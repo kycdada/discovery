@@ -1,0 +1,73 @@
+<h1>crawler(1) - A 地点から B 地点にデータを移動するクローラー</h1><h2>概要</h2><p>使用法: crawler [ crawl | testit | restart | resume | refresh | summary ][ options ]</p><h2>説明</h2><p>Data Crawler を使用して、さまざまなデータ・リポジトリー (コンテンツ管理システム、ファイル・システムなど) を<br/>クロールし、生成した結果文書をリモート・サービスにプッシュします。</p><h2>グローバル・オプション</h2>
+<pre><code>--version
+    プログラム・バージョンを表示します
+--help
+    この使用法のテキストを表示します
+</code></pre><h2>コマンド</h2><h3>crawl [ options ]</h3><p>現在の構成でクロールを実行します。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 使用する構成ファイルを指定します。デフォルトは &quot;config/crawler.conf&quot; です。
+--pii-checking &lt;value&gt;         # PII チェックを切り替えます。
+</code></pre><h3>testit [ options ]</h3><p>テスト・クロールを実行します (シード URL だけをクロールし、エンキューされた URL を表示します)。シード URL の<br/>処理結果がインデックス付け可能なコンテンツ (文書など) になる場合は、そのコンテンツが出力アダプターに送信され、<br/>画面に出力されます。シード URL の取得によって URL がエンキューされる場合、それらの URL が表示され、<br/>コンテンツは出力アダプターに送信されません。デフォルトでは、5 つのエンキューされた URL が表示されます。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 使用する構成ファイルを指定します。デフォルトは &quot;config/crawler.conf&quot; です。
+-l &lt;n&gt; | --limit &lt;n&gt;           # エンキューされた URL の表示数を制限します。
+--pii-checking &lt;value&gt;         # PII チェックを切り替えます。
+</code></pre><h3>restart [ options ]</h3><p>クロール再始動を実行します (現在の構成で新しいクロールを開始します)。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 使用する構成ファイルを指定します。
+--pii-checking &lt;value&gt;         # PII チェックを切り替えます。
+</code></pre><h3>resume [ options ]</h3><p>停止地点からクロールを再開します。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 使用する構成ファイルを指定します。
+--pii-checking &lt;value&gt;         # PII チェックを切り替えます。
+</code></pre><h3>refresh [ options ]</h3><p>前のクロールをリフレッシュします。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 使用する構成ファイルを指定します。
+--pii-checking &lt;value&gt;         # PII チェックを切り替えます。
+</code></pre><h3>summary [ options ]</h3><p>クロールのレポートを生成します。</p>
+<pre><code>--submitted                    # 送信された文書をすべて照会します。
+--processed                    # 正常に処理された文書だけを照会します。
+--failed                       # 正常に処理されなかった文書だけを照会します。
+--group-id &lt;value&gt;             # 指定のグループのクロール実行を照会します。グループには、初期クロールのほかに、初期クロールの再開、リフレッシュ、再始動が含まれます。値が未指定の場合は、デフォルトで、最後にクロールされたグループを照会します。
+--show-content                 # 照会に関連した追加のコンテンツを表示します。
+--filter                       # URL や hashID のフィルターで照会結果を絞り込みます。
+</code></pre><h2>例</h2><p><code>config/crawler.conf</code> の構成ファイルを使用してクロールを実行します。</p>
+<pre><code>crawler crawl
+</code></pre><p><code>config/crawler.conf</code> の構成ファイルを使用してテストを実行します。</p>
+<pre><code>crawler testit
+</code></pre><p><code>/home/watson/office-share.conf</code> の構成ファイルを使用してクロールを実行します。</p>
+<pre><code>crawler crawl --config /home/watson/office-share.conf
+</code></pre><p><code>/home/watson/office-share.conf</code> の構成ファイルを使用してクロールを再始動します。</p>
+<pre><code>crawler restart --config /home/watson/office-share.conf
+</code></pre><p>グループ ID <code>2</code> の失敗文書の要約情報を取得します。</p>
+<pre><code>crawler summary --failed --group-id 2 --show-content
+</code></pre><p>使用法とバージョン情報を表示します。</p>
+<pre><code>crawler --help
+</code></pre><h2>構成</h2><p><code>crawler</code> を実行するには、オプションを指定した構成ファイルが必要です。構成ファイルのサンプルが <code>crawler</code> のインストール・ディレクトリーの<br/><code>share</code> ディレクトリーに用意されています。それらのサンプルをコピーして変更してください。*サンプル自体は変更しないでください。*</p><p><code>--config | -c</code> オプションを指定しないで <code>crawler</code> を実行すると、<code>crawler</code> を開始したディレクトリーの<br/><code>config</code> ディレクトリーにある構成が使用されます。つまり、<code>config/crawler.conf</code> に基づいて <code>crawler</code> を実行することになります。</p><h2>診断</h2><p>以下の機能を使用して問題を診断します。</p><h3>デバッグ</h3><p>デバッグ・モードをアクティブにします。<code>crawler.conf</code> ファイルで以下のように設定します。</p>
+<pre><code>debugging.full_node_debugging = true
+</code></pre><h3>ロギング</h3><p>ロギングを有効にします。<code>log4j_custom.properties</code> ファイルで以下のように設定します。</p>
+<pre><code>log4j.rootLogger=INFO, Console, Log
+</code></pre><p>これは、ファイル出力の場合のデフォルトのロギング・レベルです。コンソール・ログの場合のデフォルトは以下のとおりです。</p>
+<pre><code>log4j.appender.Console.Threshold=WARN
+</code></pre><p>ロギング・レベルを以下の値に設定できます。</p>
+<pre><code>OFF - 最高ランク。ロギングをオフにする設定です。
+FATAL - アプリケーションの異常終了につながるおそれがある非常に重大なエラー・イベントを取り込みます。
+ERROR - アプリケーションの実行は続けられると考えられるエラー・イベントを取り込みます。
+WARN - 悪影響が及びそうな状態を取り込みます。
+INFO - 粗視化レベルでアプリケーションの進行状況を確認するための通知メッセージを取り込みます。
+DEBUG - アプリケーションのデバッグにとってもっとも有用な微細化レベルの通知イベントを取り込みます。
+TRACE - DEBUG よりも微細化レベルを高めて通知イベントを取り込みます。
+ALL - 最低ランク。すべてのロギングをオンにする設定です。
+</code></pre><h2>スロットル</h2><p>サイズ変更の制限値を定義して、スループットの管理に役立てます。<code>crawler.conf</code> ファイルで以下のように設定します。</p><p><code>shutdown_timeout</code> では、アプリケーションをシャットダウンするまでのタイムアウト値 (分) を指定します。デフォルト値は 10 です。</p>
+<pre><code>shutdown_timeout = &lt;n&gt;
+</code></pre><p><code>output_limit</code> は、ポータブル・クローラーが出力アダプターに同時に送信して戻りを待機する<br/>インデックス付け可能項目の最大数です。デフォルト値は 10 です。処理に使用できるコアの数によってさらに制限される場合もあります。</p>
+<pre><code>output_limit = &lt;n&gt;
+</code></pre><p><code>input_limit</code> コネクターから一度に要求できる URL の数を制限します。デフォルト値は 3 です。</p>
+<pre><code>input_limit = &lt;n&gt;
+</code></pre><p><code>output_timeout</code> は、ポータブル・クローラーが出力アダプターへの要求を中止し、後続の処理のために<br/>制限キューから項目を削除するまでの時間の長さ (秒) です。デフォルト値は 150 です。</p>
+<pre><code>output_timeout = &lt;n&gt;
+</code></pre><p>出力アダプターによる制約を考慮してください。その制約は、ここで定義する制限値に関係する場合が<br/>あるからです。前述の定義された <code>output_limit</code> は、出力アダプターに一度に送信できるインデックス付け可能なオブジェクト数にのみ関係があります。インデックス付け可能なオブジェクトが出力アダプターに送信されると、<code>output_timeout</code> 変数で定義されている「クロックによるカウント」が開始されます。<br/>出力アダプター自体にスロットルがあり、受け取った数と同数の入力が処理されないようになっている場合があります。例えば、オーケストレーション出力アダプターには、サービスへの HTTP 接続用に構成できる接続プールがある場合があります。例えば、デフォルト値が 8 の場合に<br/><code>output_limit</code> をその接続プールでの構成値より大きい数値に設定すると、実行の順番を待っている状態でクロックによるカウントが<br/>開始されるプロセスが出てきます。その後、タイムアウトになる場合があります。</p><p><code>num_threads</code> は、一度に実行できる並行スレッドの数です。この値は、整数 (並行スレッドの数を直接指定)、またはストリング (<code>&quot;xNUM&quot;</code> というフォーマットで、使用可能なプロセッサー数の倍数を指定) のいずれかになります。デフォルト値は &ldquo;x1.5&rdquo; です。つまり、<code>Runtime.availableProcessors</code> で取得する使用可能なプロセッサー数の 1.5 倍です。</p>
+<pre><code>num_threads = &lt;n&gt;
+</code></pre><p>Data Crawler プール内の並列処理を計算するための数式は、<code>min(maxThreads, max(minThreads, numThreads))</code> です。</p><h2><code>CRAWLER_OPTS</code> 環境変数</h2><p><code>CRAWLER_OPTS</code> 環境変数によって <code>crawler</code> に渡すことができるプロパティーとそれぞれのデフォルト値を以下にまとめます。</p><p>以下のようにして渡します。</p>
+<pre><code>CRAWLER_OPTS=&quot;-Dproperty=value -Dproperty=value&quot; crawler
+</code></pre><p>この値を変更するのは、IBM サポートの指示のもとでデバッグを行う場合に限ってください。</p><h3>cfa.java_bin</h3><p><code>cfa.java_bin</code> によって、コネクター・フレームワークの入力アダプターを開始するために使用する <code>java</code> コマンドを変更できます。デフォルトで <code>crawler</code> は、<br/><code>crawler</code> 自体の起動に使用されたのと同じ <code>java</code> バイナリーを使用します。</p><p>その変更を <code>java.home</code> プロパティーの設定によって行うこともできます。その設定を使用して <code>java</code> 実行可能プログラムのパスが計算されます。</p><h3>cfa.lib_dir</h3><p><code>cfa.lib_dir</code> によって、コネクター・フレームワークの <code>lib</code> ディレクトリーのパスを変更できます。この変更が必要になるケースはほとんどありません。デフォルトの場合、<br/><code>crawler</code> は、計算されたコネクター・フレームワークのパス (通常は単に <code>connectorFramework</code>) にある <code>lib</code> ディレクトリーを使用します。</p><h3>cfa.framework_jars_dir</h3><p><code>cfa.framework_jars_dir</code> によって、コネクター・フレームワークの jar ディレクトリー (デフォルトでは <code>connectorFramework/&lt;version&gt;/lib/java</code> 内) のパスを変更できます。</p><h3>cfa.plugins_dir</h3><p><code>cfa.plugins_dir</code> によって、コネクター・フレームワークのプラグイン・ディレクトリー (実際のコネクターの保管場所) のパスを指定できます。<br/>デフォルトでは、<code>framework_jars_dir</code> からビルドされ、<code>connectorFramework/&lt;version&gt;/lib/java/plugins</code> になります。</p><h2>既知の制限事項</h2><p>Data Crawler の現行リリースの既知の制限事項を詳しく取り上げます。</p>
+<ul>
+  <li>無効または欠落した URL を使用してファイル・システム・コネクターを実行した場合、Data Crawler がハングすることがあります。</li>
+  <li><code>config/crawler.conf</code> ファイルの <code>urls_to_filter</code> 値の構成で、すべてのホワイトリスト URL または RegEx を 1 つの RegEx 式に含めてください。</li>
+  <li><code>--config | -c</code> オプション内に渡される構成ファイルへのパスは、修飾されたパスでなければなりません。<br/>つまり、これは相対形式 (<code>config/crawler.conf</code> や <code>./crawler.conf</code>)、または絶対パス (<code>/path/to/config/crawler.conf</code>) でなければなりません。単に <code>crawler.conf</code> を指定できるのは、<code>crawler.conf</code> ファイルで <code>include</code> を使用して参照するファイルを <code>include</code> で指定する代わりにインラインで書き込む場合に限られます。例えば、構成ファイルを読みやすくするために、<code>discovery/discovery_service.conf</code> を <code>include</code> で参照するとします。config オプションで非修飾パスを使用するには、参照先のファイルの内容を <code>crawler.conf</code> の <code>output_adapter.discovery_service</code> キーにコピーする必要があります。</li>
+</ul><h2>変更ログ</h2><p>このリリースの変更点のリストについては、インストール・ディレクトリーにある <code>changelog.txt</code> ファイルを参照してください。</p><h2>作成者</h2><p>IBM Watson - <a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/">https://www.ibm.com/smarterplanet/us/en/ibmwatson/</a></p><p>ピッツバーグの yinz が作成しました。</p><h2>関連資料</h2><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

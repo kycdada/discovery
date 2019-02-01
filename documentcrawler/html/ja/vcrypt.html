@@ -1,0 +1,13 @@
+<h1>vcrypt(1) - 少量のデータを暗号化/暗号化解除するためのツール</h1><h2>概要</h2><p>使用法: vcrypt &ndash;decrypt|-d &ndash;encrypt|-e &ndash;genkey|-g [ OPTIONS ]</p><h2>説明</h2><p><code>vcrypt</code> は主に、コネクター・フレームワークで使用するパスワードを暗号化するために使用されます。</p><h3>鍵の長さに関する特別な注記</h3><p>Java 仮想マシンの実装は、デフォルトで 128 ビット/16 バイトの AES 鍵をサポートするはずです。Java Cryptographic Extension が<br/>インストールされているシステムでは、256 ビット/32 バイトの AES 鍵を使用できる場合もあります。32 バイトの鍵を<br/>指定した場合に、<code>vcrypt</code> の起動に使用した JVM がその鍵をサポートしていなければ、エラーが表示されます。</p><h2>コマンド</h2><h3>&ndash;encrypt | -e OPTIONS INPUT</h3><p>ファイル内や標準入力内のデータを暗号化します。</p><h3>&ndash;decrypt | -d OPTIONS INPUT</h3><p>ファイル内や標準入力内のデータを暗号化解除します。</p><h3>&ndash;genkey | -g</h3><p><code>vcrypt</code> での使用に適した暗号鍵を生成して標準出力に送ります。</p><h2>オプション</h2><h3>&ndash;keyfile|-k PATH/TO/ID_VCRYPT</h3><p>該当する Base64 エンコードの鍵 (通常は <code>--genkey|-g</code> コマンドを使用して生成した鍵) が<br/>入っているファイルのパスを指定します。</p><h2>入力</h2><h3>暗号化モード</h3>
+<pre><code>$FILE_CONTAINING_CLEARTEXT | -- $CLEARTEXT
+</code></pre><h3>暗号化解除モード</h3>
+<pre><code>$FILE_CONTAINING_CRYPTED_TEXT | -- $CRYPTED_TEXT
+</code></pre><h2>例</h2><p>鍵を生成して <code>id_vcrypt</code> ファイルに書き込みます。</p>
+<pre><code>vcrypt --genkey &gt; id_vcrypt
+</code></pre><p>標準入力のパスワードを暗号化して標準出力に送り、出力リダイレクトによって<br/><code>my_secret_data.txt</code> に書き込みます。</p>
+<pre><code>./vcrypt --encrypt --keyfile id_vcrypt -- &quot;my secret password&quot; &gt; my_secret_data.txt
+</code></pre><p>パイプ接続によって <code>xclip</code> や <code>pbcopy</code> などに出力を送り、オペレーティング・システムの<br/>クリップボードに出力を配置することもできます。</p><p>ファイル内のパスワードを暗号化解除します。</p>
+<pre><code>vcrypt --decrypt --keyfile id_vcrypt my_secret_data.txt
+</code></pre><h2>プロパティーと環境変数</h2><h3><code>VCRYPT_OPTS</code> 環境変数</h3><p>この環境変数を使用して、<code>vcrypt</code> の開始に使用する <code>java</code> コマンドにオプションを渡すことができます。</p><h3><code>vcrypt.key</code> プロパティー</h3><p><code>--keyfile | -k keyfile</code> オプションを渡す代わりに、コマンド・ラインで鍵として使用する 16 バイトまたは 32 バイトの<br/>ストリングを <code>VCRYPT_OPTS</code> の <code>-D</code> プロパティーで渡します。</p><p>使用例:</p>
+<pre><code>VCRYPT_OPTIONS=&quot;-Dvcrypt.key=&#39;1234qwerasdfzxcv&#39;&quot; vcrypt --encrypt file_to_encrypt
+</code></pre><h3><code>VIV_VCRYPT_KEY</code> 環境変数</h3><p><code>vcrypt</code> では、この環境変数を使用して鍵を設定できます。16 バイトか 32 バイトのどちらかでなければなりません。</p><h2>関連資料</h2><p>crawler(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

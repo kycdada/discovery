@@ -1,0 +1,54 @@
+<h1>Configurando valores iniciais de crawl</h1><p>Valores iniciais são os pontos de início de um crawl, e são usados pelo data crawler para<br/>recuperar dados do recurso, identificados por esse valor inicial. Geralmente, os valores iniciais configuram<br/>URLs para acessar recursos baseados em protocolo, como compartilhamentos de arquivos, compartilhamentos de<br/>SMB, bancos de dados e outros repositórios de dados que são acessíveis por vários protocolos da web. Além<br/>disso, as URLs iniciais diferentes possuem diferentes recursos.</p><p>Os valores iniciais podem ser também específicos do repositório, para ativar a execução de crawl de<br/>aplicativos de terceiros específicos, como sistemas Customer Relationship Management (CRM), sistemas Product<br/>Life Cycle (PLC), Content Management Systems (CMS), aplicativos baseados em nuvem e aplicativos baseados na<br/>web.</p><p>O data crawler fornece atualmente os valores iniciais de crawl que suportam conectores de<br/>arquivos para os tipos de repositórios a seguir:</p>
+<ul>
+  <li>Sistema de arquivo</li>
+  <li>Bancos de dados, por meio de JDBC</li>
+  <li>CMIS (Content Management Interoperability Services)</li>
+  <li>Compartilhamentos de arquivos SMB (Server Message Block), CIFS (Common Internet Filesystem) ou Samba</li>
+  <li>SharePoint e SharePoint Online</li>
+  <li>Postal</li>
+</ul><p>Um modelo de configuração inicial de crawl também é fornecido, o que permite<br/>customizar um valor inicial de crawl para um conector customizado.</p><h2>Introdução:</h2><p>Ao efetuar crawl de repositórios de dados, o crawler é iniciado em uma URL inicial especificada pelo<br/>usuário, e inicia o download das páginas de informações. O crawler também localiza links nas páginas<br/>transferidas por download e planeja as páginas descobertas recentemente para execução de crawl adicional.</p><p>As informações de configuração são usadas para determinar quais páginas precisam ser passadas por<br/>crawl, e como efetuar crawl nelas. Esse arquivo explica as opções que é possível configurar para cada arquivo<br/>inicial de crawl do conector.</p><p><strong>Nota</strong>: cada arquivo de configuração inicial de crawl funciona com um<br/>arquivo de configuração de conector de arquivo correspondente; as opções de conector de arquivo são<br/>descritas separadamente.</p><h3>Configurando o valor inicial de crawl de sistema de arquivos</h3><p>Os valores a seguir podem ser configurados para o arquivo inicial de crawl do sistema de<br/>arquivos. Para configurar esses valores, abra o arquivo <code>config/seeds/filesystem-seed.conf</code><br/>e especifique os valores a seguir, específicos para os casos de uso:</p>
+<ul>
+  <li><strong>url</strong> - Lista separada por quebras de linha de arquivos e<br/>pasta para efetuar crawl. Os usuários do UNIX podem usar um caminho, como <code>/usr/local/</code>.<br/>As URLs devem iniciar com <code>sdk-fs://</code>. Portanto, para efetuar crawl, por exemplo,<br/><code>/home/watson/mydocs</code>, o valor dessa URL seria<br/><code>sdk-fs:///home/watson/mydocs</code> - o terceiro <code>/</code> é necessário!<br/><strong>Nota</strong>: o conector Filesystem usa um protocolo customizado,<br/><code>sdk-fs://</code>, para criar uma URL válida. Não pré-anexe <code>file://</code> nos<br/>caminhos listados; as URLs devem iniciar com <code>sdk-fs://</code>.</li>
+  <li><strong>hops</strong> - Somente uso interno.</li>
+  <li><strong>default-allow</strong> - Somente uso interno.</li>
+</ul><h3>Configurando o valor inicial de crawl de banco de dados</h3><p>Os valores a seguir podem ser configurados para o arquivo inicial de crawl do banco de dados. Para<br/>configurar esses valores, abra o arquivo <code>config/seeds/database-seed.conf</code> e<br/>especifique os valores a seguir, específicos para os casos de uso:</p>
+<ul>
+  <li><strong>url</strong> - A URL da tabela ou da visualização a ser recuperada. Define a URL<br/>inicial do banco de dados SQL customizado. A estrutura é:</li>
+</ul><p> <code>database-system://host:port/database?[per=num]&amp;[sql=SQL]</code></p><p>Testar uma URL inicial mostrará todas as URLs enfileiradas. Por exemplo, testando a URL a<br/>seguir para um banco de dados que contém 200 registros:</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=100&amp;sql=select%20*%20from%20vessel&amp;</code></p><p>mostra as URLs enfileiradas a seguir:</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=0&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=100&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=200&amp;</code></p><p>Ao testar a URL a seguir, os dados recuperados da linha 43 serão mostrados:</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=1&amp;key-val=43</code><br/>* <strong>hops</strong> - Somente uso interno.<br/>* <strong>default-allow</strong> - Somente uso interno.<br/>* <strong>user-password</strong> - Credenciais para o sistema de banco de dados. O nome do<br/>usuário e senha precisam ser separados por um <code>:</code>, e a senha deve ser criptografada com<br/>o programa vcrypt enviado com o Data Crawler. Por exemplo, <code>username:[[vcrypt/3]]passwordstring</code>.<br/>* <strong>max-data-size</strong> - Tamanho máximo dos dados para um documento. Este é o<br/>maior bloco de memória que será carregado de uma vez. Aumente esse limite somente se tiver memória<br/>suficiente em seu computador.<br/>* <strong>filter-exact-duplicates</strong> - Somente uso interno.<br/>* <strong>jdbc-class</strong> (Opção do extensor) - Quando especificada, essa sequência<br/>substituirá a classe JDBC usada pelo conector quando <code>(outra)</code> for escolhida como o sistema<br/>de banco de dados.<br/>* <strong>connection-string</strong> (Opção do extensor) - Quando especificada, essa sequência<br/>substituirá a sequência de conexões JDBC gerada automaticamente. Isso permite fornecer configuração<br/>mais detalhada sobre a conexão com o banco de dados, como por exemplo, balanceamento de carga ou<br/>conexões SSL. Por exemplo: <code>jdbc:netezza://127.0.0.1:5480/databasename</code>.<br/>* <strong>save-frequency-for-resume</strong> (Opção do extensor) - Especifica o nome de<br/>uma coluna ou rótulo associado para poder continuar um crawl ou executar uma atualização parcial. O valor<br/>inicial salva o nome dessa coluna em intervalos regulares conforme ele continua com o crawl, e o salva<br/>novamente quando a última linha do banco de dados tiver sido passada por crawl. Ao continuar o crawl ou<br/>atualizá-lo, o crawl é iniciado com a linha identificada no valor salvo para esse campo.</p><h3>Configurando o valor inicial de crawl do CMIS</h3><p>Os valores a seguir podem ser configurados para o arquivo inicial de crawl do CMIS. Para configurar<br/>esses valores, abra o arquivo <code>config/seeds/cmis-seed.conf</code> e modifique os valores a seguir,<br/>específicos para os casos de uso:</p>
+<ul>
+  <li><p><strong>url</strong> -A URL de uma pasta do repositório CMIS a ser usado como um ponto de<br/>início do crawl, por exemplo:</p></li>
+  <li><p><code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=workspace://SpacesStore/guid</code><br/> Para efetuar crawl a partir da pasta raiz, é necessário fornecer a URL como:</p></li>
+  <li><p><code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=</code></p></li>
+  <li><strong>at</strong> - Opção não usada.</li>
+  <li><strong>default-allow</strong> - Somente uso interno.</li>
+</ul><h3>Configurando o valor inicial de crawl do Samba</h3><p>Os valores a seguir podem ser configurados para o arquivo inicial de crawl do Samba. Para configurar<br/>esses valores, abra o arquivo <code>config/seeds/samba-seed.conf</code> e modifique os valores a<br/>seguir, específicos para os casos de uso:</p>
+<ul>
+  <li><p><strong>url</strong> - Uma lista separada por quebras de linha de compartilhamentos com<br/>crawl, por exemplo:</p></li>
+  <li><p><code>smb://share.test.com/office</code></p></li>
+  <li><code>smb://share.test.com/cash/money/change</code></li>
+  <li><code>smb://share.test.com/C$/Program Files</code></li>
+  <li><p><strong>hops</strong> - Somente uso interno.</p></li>
+  <li><strong>default-allow</strong> - Somente uso interno.</li>
+</ul><h3>Configurando o valor inicial de crawl do SharePoint</h3><p>Os valores adicionais a seguir podem ser configurados para o arquivo inicial de crawl do<br/>SharePoint. Para configurar esses valores, abra o arquivo<br/><code>config/seeds/sharepoint-seed.conf</code> e modifique os valores a seguir, específicos para os<br/>casos de uso:</p>
+<ul>
+  <li><p><strong>url</strong> - Uma lista separada por quebras de linha de aplicativos da web<br/>SharePoint ou coleções de sites para efetuar crawl, por exemplo:</p></li>
+  <li><p><code>io-sp://a.com</code></p></li>
+  <li><code>io-sp://b.com:83/site</code></li>
+  <li><code>io-sp://c.com/site2</code></li>
+</ul><p>Os subsites desses sites também serão passados por crawl (a menos que sejam excluídos por<br/>outras regras de crawling).<br/>* <strong>filter-url</strong> - Uma lista separada por quebras de linha de aplicativos da web<br/>SharePoint ou coleções de sites para efetuar crawl, por exemplo:</p>
+<ul>
+  <li><code>http://a.com
+</code></li>
+  <li><code>http://b.com:83/site
+</code></li>
+  <li><code>http://c.com/site2</code></li>
+  <li><p><strong>hops</strong> - Somente uso interno.</p></li>
+  <li><strong>n-concurrent-requests</strong> - Somente uso interno.</li>
+  <li><strong>delay</strong> - Somente uso interno.</li>
+  <li><strong>default-allow</strong> - Somente uso interno.</li>
+  <li><strong>seed-protocol</strong> - Configura o protocolo inicial para filhos da<br/>coleção de sites. Necessário quando o protocolo de coleção de sites for SSL, HTTP ou HTTPS. Esse valor deve<br/>ser configurado de maneira igual ao protocolo de coleção de sites.</li>
+</ul><h3>Configurando o valor inicial do Box</h3><p>Os valores a seguir podem ser configurados para o arquivo inicial de crawl do Box. Para configurar<br/>esses valores, abra o arquivo <code>config/seeds/box-seed.conf</code> e especifique os valores a<br/>seguir, específicos para os casos de uso:</p>
+<ul>
+  <li><strong>URL</strong> -A URL a ser usada como o ponto de início do crawl. O valor padrão é<br/><code>box://app.box.com/</code>.</li>
+  <li><strong>default-allow</strong> - Somente uso interno.</li>
+</ul><h2>CONSULTE TAMBÉM</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>orchestration_service.conf(5)</p>

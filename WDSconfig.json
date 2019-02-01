@@ -1,0 +1,130 @@
+{
+    "_comment": "2019/1月30日時点のデータです。common.pyの環境詳細を取得するためのメソッドから、持ってきたものです。現在のconfigと差異がないことをお祈り申し上げます。",
+    "configuration_id": "82fb133d-aece-4de5-9cde-040a55928083",
+    "name": "test Configuration o9gr",
+    "created": "2019-01-29T01:05:00.114Z",
+    "updated": "2019-01-29T10:42:50.934Z",
+    "description": "",
+    "conversions": {
+        "html": {
+            "exclude_content": {
+                "xpaths": []
+            },
+            "exclude_tag_attributes": [
+                "EVENT_ACTIONS"
+            ],
+            "exclude_tags_completely": [
+                "script",
+                "sup"
+            ],
+            "exclude_tags_keep_content": [
+                "font",
+                "em",
+                "span"
+            ],
+            "keep_content": {
+                "xpaths": []
+            }
+        },
+        "json_normalizations": [],
+        "pdf": {
+            "heading": {
+                "fonts": [
+                    {
+                        "level": 1,
+                        "max_size": 80,
+                        "min_size": 24
+                    },
+                    {
+                        "bold": false,
+                        "italic": false,
+                        "level": 2,
+                        "max_size": 24,
+                        "min_size": 18
+                    },
+                    {
+                        "bold": true,
+                        "level": 2,
+                        "max_size": 24,
+                        "min_size": 18
+                    },
+                    {
+                        "bold": false,
+                        "italic": false,
+                        "level": 3,
+                        "max_size": 18,
+                        "min_size": 13
+                    },
+                    {
+                        "bold": true,
+                        "level": 3,
+                        "max_size": 18,
+                        "min_size": 13
+                    },
+                    {
+                        "bold": false,
+                        "italic": false,
+                        "level": 4,
+                        "max_size": 13,
+                        "min_size": 11
+                    }
+                ]
+            }
+        },
+        "segment": {
+            "enabled": true,
+            "selector_tags":["h1","h2","h3"]
+        },
+        "word": {
+            "heading": {
+                "fonts": [
+                    {
+                        "bold": false,
+                        "italic": false,
+                        "level": 1,
+                        "min_size": 24
+                    },
+                    {
+                        "bold": true,
+                        "italic": false,
+                        "level": 2,
+                        "max_size": 23,
+                        "min_size": 18
+                    },
+                    {
+                        "bold": false,
+                        "italic": false,
+                        "level": 3,
+                        "max_size": 17,
+                        "min_size": 14
+                    },
+                    {
+                        "bold": true,
+                        "italic": false,
+                        "level": 4,
+                        "max_size": 13,
+                        "min_size": 13
+                    }
+                ],
+                "styles": [
+                    {
+                        "level": 1,
+                        "names": [
+                            "pullout heading",
+                            "pulloutheading",
+                            "header"
+                        ]
+                    },
+                    {
+                        "level": 2,
+                        "names": [
+                            "subtitle"
+                        ]
+                    }
+                ]
+            }
+        }
+    },
+    "enrichments": [],
+    "normalizations": []
+}

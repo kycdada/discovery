@@ -1,0 +1,54 @@
+<h1>クロール・シードの構成</h1><p>シードはクロールの開始点です。データ・クローラーは、そのシードで指定されているリソースからデータを取得します。通常、シードでは、プロトコル・ベースのリソース (ファイル共有、SMB 共有、データベース、各種の Web プロトコルでアクセスできるその他のデータ・リポジトリーなど) にアクセスするための URL を構成します。また、シード URL が異なれば、機能も異なります。</p><p>シードをリポジトリー固有にして、特定のサード・パーティー・アプリケーション (カスタマー・リレーションシップ・マネジメント (CRM) システム、製品ライフサイクル (PLC) システム、コンテンツ管理システム (CMS)、クラウド・ベースのアプリケーション、および Web データベース・アプリケーションなど) をクロールできるようにすることも可能です。</p><p>データ・クローラーには、以下のリポジトリー・タイプのファイル・コネクターをサポートするクロール・シードが現在用意されています。</p>
+<ul>
+  <li>ファイル・システム</li>
+  <li>データベース (JDBC 経由)</li>
+  <li>CMIS (Content Management Interoperability Services)</li>
+  <li>SMB (Server Message Block)、CIFS (Common Internet Filesystem)、Samba のファイル共有</li>
+  <li>SharePoint および SharePoint Online</li>
+  <li>BOX</li>
+</ul><p>クロール・シード構成テンプレートも用意されています。そのテンプレートを使用して、カスタム・コネクターのクロール・シードをカスタマイズできます。</p><h2>はじめに:</h2><p>クローラーは、データ・リポジトリーをクロールする時に、ユーザー指定のシード URL から処理を始めて、情報のページをダウンロードしていきます。クローラーは、ダウンロードしたページに含まれているリンクも見つけて、新しくディスカバーしたページをさらにクロールするためのスケジュールを設定します。</p><p>構成情報を使用して、クロールする必要のあるページやクロールの方法が決定されます。コネクターのクロール・シード・ファイルごとに構成できるオプションをこのファイルで説明します。</p><p><strong>注</strong>: 各クロール・シード構成ファイルは、対応するファイル・コネクター構成ファイルと連携して使用されます。ファイル・コネクター・オプションについては、別途説明します。</p><h3>ファイル・システム・クロール・シードの構成</h3><p>以下に、ファイル・システム・クロール・シード・ファイル用に構成できる値を示します。これらの値を設定するには、<code>config/seeds/filesystem-seed.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を指定します。</p>
+<ul>
+  <li><strong>url</strong> - クロールするファイルとフォルダーの改行で区切られたリスト。UNIX ユーザーは、<code>/usr/local/</code> などのパスを使用できます。<br/>URL は、<code>sdk-fs://</code> で始まる必要があります。したがって、例えば、<code>/home/watson/mydocs</code> をクロールするには、この URL の値は <code>sdk-fs:///home/watson/mydocs</code> になります。3 番目の <code>/</code> が必要です。**注**: ファイル・システム・コネクターは、カスタム・プロトコル <code>sdk-fs://</code> を使用して有効な URL を作成します。リストされているパスの前に <code>file://</code> を付加しないでください。URL は <code>sdk-fs://</code> で始まる必要があります。</li>
+  <li><strong>hops</strong> - 内部使用のみ。</li>
+  <li><strong>default-allow</strong> - 内部使用のみ。</li>
+</ul><h3>データベース・クロール・シードの構成</h3><p>以下に、データベース・クロール・シード・ファイル用に構成できる値を示します。これらの値を設定するには、<code>config/seeds/database-seed.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を指定します。</p>
+<ul>
+  <li><strong>url</strong> - 取得するテーブルまたはビューの URL。カスタムの SQL データベース・シード URL を定義します。構造は、以下のとおりです。</li>
+</ul><p> <code>database-system://host:port/database?[per=num]&amp;[sql=SQL]</code></p><p>シード URL をテストすると、エンキューされた URL がすべて表示されます。例えば、次のような、200 のレコードが含まれているデータベースの URL をテストします。</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=100&amp;sql=select%20*%20from%20vessel&amp;</code></p><p>以下のようなエンキューされた URL が表示されます。</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=0&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=100&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=200&amp;</code></p><p>次の URL のテスト中に、行 43 から取得したデータが表示されます。</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=1&amp;key-val=43</code><br/>* <strong>hops</strong> - 内部使用のみ。<br/>* <strong>default-allow</strong> - 内部使用のみ。<br/>* <strong>user-password</strong> - データベース・システムの資格情報。ユーザー名とパスワードは <code>:</code> で区切る必要があり、パスワードは Data Crawler 付属の vcrypt プログラムで暗号化する必要があります。例えば、<code>username:[[vcrypt/3]]passwordstring</code> のようになります。<br/>* <strong>max-data-size</strong> - 文書のデータの最大サイズ。これは、一度にロードされるメモリーの最大ブロックです。コンピューター上に十分なメモリーがある場合に限り、この限度を増やしてください。<br/>* <strong>filter-exact-duplicates</strong> - 内部使用のみ。<br/>* <strong>jdbc-class</strong> (エクステンダー・オプション) - 指定すると、データベース・システムとして <code>(other)</code> が選択されている場合に、コネクターで使用される JDBC クラスがこのストリングによってオーバーライドされます。<br/>* <strong>connection-string</strong> (エクステンダー・オプション) - 指定すると、自動生成された JDBC 接続ストリングがこのストリングによってオーバーライドされます。これにより、ロード・バランシングや SSL 接続など、データベース接続に関するより詳細な構成を指定できます。例えば、<code>jdbc:netezza://127.0.0.1:5480/databasename</code> のようになります。<br/>* <strong>save-frequency-for-resume</strong> (エクステンダー・オプション) - クロールの再開や、部分的なリフレッシュを可能にするために、列または関連付けられているラベルの名前を指定します。シードでクロールが進行するときに、シードによってこの列の名前が定期的な間隔で保存され、データベースの最後の行がクロールされると、この列の名前が再度保存されます。クロールを再開したり、リフレッシュしたりする場合、クロールはこのフィールドの保存値で指定された行から処理を開始します。</p><h3>CMIS クロール・シードの構成</h3><p>以下に、CMIS クロール・シード・ファイル用に構成できる値を示します。これらの値を設定するには、<code>config/seeds/cmis-seed.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><p><strong>url</strong> - クロールの開始点として使用する CMIS リポジトリーのフォルダーの URL。以下に例を示します。</p></li>
+  <li><p><code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=workspace://SpacesStore/guid</code><br/> ルート・フォルダーからクロールする場合は、以下のように URL を指定する必要があります。</p></li>
+  <li><p><code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=</code></p></li>
+  <li><strong>at</strong> - このオプションは使用されません。</li>
+  <li><strong>default-allow</strong> - 内部使用のみ。</li>
+</ul><h3>Samba クロール・シードの構成</h3><p>以下に、Samba クロール・シード・ファイル用に構成できる値を示します。これらの値を設定するには、<code>config/seeds/samba-seed.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>url</strong> - クロールする共有の改行で区切られたリスト。以下に例を示します。</li>
+</ul>
+<ul>
+  <li><code>smb://share.test.com/office</code></li>
+  <li><code>smb://share.test.com/cash/money/change</code></li>
+  <li><code>smb://share.test.com/C$/Program Files</code></li>
+  <li><p><strong>hops</strong> - 内部使用のみ。</p></li>
+  <li><strong>default-allow</strong> - 内部使用のみ。</li>
+</ul><h3>SharePoint クロール・シードの構成</h3><p>以下に、SharePoint クロール・シード・ファイル用に構成できる追加の値を示します。これらの値を設定するには、<code>config/seeds/sharepoint-seed.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><p><strong>url</strong> - クロールする SharePoint Web アプリケーションまたはサイト・コレクションのリスト。改行で区切ります。以下に例を示します。</p></li>
+  <li><p><code>io-sp://a.com</code></p></li>
+  <li><code>io-sp://b.com:83/site</code></li>
+  <li><code>io-sp://c.com/site2</code></li>
+</ul><p>これらのサイトのサブサイトもクロールされます (ただし、他のクロール・ルールによって除外されている場合を除きます)。<br/>* <strong>filter-url</strong> - クロールする SharePoint Web アプリケーションまたはサイト・コレクションのリスト。改行で区切ります。以下に例を示します。</p>
+<ul>
+  <li><code>http://a.com</code></li>
+  <li><code>http://b.com:83/site</code></li>
+  <li><code>http://c.com/site2</code></li>
+  <li><p><strong>hops</strong> - 内部使用のみ。</p></li>
+  <li><strong>n-concurrent-requests</strong> - 内部使用のみ。</li>
+  <li><strong>delay</strong> - 内部使用のみ。</li>
+  <li><strong>default-allow</strong> - 内部使用のみ。</li>
+  <li><strong>seed-protocol</strong> - サイト・コレクションの子のシード・プロトコルを設定します。<br/>サイト・コレクションのプロトコルが SSL、HTTP、または HTTPS である場合に必要です。この値は、サイト・コレクションのプロトコルと同じものに設定する必要があります。</li>
+</ul><h3>Box シードの構成</h3><p>以下に、Box クロール・シード・ファイル用に構成できる値を示します。これらの値を設定するには、<code>config/seeds/box-seed.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を指定します。</p>
+<ul>
+  <li><strong>url</strong> - クロールの開始点として使用する URL。デフォルト値は <code>box://app.box.com/</code> です。</li>
+  <li><strong>default-allow</strong> - 内部使用のみ。</li>
+</ul><h2>関連資料</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>orchestration_service.conf(5)</p>

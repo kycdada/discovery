@@ -1,0 +1,22 @@
+<h1>配置 Discovery Service</h1><p>当使用 IBM Watson Discovery Service 时，Discovery Service 会告知搜寻器如何管理已搜寻的文件。要直接更改缺省选项，请打开 <code>config/discovery/discoveryservice.conf</code> 文件，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><strong>http_timeout</strong> - 文档读取/建立索引操作的超时值（以秒计）；缺省值为 <code>125</code>。</li>
+  <li><strong>concurrent_upload_connection_limit</strong> - 可用于上载文档的并发连接数；缺省值为 <code>2</code>。当使用 Orchestration Service 输出适配器时，此数字应大于或等于在配置搜寻选项时设置的 <code>output_limit</code>。</li>
+  <li><strong>base_url</strong> - 要将已搜寻文档发送到的 URL。对于 Discovery Service 的当前发行版，此值为 <code>https://gateway.watsonplatform.net/discovery/api</code>。</li>
+  <li><strong>environment_id</strong> - <code>base-url</code> 的已搜寻文档集合所在的位置。</li>
+  <li><strong>collection_id</strong> - 您在 Discovery Service 中设置的文档集合的名称。</li>
+  <li><strong>configuration_id</strong> - Discovery Service 使用的配置文件的文件名。</li>
+  <li><strong>check_for_completion</strong> - 检查在端点上是否成功处理了文档。这会让您感到搜寻器的性能有所下降，但会生成与文档上载和转换成功与否有关的可靠通知。值为 <code>true</code> 或 <code>false</code>。<br/><strong>要点</strong> - 启用此参数后，最好将 <code>concurrent_upload_connection_limit</code> 增至大于或等于在配置搜寻选项时设置的 <code>output_limit</code>，以便充分利用可用的资源。</li>
+</ul><p>提供您的 Discovery Service 凭证：<br/>* <strong>username</strong> - 用于向已搜寻文档集合所在位置进行认证的用户名。<br/>* <strong>password</strong> - 用于向已搜寻文档集合所在位置进行认证的密码。</p><p>Discovery Service 输出适配器可以发送统计信息，让 IBM 能够更好地理解用户需求并服务于用户。可设置 <code>send_stats</code> 变量的以下选项：<br/>* <strong>jvm</strong> - 已发送的 Java 虚拟机 (JVM) 统计信息（包括 Java 供应商和版本），这些统计信息由用于执行 Data Crawler 的 JVM 来报告。值为 <code>true</code> 或 <code>false</code>。<br/>* <strong>os</strong> - 已发送的操作系统 (OS) 统计信息（包括 OS 名称、版本和体系结构），这些统计信息由用于执行 Data Crawler 的 JVM 来报告。值为 <code>true</code> 或 <code>false</code>。</p>
+<ul>
+  <li><strong>api_version</strong> - 仅供内部使用。上次更改 API 版本的日期。</li>
+</ul><h1>配置 URL 跟踪存储器</h1><p><code>config/discovery</code> 文件夹还包含一个配置文件，用于在内部映射搜寻器 URL 与文档标识。要直接更改缺省选项，请打开 <code>config/discovery/uri_tracking_storage.conf</code> 文件，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><strong>driver</strong> - 您的数据库的 JDBC H2 驱动程序类。缺省值为 <code>org.h2.Driver</code>。</li>
+  <li><strong>url</strong> - 这是 JDBC 连接字符串的 URL 前缀。格式为 <code>jdbc:h2:[file:]</code>。**注**：前缀 <code>file:</code> 为可选。如果未提供此前缀，或者只使用了 <code>database_location</code> 的相对路径，那么将使用当前工作目录作为起点。缺省值为 <code>jdbc:h2:file:</code>。</li>
+  <li><strong>database_location</strong> - 磁盘上用于存储数据库的位置，例如，<code>./storage/database</code> 或 <code>~/storage/database</code>。缺省值为 <code>./storage/database</code>。</li>
+  <li><strong>database_name</strong> - 数据库的名称。缺省值为 <code>ActivityDB</code>。</li>
+  <li><strong>table_name</strong> - 要使用的表的名称。缺省值为 <code>UriTracker</code>。</li>
+  <li><strong>username</strong> - 用于连接到数据库的用户名</li>
+  <li><strong>password</strong> - 用于连接到数据库的密码</li>
+</ul><h2>另请参阅</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p>

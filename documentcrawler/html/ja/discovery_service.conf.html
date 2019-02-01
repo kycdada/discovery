@@ -1,0 +1,22 @@
+<h1>ディスカバリー・サービスの構成</h1><p>ディスカバリー・サービスでは、IBM Watson ディスカバリー・サービスを使用する場合にクロール済みのファイルをどう管理するかをクローラーに対して指定します。デフォルト・オプションを直接変更する場合は、<code>config/discovery/discovery_service.conf</code> ファイルを開いて、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>http_timeout</strong> - 文書の読み取り/インデックス付け操作のタイムアウト (秒単位)。デフォルトは <code>125</code> です。</li>
+  <li><strong>concurrent_upload_connection_limit</strong> - 文書のアップロード時に可能な同時接続の数。デフォルトは <code>2</code> です。オーケストレーション・サービス出力アダプターを使用する場合は、クロール・オプションの構成時に設定した <code>output_limit</code> の値以上の数でなければなりません。</li>
+  <li><strong>base_url</strong> - クロールする文書の送信先の URL。現行リリースのディスカバリー・サービスの場合は、<code>https://gateway.watsonplatform.net/discovery/api</code> という値になります。</li>
+  <li><strong>environment_id</strong> - <code>base-url</code> でクロールする文書コレクションの場所。</li>
+  <li><strong>collection_id</strong> - ディスカバリー・サービスでセットアップした文書コレクションの名前。</li>
+  <li><strong>configuration_id</strong> - ディスカバリー・サービスで使用する構成ファイルのファイル名。</li>
+  <li><strong>check_for_completion</strong> - 文書がエンドポイントで正常に処理されたかどうかを検査します。この検査によって、クローラーのパフォーマンスは落ちるとしても、文書のアップロードや変換が成功したという信頼性の高い通知を生成できます。値は、<code>true</code> または <code>false</code> のいずれかです。<br/><strong>重要</strong> - このパラメーターを有効にする場合は、利用できるリソースをフルに活用するために、<code>concurrent_upload_connection_limit</code> の値を大きくして、クロール・オプションの構成時に設定した <code>output_limit</code> の値以上にしてください。</li>
+</ul><p>ディスカバリー・サービスの資格情報を指定します。<br/>* <strong>username</strong> - クロールする文書コレクションの場所で認証を行うためのユーザー名。<br/>* <strong>password</strong> - クロールする文書コレクションの場所で認証を行うためのパスワード。</p><p>ディスカバリー・サービス出力アダプターは、IBM がユーザーに対する理解を深めてサービスを向上させるための統計を送信できます。<code>send_stats</code> 変数に対して以下のオプションを設定できます。<br/>* <strong>jvm</strong> - 送信される Java 仮想マシン (JVM) 統計に、Data Crawler の実行に使用する JVM から報告された Java のベンダーとバージョンが含まれます。値は、<code>true</code> または <code>false</code> のいずれかです。<br/>* <strong>os</strong> - 送信されるオペレーティング・システム (OS) 統計には、Data Crawler の実行に使用する JVM から報告された OS 名、バージョン、およびアーキテクチャーが含まれます。値は、<code>true</code> または <code>false</code> のいずれかです。</p>
+<ul>
+  <li><strong>api_version</strong> - 内部使用のみ。API バージョンの最終変更日。</li>
+</ul><h1>URL トラッキング・ストレージの構成</h1><p><code>config/discovery</code> フォルダーには、クローラー URL と文書 ID の内部マッピングのために使用できる構成ファイルも入っています。デフォルト・オプションを直接変更する場合は、<code>config/discovery/uri_tracking_storage.conf</code> ファイルを開いて、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>driver</strong> - データベースの JDBC H2 ドライバー・クラス。デフォルト値は <code>org.h2.Driver</code> です。</li>
+  <li><strong>url</strong> - これは JDBC 接続ストリングの URL 接頭部です。形式は <code>jdbc:h2:[file:]</code> です。**注**: 接頭部 <code>file:</code> はオプションです。<code>database_location</code> で相対パスのみを使用する場合や値を何も指定しない場合は、現行作業ディレクトリーが開始点として使用されます。デフォルトは <code>jdbc:h2:file:</code> です。</li>
+  <li><strong>database_location</strong> - データベースを保管するディスク上の場所 (<code>./storage/database</code> や <code>~/storage/database</code> など)。デフォルト値は <code>./storage/database</code> です。</li>
+  <li><strong>database_name</strong> - データベースの名前。デフォルト値は <code>ActivityDB</code> です。</li>
+  <li><strong>table_name</strong> - 使用するテーブルの名前。デフォルト値は <code>UriTracker</code> です。</li>
+  <li><strong>username</strong> - データベースに接続するユーザー名。</li>
+  <li><strong>password</strong> - データベースに接続するパスワード。</li>
+</ul><h2>関連資料</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p>

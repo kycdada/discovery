@@ -1,0 +1,10 @@
+<h1>配置 Orchestration Service</h1><p>Orchestration Service 会告知搜寻器如何管理已搜寻的文件。要直接更改缺省选项，请打开 <code>config/orchestration/orchestration-service.conf</code> 文件，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><strong>http_timeout</strong> - 文档读取/建立索引操作的超时值（以秒计）；缺省值为 <code>585</code>。</li>
+  <li><strong>concurrent_upload_connection_limit</strong> - 可用于上载文档的并发连接数；缺省值为 <code>10</code>。 通常，此数字应大于或等于在配置搜寻选项时设置的 <code>output_limit</code>。</li>
+  <li><strong>base_url</strong> - 要将已搜寻文档发送到的 URL。</li>
+  <li><strong>endpoint</strong> - <code>base-url</code> 的已搜寻文档集合所在的位置。</li>
+  <li><strong>username</strong> - 用于向 <code>endpoint</code> 位置进行认证的用户名。</li>
+  <li><strong>password</strong> - 用于向 <code>endpoint</code> 位置进行认证的密码。**要点** - <strong>请勿</strong>使用 Data Crawler 随附的 vcrypt 程序来加密此密码。</li>
+  <li><strong>config_file</strong> - Orchestration Service 使用的配置文件。</li>
+</ul><p>Orchestration Service 输出适配器可以发送统计信息，让 IBM 能够更好地理解用户需求并服务于用户。可设置 <code>send_stats</code> 变量的以下选项：<br/>* <strong>jvm</strong> - 已发送的 Java 虚拟机 (JVM) 统计信息（包括 Java 供应商和版本），这些统计信息由用于执行 Data Crawler 的 JVM 来报告。值为 <code>true</code> 或 <code>false</code>。<br/>* <strong>os</strong> - 已发送的操作系统 (OS) 统计信息（包括 OS 名称、版本和体系结构），这些统计信息由用于执行 Data Crawler 的 JVM 来报告。值为 <code>true</code> 或 <code>false</code>。</p><h2>另请参阅</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p>

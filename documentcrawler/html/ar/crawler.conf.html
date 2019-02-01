@@ -1,0 +1,73 @@
+<h1>توصيف Data Crawler</h1><p><code>crawler</code> يتطلب ملف توصيف للاختيارات الخاصة به. تتوافر أمثلة على التوصيف في دليل <code>المشاركة</code> في دليل تركيب <code>crawler</code>. يمكن نسخ هذه الأمثلة وتعديلها. <em>لا تقوم بتعديل الأمثلة في مكانها.</em></p><p>يتضمن الملف ‏‎<code>crawler.conf</code>‎‏ معلومات تقوم باخبار أداة البحث أي ملفات يتم استخدامها لعمليات بحث صفحات الانترنت الخاصة بها (موفق المدخلات)، ومكان ارسال ارسال مجموعة الملفات التي تم بحثها بمجرد اتمام عملية بحث صفحات الانترنت (موفق المخرجات)، واختيارات أخرى خاصة بادارة بحث صفحات الانترنت.</p><p><strong>ملحوظة</strong>: كل مسارات الملفات تعد متعلقة بالدليل <code>config</code>، عدا الحالات المشار اليها.</p><p>الاختيار التي يمكن تحديدها في هذا الملف هي:</p><h2>موفق المدخلات</h2>
+<ul>
+  <li><strong>الفئة</strong> - الاستخدام الداخلي فقط، يقوم بتعريف فئة موفق مدخلات Data Crawler. القيمة المفترضة هي: ‏‎<code>com.ibm.watson.crawler.connectorframeworkinputadapter.Crawl</code>‎‏.</li>
+  <li><strong>التوصيف</strong> - الاستخدام الداخلي فقط، يقوم بتعريف توصيف Connector Framework. مفتاح التوصيف المفترض الذي في هذه الكتلة والمستخدم للتمرير لموفق المدخلات الذي تم اختياره هو: ‏‎<code>connector_framework</code>‎‏. <strong>ملحوظة</strong> - يعد Connector framework هو ما يسمح لك بالتحدث الى البيانات الخاصة بك. قد تكون بيانات داخلية في المشروع، أو قد تكون بيانات خارجية على شبكة الانترنت أو في وحدة شارات التعليم المجمعة. تسمح الموصلات بالتوصل الى عدد من مصادر البيانات المختلفة، بينما يتم التحكم في الاتصال فعليا بواسطة عملية بحث صفحات الانترنت.</li>
+  <li><strong>هام</strong> - البيانات التي تم استرجاعها بواسطة Framework Input Adapter تم تسجيلها في الذاكرة الوسيطة محليا. ولا يتم تخزينها بشكل مشفر. بصفة مفترضة، يتم تسجيل البيانات في الذاكرة الوسيطة بدليل مؤقت يجب محوه عند اعادة التحميل الأولي، ويجب أن تكون قابلة للقراءة فقط بواسطة المستخدم الذي قام بتنفيذ أمر أداة البحث. هناك فرصة أن ينجو هذا الدليل من أداة البحث اذا انتهى عمل connector framework قبل أن يتمكن من اعادة تنظيم نفسه. يمكنك الأخذ في الاعتبار بعناية مكان البيانات التي تم تسجيلها في الذاكرة الوسيطة الخاصة بك - يمكنك وضعها بنظام ملفات مشفر، لكن كن على حذر من الأثار المترتبة على الأداء من القيام بذلك. يمكنك أنت فقط أن تقرر التوازن المناسب بين السرعة والسرية فيما يتعلق بعمليات بحث صفحات الانترنت الخاصة بك.</li>
+  <li><strong>crawl_config_file</strong> - هو ملف التوصيف المستخدم لبحث صفحات الانترنت. القيمة المفترضة هي: ‏‎<code>connectors/filesystem.conf</code>‎‏.</li>
+  <li><strong>crawl_seed_file</strong> - هو ملف الخاص بأساس الترقيم الآلى المستخدم لبحث صفحات الانترنت. القيمة المفترضة هي: ‏‎<code>seeds/filesystem-seed.conf</code>‎‏.</li>
+  <li><strong>id_vcrypt_file</strong> - هو ملف المفاتيح المستخدم لتشفير البيانات بواسطة أداة البحث؛ المفتاح المفترض الذي تم تضمينه مع أداة البحث هو ‏‎<code>id_vcrypt</code>‎‏.<br/>يمكن استخدام البرنامج النصي vcrypt في حافظة <code>bin</code> اذا كنت بحاجة لتكوين ملف ‏‎id_vcrypt_file‎‏ جديد</li>
+  <li><strong>crawler_temp_dir</strong> - هو حافظة Crawler المؤقتة الخاصة بسجلات الموصل. تم ادخال القيمة المفترضة، <code>tmp</code>. اذا لم تكن موجودة بالفعل، فسيتم تكوين الحافظة <code>tmp</code> في دليل العمل الحالي.</li>
+  <li><strong>extra_jars_dir</strong> - الاستخدام الداخلي فقط؛ حيث يتم اضافة المزيد من ملفات تخزين JAVA الى مسار فئة Connector Framework.<br/>يجب أن تكون هذه القيمة <code>oakland</code> عند استخدام الموصل SharePoint، و <code>database</code> عند استخدام موصل قاعدة البيانات. يمكنك تركها خالية (على سبيل المثال، مجموعة حروف خالية &quot;&quot;) عند استخدام موصلات أخرى.<br/> <strong>ملحوظة</strong>: وفقا لدليل connector framework ‏‎<code>lib/java</code>‎‏.</li>
+  <li><strong>urls_to_filter</strong> - كشف سماح مفصول بسطر جديد لعناوين URL المراد بحثها، في نموذج التعبير معتاد. يقوم Data Crawler فقط ببحث صفحات الانترنت لعناوين URL التي تتوافق مع أحدى التعبيرات المعتادة التي تم ادخالها. يتضمن كشف النطاق أكثر النطاقات الشائعة ذات المستوى الرئيسي؛ ويمكن الاضافه اليه اذا لازم الأمر. يتضمن كشف نوع لاحقة الملف لاحقات الملفات التي تقوم Orchestration Service بدعمها، كهذا الاصدار من Data Crawler. تأكد من أنه تم السماح بنطاق عنوان URL أساس الترقيم الآلى الخاص بك بواسطة مرشح البيانات. على سبيل المثال، اذا كان أساس الترقيم الآلى يبدو وكأنه ‏‎<code>http://testdomain.test.in</code>‎‏، قم باضافة &ldquo;<code>in</code>&rdquo; الى مرشح بيانات النطاق. تأكد من أنه لن يتم استبعاد عنوان URL أساس الترقيم الآلى الخاص بك بواسطة مرشح البيانات، أو أن Crawler قد يصبح معلق.</li>
+  <li><strong>max_text_size</strong> - الحد الأقصى للحجم، بالبايت، الخاص بالوثيقة قبل أن يتم كتابتها على قرص بواسطة Connector Framework. يؤدي ضبط ذلك بقيمة أعلى الى تخفيض كمية الوثائق التي يتم كتابتها الى القرص، ولكن سيؤدي الى زيادة متطلبات الذاكرة.</li>
+  <li><strong>extra_vm_params</strong> - يسمح لك باضافة الكثير من معاملات Java الى الأمر المستخدم لبدء تشغيل Connector Framework.</li>
+  <li><strong>bootstrap_logging</strong> - يقوم بكتابة سجل بدء تشغيل connector framework، وهو مفيد لتصحيح أخطاء المتقدم فقط. القيم هي <code>true</code> أو <code>false</code>. وسيتم كتابة ملف السجل الى ‏‎<code>crawler_temp_dir</code>‎‏.</li>
+</ul><h2>موفق مساحة التخزين</h2><p>يسمح بتخزين الحالة الداخلية لأداة البحث بقاعدة بيانات. هذه المحددات ضرورية للاختيارات <code>restart</code> و <code>resume</code> الخاصة ببحث صفحات الانترنت لتعمل بشكل صحيح.</p>
+<pre><code class="javascript">storage_adapter {
+ config = &quot;storage_in_db&quot;
+  storage_in_db {
+    include &quot;storage/database_storage.conf&quot;
+  } 
+}
+</code></pre><p>الملف المشار اليه، ‏‎<code>storage/database_storage.conf</code>‎‏، بصفة مفترضة يقوم باستخدام قاعدة بيانات H2‎. يمكن استخدام أي قاعدة بيانات باستخدام مشغل JDBC، بدلا من المفترضات التي تم ادخالها. يرجع الى المطبوعات الفنية الخاصة بمشغل JDBC الخاص بك لايجاد معلومات معينة عن بعض هذه المحددات. يمكن تغيير الاختيارات المفترضة مباشرة بواسطة فتح ملف ‏‎<code>config/storage/database_storage.conf</code>‎‏، وتعديل القيم التالية الخاصة بحالة الاستخدام الخاص بك:<br/>* <strong>class</strong> - تشير هذه الفئة لفئة موفق قاعدة البيانات المراد استخدامه. القيمة المفترض هي ‏‎<code>com.ibm.watson.crawler.storageadapters.DatabasePersistAdapter</code>‎‏<br/>* <strong>driver</strong> - فئة مشغل JDBC. القيمة المفترض هي ‏‎<code>org.h2.Driver</code>‎‏ لاستخدام H2‎<br/>* <strong>url</strong> - ارجع الى اختيارات JDBC للحصول على برنامج المشغل الخاص بك. يعد هذا هو بادئة عنوان URL الخاص بمجموعة حروف وصلة JDBC. المفترض هو ‏‎<code>jdbc:h2:file:</code>‎‏<br/>* <strong>database_location</strong> - هو المكان الذي تريد به قاعدة البيانات الخاصة بك. يتم تطبيق هذا فقط على قواعد البيانات المبنية على أساس الملفات مثل sqlite و H2. القيمة المفترض هي ‏‎<code>./storage/database</code>‎‏<br/>* <strong>database_name</strong> - اسم قاعدة البيانات. القيمة المفترض هي ‏‎<code>ActivityDB</code>‎‏<br/>* <strong>table_name</strong> - اسم الجدول المراد استخدامه. القيمة المفترض هي ‏‎<code>Ledger</code>‎‏<br/>* <strong>اسم المستخدم</strong> - اسم المستخدم للاتصال بقاعدة البيانات<br/>* <strong>كلمة السرية</strong> - كلمة السرية للاتصال بقاعدة البيانات</p><p>يعد التوصيف المفترض كافي لمعظم الأنشطة.</p><h2>موفق المخرجات</h2><p>هناك زوج من <em>موفقات المخرجات</em> الذي يمكنك الاختيار من بينهما. يمكنك تحديد موفق المخرجات بواسطة تحديد ‏‎<code>output_adapter.class</code>‎‏ في ‏‎<code>crawler.conf</code>‎‏. الاختيارات هي:</p>
+<ul>
+  <li><strong>class</strong> - يقوم بتعريف فئة موفق المخرجات Data Crawler. القيمة المفترض هي ‏‎<code>com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter</code>‎‏</li>
+  <li><strong>config</strong> - يقوم بتعريف مفتاح التوصيف للتمرير للموفق المخرجات. يجب أن تقوم مجموعة الحروف بمقابلة مفتاح في عنصر التوصيف هذا. في مثال الكود التالي:<br/><code>javascript
+  orchestration_service {
+include &quot;orchestration_service.conf&quot;
+  },
+  test {
+output_directory = &quot;/tmp/crawler-test-output&quot;
+  }
+}
+</code><br/>مفتاح التوصيف هو ‏‎<code>orchestration_service</code>‎‏. القيمة المفترضة هي <code>discovery_service</code>.يجب تحديد موفق مخرجات بواسطة تحديد معامل <code>class</code> الخاص به و المفتاح <code>config</code>.</li>
+  <li><p><strong>موفق مخرجات Orchestration Service</strong>: يقوم بتحميل الوثائق التي تم بحثها الى ‏‎Watson Developer Cloud&rsquo;s Orchestration Service‎‏. يمكنك تحديد هذا الموفق بواسطة تحديد المعامل <code>class</code> والمفتاح <code>config</code> كما يلي:<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.orchestrationserviceoutputadapter.oneatatime.OrchestrationServiceOutputAdapter&quot;
+  config = &quot;orchestration_service&quot;
+  orchestration_service {
+include &quot;orchestration/orchestration_service.conf&quot;
+  }
+</code></p></li>
+  <li><strong>موفق مخرجات Discovery Service</strong>: يقوم بتحميل الوثائق التي تم بحثها الى ‏‎Watson Developer Cloud&rsquo;s Discovery Service‎‏. يمكنك تحديد هذا الموفق بواسطة تحديد المعامل <code>class</code> والمفتاح <code>config</code> كما يلي:<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter&quot;
+  config = &quot;discovery_service&quot;
+  discovery_service {
+include &quot;discovery/discovery_service.conf&quot;
+  }
+</code></li>
+  <li><strong>موفق مخرجات Watson Test</strong>: يقوم بكتابة تمثيل للملفات التي تم بحثها الى قرص في المكان المحدد. يمكنك<br/>تحديد هذا الموفق بواسطة تحديد المعامل <code>class</code> والمفتاح <code>config</code> كما يلي:</li>
+</ul><p><strong>ملحوظة</strong> - يقوم المعامل الاضافي، <code>output_directory</code>، بتحديد الدليل الذي يجب كتابة تمثيل البيانات التي تم بحثها اليه.<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.testoutputadapter.TestOutputAdapter&quot;
+  config = &quot;test&quot;
+  output_directory = &quot;/tmp/crawler-test-output&quot;
+</code><br/>* <strong>retry</strong> - يقوم بتحديد اختيارات اعادة المحاولة في حالة فشل محاولات الدفع الى موفق المخرجات.<br/> * max_attempts - الحد الأقصى لعدد مرات اعادة المحاولة. القيمة المفترض هي <code>10</code><br/> * delay - الحد الأدنى للتأخير بين المحاولات، بالثانية. القيمة المفترض هي <code>2</code><br/> * exponent_base - هو المعامل الذي يقوم بتحديد زيادة وقت التأخير بعد كل محاولة غير ناجحة. القيمة المفترض هي <code>2</code></p><p>المعادلة هي:<br/><code>
+ d(nth_retry) = delay * (exponent_base ^ nth_retry)
+</code></p><p>على سبيل المثال، المحددات ذات التأخير لمدة 1 ثانية و قاعدة أس بالقيمة 2، سيؤدي الى تأخير اعادة المحاولة الثانية - المحاولة الثالثة - لمدة 2 ثانية بدلا من 1، وتأخير التالية الى 4 ثانية.<br/> <code>
+ d(0) = 1 * (2 ^ 0) = 1 second
+ d(1) = 1 * (2 ^ 1) = 2 seconds
+ d(2) = 1 * (2 ^ 2) = 4 seconds
+</code><br/> وبالتالي، باستخدام المحددات المفترضة، سيتم محاولة الاحالة حتى 10 مرات، والانتظار تقريبا 1,022 ثانية ( أكثر بقليل من 17 دقيقة). يعد هذا الوقت تقريبا لأن هناك وقت اضافي يتم اضافته لتجنب حدوث تنفيذ عمليات اعادة احالة متعددة في نفس الوقت. يعد هذا الوقت &ldquo;غير الدقيق&rdquo; هو حتى 10%, لذا أخر اعادة محاولة في المثال السابق قد تتأخر حتى 4.4 ثانية. لا يتضمن وقت الانتظار الوقت المستغرق للاتصال بالخدمة، أو تحميل البيانات، أو انتظار الاستجابة.</p><p><em>تحذير:</em> قد يؤدي تخفيض وقت الانتظار بواسطة تخفيض أي من هذه القيم المفترضة الى عدم تحميل الوثائق بنجاح بواسطة موفق المخرجات الذي تم توصيفه. الدليل على ذلك عند استخدام خدمات Watson Developer Cloud سيكون هناك الرسائل RetryFailure في سجل الاقتباس &ldquo;429 Too Many Requests&rdquo; تقوم بتقييم الحد.</p><h2>اختيار تصحيح الأخطاء</h2>
+<ul>
+  <li><strong>full_node_debugging</strong> - يقوم بتفعيل نمط تصحيح الأخطاء؛ القيم المحتملة هي <code>true</code> أو <code>false</code>. <strong>تحذير</strong>: سيقوم بوضع البيانات الكاملة الخاصة بكل وثيقة تم بحثها في السجلات.</li>
+  <li><strong>heartbeat_wait_time</strong> - الفترة الزمنية، بالملي ثانية، بين تسجيل احصائيات استيعاب وثيقة (نمط تصحيح الأخطاء فقط). القيمة المفترضة هي 1000 ملي ثانية.</li>
+</ul><h2>اختيارات التسجيل</h2>
+<ul>
+  <li><strong>configuration_file</strong> - ملف التوصيف ليتم استخدامه للتسجيل. في ملف النموذج ‏‎<code>crawler.conf</code>‎‏، تم تعريف هذا الاختيار في ‏‎<code>logging.log4j</code>‎‏ والقيمة المفترضة الخاصة به هي ‏‎<code>log4j_custom.properties</code>‎‏.<br/>يجب تعريف هذا الاختيار بطريقة مماثلة سواء باستخدام ملف ‏‎<code>.properties</code>‎‏ أو ‏‎<code>.conf</code>‎‏.</li>
+</ul><h2>اختيارات اضافية لادارة بحث صفحات الانترنت</h2>
+<ul>
+  <li><strong>shutdown_timeout</strong> - يقوم بتحديد قيمة انتهاء الوقت، بالدقائق، قبل اغلاق التطبيق. القيمة المفترض هي <code>10</code>.</li>
+  <li><strong>output_limit</strong> - هو أعلى عدد من البنود المفهرسة التي سيحاول Crawler ارساله في نفس الوقت الى موفق المخرجات. قد يتم حد هذا بشكل أكبر بواسطة عدد الأجزاء المركزية المتاحة للقيام بالعمل. وفي أية نقطة محددة لن يكون هناك أكثر من &ldquo;x&rdquo; بند قابل للفهرسة يتم ارساله الى موفق المخرجات وينتظر رجوعه. القيمة المفترض هي <code>10</code>.</li>
+  <li><strong>input_limit</strong> - يقوم بحد عدد عناوين URL التي يمكن طلبها من الموصل في نفس الوقت.القيمة المفترض هي <code>3</code>.</li>
+  <li><strong>output_timeout</strong> هو مقدار الوقت، بالثانية، قبل تخلي Data Crawler عن ارسال طلب الى موفق المخرجات، ثم ازالة البند من صف موفق المخرجات، للسماح بالمزيد من عمليات التشغيل. القيمة المفترض هي <code>1200</code>.MD:STRONG&gt;ملحوظة** - يجب الاهتمام بالقيود التي يتم فرضها بواسطة موفق المخرجات، حيث قد تتعلق تلك القيود بالحدود التي يتم تعريفها هنا. <code>output_limit</code> الذي تم تعريفه بأعلى يتعلق فقط بعدد العناصر القابلة للفهرسة التي يمكن ارسالها الى موفق المخرجات فورا. بمجرد ارسال عنصر قابل للفهرسة الى موفق المخرجات، يبدأ &ldquo;العد الزمني،&rdquo; كما هو معرف بواسطة المتغير <code>output_timeout</code>. من الممكن أن يتوافر لموفق المخرجات نفسه خاصية تضيق الاختيارات مما يمنعه من القدرة على تشغيل نفس عدد المدخلات الذي يقوم باستلامه. على سبيل المثال، قد يتوافر لموفق مخرجات التنسيق مستودع وصلات، قابل للتوصيف لاتصالات HTTP بالخدمة. اذا كان المفترض 8، على سبيل المثال، واذا تم اعداد <code>output_limit</code> ليكون رقم أكبر من 8، فسيتوافر لديك عمليات، على مدار الساعة، في انتظار دورها ليتم تنفيذها. ويمكنك مواجهة حالات انتهاء الوقت.</li>
+  <li><strong>num_threads</strong> - عدد سلاسل العمليات المتوازية التي ي مكن تشغيلها في وقت واحد. يمكن أن تكون هذه القيمة اما رقم صحيح، وهي التي تقوم بتحديد عدد سلاسل العمليات المتوازية مباشرة، أو أن تكون مجموعة حروف، بالنسق &ldquo;xNUM&rdquo;، مما يحدد عامل الضرب لعدد وحدات التشغيل المتاحة، على سبيل المثال، ‏‎&ldquo;x1.5&rdquo;‎‏. القيم المفترضة هي <code>&quot;30&quot;</code>.</li>
+</ul><h2>يمكنك الاطلاع أيضا على</h2><p>‏‎crawler(1)‎‏</p><p>‏‎vcrypt(1)‎‏</p><p>‏‎crawler-options.conf(5)‎‏</p><p>‏‎crawler-seed.conf(5)‎‏</p><p>‏‎orchestration_service.conf(5)‎‏</p>

@@ -1,0 +1,73 @@
+<h1>crawler(1) - 搜索器，用來將資料從點 A 移動至點 B</h1><h2>用法概要</h2><p>用法：crawler [ crawl | testit | restart | resume | refresh | summary ][ options ]</p><h2>說明</h2><p>「資料搜索器」可用來搜索資料的各種儲存庫，例如內容管理系統和檔案系統，然後將產生的文件推送至遠端服務。</p><h2>廣域選項</h2>
+<pre><code>--version
+    顯示程式版本
+--help
+    顯示此用法文字
+</code></pre><h2>指令</h2><h3>crawl [ options ]</h3><p>以現行配置執行搜索。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 指定要使用的配置檔。預設值是 &quot;config/crawler.conf&quot;。
+--pii-checking &lt;value&gt;         # 切換 PII 檢查
+</code></pre><h3>testit [ options ]</h3><p>執行測試搜索，只搜索種子 URL，並顯示任何放入佇列的 URL。如果種子 URL 造成可檢索的內容（例如，它是文件），則會將該內容傳送到輸出配接器，並將內容列印至畫面。如果種子 URL 擷取使 URL 放入佇列，將會顯示那些 URL，且不會將內容傳送至輸出配接器。依預設，會顯示五個放入佇列的 URL。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 指定要使用的配置檔。預設值是 &quot;config/crawler.conf&quot;。
+-l &lt;n&gt; | --limit &lt;n&gt;           # 限制所顯示放入佇列的 URL 數量。
+--pii-checking &lt;value&gt;         # 切換 PII 檢查
+</code></pre><h3>restart [ options ]</h3><p>執行「重新啟動」搜索；以現行配置啟動新的搜索。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 指定要使用的配置檔。
+--pii-checking &lt;value&gt;         # 切換 PII 檢查
+</code></pre><h3>resume [ options ]</h3><p>從停止搜索處繼續搜索。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 指定要使用的配置檔。
+--pii-checking &lt;value&gt;         # 切換 PII 檢查
+</code></pre><h3>refresh [ options ]</h3><p>重新整理前一個搜索。</p>
+<pre><code>-c &lt;value&gt; | --config &lt;value&gt;  # 指定要使用的配置檔。
+--pii-checking &lt;value&gt;         # 切換 PII 檢查
+</code></pre><h3>summary [ options ]</h3><p>產生一份搜索報告。</p>
+<pre><code>--submitted                    # 查詢所有提交的文件
+--processed                    # 僅查詢成功處理的文件
+--failed                       # 僅查詢無法成功處理的文件
+--group-id &lt;value&gt;             # 查詢針對指定群組執行的搜索。一個群組包含一個起始搜索，以及該起始搜索的任何回復、重新整理或重新啟動。如果未指定值，此查詢會預設為搜索最新的群組。
+--show-content                 # 顯示與查詢關聯的任何其他內容
+--filter                       # 依 URL 和 hashID 過濾查詢結果
+</code></pre><h2>範例</h2><p>使用位於 <code>config/crawler.conf</code> 的配置檔執行搜索：</p>
+<pre><code>crawler crawl
+</code></pre><p>使用位於 <code>config/crawler.conf</code> 的配置檔執行測試：</p>
+<pre><code>crawler testit
+</code></pre><p>使用位於 <code>/home/watson/office-share.conf</code> 的配置檔執行搜索：</p>
+<pre><code>crawler crawl --config /home/watson/office-share.conf
+</code></pre><p>使用位於 <code>/home/watson/office-share.conf</code> 的配置檔重新啟動搜索：</p>
+<pre><code>crawler restart --config /home/watson/office-share.conf
+</code></pre><p>取得群組 ID 為 <code>2</code> 之失敗文件的摘要資訊：</p>
+<pre><code>crawler summary --failed --group-id 2 --show-content
+</code></pre><p>顯示用法，包括版本：</p>
+<pre><code>crawler --help
+</code></pre><h2>配置</h2><p><code>crawler</code> 需要配置檔作為其選項。配置檔的範例是在 <code>crawler</code> 安裝目錄的 <code>share</code> 目錄中提供。複製這些範例並加以修改。*請勿就地修改範例。*</p><p>如果沒有指定 <code>--config | -c</code> 選項，<code>crawler</code> 會在已啟動 <code>crawler</code> 目錄的 <code>config</code> 目錄中尋找其配置。也就是說，<code>crawler</code> 會尋找 <code>config/crawler.conf</code>。</p><h2>診斷</h2><p>使用這些特性來診斷問題。</p><h3>除錯</h3><p>啟動除錯模式。在 <code>crawler.conf</code> 檔案中，設定：</p>
+<pre><code>debugging.full_node_debugging = true
+</code></pre><h3>記載</h3><p>啟用記載功能。在 <code>log4j_custom.properties</code> 檔案中，設定：</p>
+<pre><code>log4j.rootLogger=INFO, Console, Log
+</code></pre><p>這是檔案輸出的預設記載層次。對於主控台日誌，預設值是：</p>
+<pre><code>log4j.appender.Console.Threshold=WARN
+</code></pre><p>記載層次可以設定為下列值：</p>
+<pre><code>OFF - 可能的最高等級，這預期會關閉記載。
+FATAL - 指定將可能導致應用程式中止的非常重大錯誤事件。
+ERROR - 指定仍可能讓應用程式繼續執行的錯誤事件。
+WARN - 指定可能有害的狀況。
+INFO - 指定參考訊息，以粗略層次強調顯示應用程式的進度。
+DEBUG - 指定對於除錯應用程式最實用的精細參考資訊事件。
+TRACE - 指定較 DEBUG 更精細的參考資訊事件。
+ALL - 可能的最低等級，這預期會開啟所有記載。
+</code></pre><h2>節流控制</h2><p>定義大小限制以協助管理傳輸量。在 <code>crawler.conf</code> 檔案中，設定：</p><p><code>shutdown_timeout</code> 指定關閉應用程式之前的逾時值（分鐘）；預設值是 10。</p>
+<pre><code>shutdown_timeout = &lt;n&gt;
+</code></pre><p><code>output_limit</code> 是可攜式搜索器將同步傳送至輸出配接器等待傳回的可檢索項目之最高數量；預設值是 10。這可能會另外受可供用來執行作業的核心數所限制。</p>
+<pre><code>output_limit = &lt;n&gt;
+</code></pre><p><code>input_limit</code> 限制一次可以向連接器要求的 URL 數量；預設值是 3。</p>
+<pre><code>input_limit = &lt;n&gt;
+</code></pre><p><code>output_timeout</code> 是可攜式搜索器放棄對輸出配接器的要求，然後從限制佇列移除項目以允許更多處理之前的時間量（以秒為單位）。預設值是 150。</p>
+<pre><code>output_timeout = &lt;n&gt;
+</code></pre><p>應該考量輸出配接器所強制施行的限制，因為那些限制可能與這裡定義的限制相關。上方定義的 <code>output_limit</code> 只與一次可以傳送至輸出配接器的可檢索物件數量相關。一旦將可檢索物件傳送至輸出配接器後，它便「計入工作」，如 <code>output_timeout</code> 變數所定義。輸出配接器本身有可能具有節流控制，使得它無法處理所接收的諸多輸入。例如，編排輸出配接器可能有連線儲存區，可配置對服務的 HTTP 連線。例如，如果它預設為 8，且如果您將 <code>output_limit</code> 設定為大於該連線儲存區配置的數量，則您會有計入工作的程序在等候執行。接著您可能會遇到逾時。</p><p><code>num_threads</code> 可一次執行的平行執行緒數目。此值可以是整數，直接指定平行執行緒的數目，也可以是字串，帶有格式 <code>&quot;xNUM&quot;</code>，指定可用處理器數量的乘法係數。預設值是 &ldquo;x1.5&rdquo;，或 1.5 乘上可用處理器的數量（如同採用 <code>Runtime.availableProcessors</code>）。</p>
+<pre><code>num_threads = &lt;n&gt;
+</code></pre><p>用於在「資料搜索器」儲存區中計算平行化的公式：<code>min(maxThreads, max(minThreads, numThreads))</code>。</p><h2>環境變數 <code>CRAWLER_OPTS</code></h2><p>以下為可透過 <code>CRAWLER_OPTS</code> 環境變數傳遞至 <code>crawler</code> 的內容，列出時加上預設值。</p><p>以此方式傳遞它們：</p>
+<pre><code>CRAWLER_OPTS=&quot;-Dproperty=value -Dproperty=value&quot; crawler
+</code></pre><p>應該僅針對除錯目的，並且在 IBM 支援中心指示的情況下才變更它們。</p><h3>cfa.java_bin</h3><p><code>cfa.java_bin</code> 可以變更用來啟動「連接器架構輸入配接器」的 <code>java</code> 指令。依預設，<code>crawler</code> 會使用用來啟動 <code>crawler</code> 本身的相同 <code>java</code> 二進位。</p><p>您也可以透過設定 <code>java.home</code> 內容來變更它，然後它用來計算 <code>java</code> 執行檔的路徑。</p><h3>cfa.lib_dir</h3><p><code>cfa.lib_dir</code> 會將路徑變更為「連接器架構」的 <code>lib</code> 目錄。這應該不太需要變更。依預設，<code>crawler</code> 會使用「連接器架構」計算路徑內的 <code>lib</code> 目錄，通常只是 <code>connectorFramework</code>。</p><h3>cfa.framework_jars_dir</h3><p><code>cfa.framework_jars_dir</code> 會將路徑變更為「連接器架構」的 JAR 目錄，預設是在 <code>connectorFramework/&lt;version&gt;/lib/java</code> 中。</p><h3>cfa.plugins_dir</h3><p><code>cfa.plugins_dir</code> 會指定「連接器架構」plugins 目錄的路徑，實際的「連接器」都儲存在此處。依預設，這是從 <code>framework_jars_dir</code> 建置，並且將會是 <code>connectorFramework/&lt;version&gt;/lib/java/plugins</code>。</p><h2>已知限制</h2><p>現行版本資料搜索器中已知限制的詳細資料</p>
+<ul>
+  <li>使用無效或遺漏的 URL 執行「檔案系統」連接器時，「資料搜索器」可能會當掉。</li>
+  <li>配置 <code>config/crawler.conf</code> 檔案中的 <code>urls_to_filter</code> 值，這樣所有白名單 URL 或正規表示式都包含在單一正規表示式中。</li>
+  <li>傳入 <code>--config | -c</code> 選項的配置檔路徑必須是完整路徑。也就是說，它必須採用相對格式 <code>config/crawler.conf</code> 或 <code>./crawler.conf</code>，或絕對路徑 <code>/path/to/config/crawler.conf</code>。若且唯若使用 <code>crawler.conf</code> 檔案中的 <code>include</code> 參照的檔案為行內，而不是使用 <code>include</code> 時，可以僅指定 <code>crawler.conf</code>。例如，將 <code>discovery/discovery_service.conf</code> <code>include</code>，以便讓配置更易於閱讀。必須將其內容複製到 <code>output_adapter.discovery_service</code> 金鑰內的 <code>crawler.conf</code>，以便在配置選項中使用不完整路徑。</li>
+</ul><h2>變更日誌</h2><p>請參閱安裝目錄中的 <code>changelog.txt</code> 檔案，以取得此版本中的變更清單。</p><h2>作者</h2><p>IBM Watson - <a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/">https://www.ibm.com/smarterplanet/us/en/ibmwatson/</a></p><p>由匹茲堡的 yinz 製作。</p><h2>另請參閱</h2><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

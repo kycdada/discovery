@@ -1,0 +1,52 @@
+<h1>Configuratie van crawlseeds</h1><p>Seeds vormen het uitgangspunt van een crawl en worden door de datacrawler gebruikt voor het ophalen van gegevens uit de resource die door die seed wordt aangegeven. De seeds configureren in het algemeen URL&rsquo;s om toegang te krijgen tot op protocol gebaseerde resources zoals fileshares, SMB-shares, databases en andere gegevens die toegankelijk zijn middels verschillende webprotocollen. Daarnaast hebben verschillende seed-URL&rsquo;s verschillende mogelijkheden.</p><p>Seeds kunnen ook specifiek voor een repository zijn om het crawlen van specifieke toepassingen van derden mogelijk te maken, bijvoorbeeld CRM-systemen (customer relationship management), PLC-systemen (product life cycle), CMS-systemen (content management systems), cloudtoepassingen en webdatabasetoepassingen.</p><p>De data crawler biedt op dit moment crawlseeds die ondersteuning bieden voor bestandsconnectors voor de volgende typen repository&rsquo;s:</p>
+<ul>
+  <li>Bestandssysteem</li>
+  <li>Databases, via JDBC</li>
+  <li>CMIS (Content Management Interoperability Services)</li>
+  <li>Bestandsshares van SMB (Server Message Block), CIFS (Common Internet Filesystem) of Samba</li>
+  <li>SharePoint en SharePoint Online</li>
+  <li>Box</li>
+</ul><p>Er is ook een configuratiesjabloon voor crawlseeds beschikbaar, waarmee u wijzigingen in een crawlseed kunt aanbrengen voor een aangepaste connector.</p><h2>Aan de slag:</h2><p>Bij het crawlen van gegevensrepository&rsquo;s begint de crawler met een door de gebruiker opgegeven seed-URL en begint met het downloaden van pagina&rsquo;s met informatie. De crawler zoekt ook links in de gedownloade pagina&rsquo;s en plant de nieuw gevonden pagina&rsquo;s voor verdere crawls.</p><p>Er worden configuratiegegevens gebruikt om te bepalen welke pagina&rsquo;s moeten worden gecrawld en hoe u crawlt. In dit bestand vindt u een overzicht van de opties die u voor elk crawlseedbestand voor een connector kunt configureren.</p><p><strong>Opmerking</strong>: Elk configuratiebestand voor een crawlseed werkt met een corresponderend configuratiebestand van de bestandsconnector; opties voor bestandsconnectors worden afzonderlijk beschreven.</p><h3>De crawlseed voor het bestandssysteem configureren</h3><p>De volgende waarden kunnen worden geconfigureerd voor het crawlseedbestand voor het bestandssysteem. Om deze waarden in te stellen, opent u het bestand <code>config/seeds/filesystem-seed.conf</code> en geeft u de volgende waarden voor uw gebruiksvoorbeelden op:</p>
+<ul>
+  <li><strong>url</strong> - Door terugloop-met-nieuwe-regel gescheiden lijst van bestanden en mappen die gecrawld worden. UNIX-gebruikers kunnen een pad zoals <code>/usr/local/</code> opgeven.<br/>De URL&rsquo;s moet beginnen met <code>sdk-fs://</code>. Als u dus bijvoorbeeld <code>/home/watson/mydocs</code> wilt crawlen, is de waarde van deze URL <code>sdk-fs:///home/watson/mydocs</code> - de derde <code>/</code> is vereist!<br/><strong>Opmerking</strong>: De bestandssysteemconnector maakt gebruik van een aangepast protocol, <code>sdk-fs://</code>, voor het maken van een geldige URL. Voeg niet <code>file://</code> aan de afgebeelde paden toe; de URL&rsquo;s moet beginnen met <code>sdk-fs://</code>.</li>
+  <li><strong>hops</strong> - Alleen voor intern gebruik.</li>
+  <li><strong>default-allow</strong> - Alleen voor intern gebruik.</li>
+</ul><h3>De crawlseed voor de database configureren</h3><p>De volgende waarden kunnen worden geconfigureerd voor het crawlseedbestand voor de database. Om deze waarden in te stellen, opent u het bestand <code>config/seeds/database-seed.conf</code> en geeft u de volgende waarden voor uw gebruiksvoorbeelden op:</p>
+<ul>
+  <li><strong>URL</strong> - De URL van de tabel of de view om op te halen. Hiermee definieert u de seed-URL van uw aangepaste SQL-database. De structuur is:</li>
+</ul><p> <code>databasesysteem://host:poort/database?[per=num]&amp;[sql=SQL]</code></p><p>Door het testen van een seed-URL ziet u alle URL&rsquo;s die in de wachtrij zijn geplaatst. Een voorbeeld is het testen van de volgende URL voor een database met 200 records:</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=100&amp;sql=select%20*%20from%20vessel&amp;</code></p><p>u ziet de volgende in de wachtrij geplaatste URL&rsquo;s:</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=0&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=100&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=200&amp;</code></p><p>Bij het testen van de volgende URL ziet u de gegevens die zijn opgehaald uit rij 43:</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=1&amp;key-val=43</code><br/>* <strong>hops</strong> - Alleen voor intern gebruik.<br/>* <strong>default-allow</strong> - Alleen voor intern gebruik.<br/>* <strong>user-password</strong> - Legitimatiegegevens voor het databasesysteem. De gebruikersnaam en het wachtwoord moeten worden gescheiden door een <code>:</code> en het wachtwoord moet worden versleuteld met het programma vcrypt dat bij de Data Crawler wordt geleverd. Bijvoorbeeld <code>username:[[vcrypt/3]]passwordstring</code>.<br/>* <strong>max-data-size</strong> - Maximumgrootte van de gegevens van een document. Dit is het grootste geheugenblok dat op een bepaald moment wordt geladen. Verhoog deze limiet alleen als u beschikt over voldoende geheugen op uw computer.<br/>* <strong>filter-exact-duplicates</strong> - Alleen voor intern gebruik.<br/>* <strong>jdbc-class</strong> (Extender optie) - Als u deze optie opgeeft, vervangt deze reeks de JDBC-klasse die wordt gebruikt door de connector als <code>(other)</code> gekozen is voor het databasesysteem.<br/>* <strong>connection-string</strong> (Extender optie) - Als u deze optie opgeeft, vervangt deze reeks de automatisch gegenereerde JDBC-verbindingsreeks. Op deze manier kunt u een meer gedetailleerde configuratie van de databaseverbinding opgeven, bijvoorbeeld voor belastingsverdeling of SSL-verbindingen. Bijvoorbeeld: <code>jdbc:netezza://127.0.0.1:5480/databasenaam</code>.<br/>* <strong>save-frequency-for-resume</strong> (Extender optie) - De naam van een kolom of bijbehorend label, voor het hervatten van crawls of een gedeeltelijke vernieuwing. De seed slaat de naam van deze kolom met regelmatige intervallen op tijdens de crawl en slaat hem opnieuw op nadat de laatste rij van de database is gecrawld. Bij het hervatten of vernieuwen van de crawl begint de crawl met de rij die wordt aangegeven in de opgeslagen waarde voor dit veld.</p><h3>De crawlseed voor CMIS configureren</h3><p>De volgende waarden kunnen worden geconfigureerd voor het CMIS-crawlseedbestand. Om deze waarden in te stellen, opent u het bestand <code>config/seeds/cmis-seed.conf</code> en wijzigt u de volgende waarden voor uw gebruiksvoorbeelden:</p>
+<ul>
+  <li><p><strong>URL</strong> - De URL van een map in de CMIS-repository die wordt gebruikt als beginpunt van de crawl, bijvoorbeeld:</p></li>
+  <li><p><code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=workspace://SpacesStore/guid</code><br/> Voor het crawlen vanaf de hoofdmap moet u de URL als volgt opgeven:</p></li>
+  <li><p><code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=</code></p></li>
+  <li><strong>at</strong> - Ongebruikte optie.</li>
+  <li><strong>default-allow</strong> - Alleen voor intern gebruik.</li>
+</ul><h3>De crawlseed voor Samba configureren</h3><p>De volgende waarden kunnen worden geconfigureerd voor het SAMBA-crawlseedbestand. Om deze waarden in te stellen, opent u het bestand <code>config/seeds/samba-seed.conf</code> en wijzigt u de volgende waarden voor uw gebruiksvoorbeelden:</p>
+<ul>
+  <li><p><strong>url</strong> - Een door terugloop-met-nieuwe-regel gescheiden lijst van shares die gecrawld worden, bijvoorbeeld:</p></li>
+  <li><p><code>smb://share.test.com/office</code></p></li>
+  <li><code>smb://share.test.com/cash/money/change</code></li>
+  <li><code>smb://share.test.com/C$/Program Files</code></li>
+  <li><p><strong>hops</strong> - Alleen voor intern gebruik.</p></li>
+  <li><strong>default-allow</strong> - Alleen voor intern gebruik.</li>
+</ul><h3>De crawlseed voor SharePoint configureren</h3><p>De volgende extra waarden kunnen worden geconfigureerd voor het crawlseedbestand voor SharePoint. Om deze waarden in te stellen, opent u het bestand <code>config/seeds/sharepoint-seed.conf</code> en wijzigt u de volgende waarden voor uw gebruiksvoorbeelden:</p>
+<ul>
+  <li><p><strong>url</strong> - Een door terugloop-met-nieuwe-regel gescheiden lijst van SharePoint-webtoepassingen of siteverzamelingen die gecrawld worden, bijvoorbeeld:</p></li>
+  <li><p><code>io-sp://a.com</code></p></li>
+  <li><code>io-sp://b.com:83/site</code></li>
+  <li><code>io-sp://c.com/site2</code></li>
+</ul><p>De subsites van deze sites worden ook gecrawld (tenzij ze zijn uitgesloten door andere regels voor crawlen).<br/>* <strong>filter-url</strong> - Een door terugloop-met-nieuwe-regel gescheiden lijst van SharePoint-webtoepassingen of siteverzamelingen die gecrawld worden, bijvoorbeeld:</p>
+<ul>
+  <li><code>http://a.com</code></li>
+  <li><code>http://b.com:83/site</code></li>
+  <li><code>http://c.com/site2</code></li>
+  <li><p><strong>hops</strong> - Alleen voor intern gebruik.</p></li>
+  <li><strong>n-concurrent-requests</strong> - Alleen voor intern gebruik.</li>
+  <li><strong>delay</strong> - Alleen voor intern gebruik.</li>
+  <li><strong>default-allow</strong> - Alleen voor intern gebruik.</li>
+  <li><strong>seed-protocol</strong> - Hiermee stelt u het seedprotocol in voor onderliggende items van de websitecollectie. Dit is nodig als het protocol van de siteverzameling SSL, HTTP of HTTPS is. Voor deze waarde moet hetzelfde worden opgegeven als voor het protocol van de siteverzameling.</li>
+</ul><h3>De seed voor Box configureren</h3><p>De volgende waarden kunnen worden geconfigureerd voor het Box-crawlseedbestand. Om deze waarden in te stellen, opent u het bestand <code>config/seeds/box-seed.conf</code> en geeft u de volgende waarden voor uw gebruiksvoorbeelden op:</p>
+<ul>
+  <li><strong>url</strong> - De URL die moet worden gebruikt als startpunt voor de crawl. De standaardwaarde is <code>box://app.box.com/</code>.</li>
+  <li><strong>default-allow</strong> - Alleen voor intern gebruik.</li>
+</ul><h2>ZIE OOK</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>orchestration_service.conf(5)</p>

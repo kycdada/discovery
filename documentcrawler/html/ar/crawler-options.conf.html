@@ -1,0 +1,126 @@
+<h1>توصيف اختيارات بحث صفحات الانترنت</h1><p>يقوم data crawler بتجميع البيانات الأولية التي يتم استخدامها في النهاية لتكوين نتائج البحث لخدمة ‏‎IBM Watson Retrieve and Rank‎‏.</p><p>يقدم data crawler حاليا موصلات لدعم تجميع البيانات من مستودعات التخزين التالية:</p>
+<ul>
+  <li>Filesystem</li>
+  <li>Databases, via JDBC</li>
+  <li>CMIS (Content Management Interoperability Services)</li>
+  <li>SMB (Server message Block, CIFS (Common Internet Filesystem), or Samba fileshares</li>
+  <li>SharePoint and SharePoint Online</li>
+  <li>مربع</li>
+</ul><p>يتم أيضا تقديم قالب توصيف موصل، مما يسمح لك بتهيئة الموصل.</p><h2>كيفية البدء:</h2><p>عند بحث مستودعات البيانات، يبدأ crawler من عنوان URL أساس الترقيم الآلى المحدد للبدء بواسطة المستخدم، ويبدأ في تحميل الصفحات من المعلومات. يقوم crawler أيضا بايجاد الروابط التي في الصفحات التي يتم تحميلها، ويقوم بجدولة الصفحات التي تم اكتشافها مؤخرا لمزيد من عمليات بحث صفحات الانترنت.</p><p>يتم استخدام معلومات التوصيف لتحديد أي الصفحات بحاجة الى أن يتم بحثها، وكيفية بحثهم. ويفسر ذلك الاختيارات التي يمكنك توصيفها لكل موصل.</p><p><strong>ملوظة</strong>: أيضا يتوافر لكل موصل ملف توصيف أساس الترقيم الآلى مقابل؛ ويتم وصف اختيارا توصيف أساس الترقيم الآلى بشكل منفصل.</p><h3>توصيف Filesystem Connector</h3><p>يسمح لك Filesystem Connector ببحث الملفات تعد محلية بالنسبة الى لعملية تركيب data crawler. فيما يلي اختيارات التوصيف الأساسية المطلوبة لاستخدام Filesystem Connector. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/connectors/filesystem.conf</code>‎‏ وتعديل القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>protocol</strong> - هو اسم بروتوكول الموصل الذي يتم استخدامه لبحث صفحات الانترنت. استخدم <code>sdk-fs</code> لهذا الموصل.</li>
+  <li><strong>collection</strong> - يتم استخدام هذه الخاصية المميزة لفك الملفات المؤقته.</li>
+  <li><strong>logging-config</strong> - يقوم بتحديد الملفات المستخدمة لتوصيف اختيارات التسجيل؛ يجب تنسيقها كمجموعة حروف ‏‎<code>log4j</code> XML‎‏.</li>
+  <li><strong>classname</strong> - اسم فئة Java للموصل. يجب أن تكون القيمة لاستخدام هذا الموصل هي ‏‎<code>plugin:filesystem.plugin@filesystem</code>‎‏.</li>
+</ul><h3>توصيف Database Connector</h3><p>يسمح لك database connector ببحث أحد قواعد البيانات بواسطة تنفيذ أمر SQL مهيأ وتكوين وثيقة لكل صف (سجل) وعنصر محتويات واحد لكل عمود (مجال). يمكنك تحديد عمود ليتم استخدامه كمفتاح متفرد، بالاضافة الى عمود يتضمن خاتم وقت يمثل تاريخ أخر تعديل لكل سجل. يقوم الموصل باسترجاع كل السجلات من قاعدة البيانات المحددة، ويمكنك أيضا التقيود بجداول محددة، وهكذا في عبارة SQL.</p><p>يسمح لك Database connector بالبحث في قواعد البيانات التالية:</p>
+<ul>
+  <li>IBM DB2</li>
+  <li>MySQL</li>
+  <li>Oracle</li>
+  <li>PostgreSQL</li>
+  <li>Microsoft SQL Server</li>
+  <li>Sybase</li>
+  <li>قواعد بيانات أخرى متوافقة مع SQL بواسطة برنامج مشغل متوافق مع ‎JDBC 3.0‎</li>
+</ul><p>يقوم الموصل باسترجاع كل السجلات من قاعدة البيانات والجدول المحددين.</p><p><strong>مشغلي JDBC</strong> يقوم Database connector الذي يتم شحنه مع البرنامج المشغل ‏‎Oracle JDBC (Java Database Connectivity)‎‏ النسخة 1.5‏. يتم<br/>ايجاد كل مشغلي JDBC الذي يتم شحنهم مع data crawler في الدليل<br/>‏‎<code>/lib/java/database</code>‎‏ لتركيب data crawler الخاص بك، حيث يمكنك اضافتهم، وازالتهم، وتعديلهم حسب الضرورة. يمكنك أيضا استخدام محددات <code>extra_jars_dir</code> في الملف ‏‎<code>crawler.conf</code>‎‏ لتحديد مكان أخر.</p><p><strong><em>DB2 JDBC Drivers</em></strong><br/>لا يتم شحن Data crawler مع ‏‎JDBC drivers for DB2‎‏ بسبب وجود مشكلات بالترخيص. ومع ذلك، تتضمن كل عمليات تركيب DB2‎ حيث قمت بتركيب دعم JDBC ملفات JAR التي يتطلبها data crawler، حتى تتمكن من بحث تركيب DB2‎. للبحث بنسخة DB2‎، يجب عليك نسخ هذه الملفات الى دليل مناسب في تركيب data crawler الخاص بك بحيث يستطيع Database connector استخدامهم.</p><p>ليتم الاتاحة الى data crawler القيام ببحث تركيب DB2‎، قم بايجاد ملفات JAR ‏‎<code>db2jcc.jar</code>‎‏ والتراخيص (عادة، ‏‎<code>db2jcc_license_cu.jar</code>‎‏) في تركيب DB2‎ الخاص بك، وقم بنسخ تلك الملفات الى الدليل الفرعي ‏‎<code>lib/java</code>‎‏ لدليل تركيب data crawler الخاص بك، و يمكنك استخدام محددات ‏‎<code>extra_jars_dir</code>‎‏ التي في الملف ‏‎<code>crawler.conf</code>‎‏ لتحديد مكان أخر.</p><p><strong><em>MySQL JDBC Drivers</em></strong><br/>لا يتم شحن data crawler مع ‏‎JDBC drivers for MySQL‎‏ بسبب احتمالية وجود مشكلات بالترخيص اذا تم تسليمهم كجزء من المنتج. ومع ذلك، فان تحميل ملف JAR يتضمن مشغلي MySQL JDBC وتكامل تركيب crawler يعد أمر سهل القيام به:</p>
+<ol>
+  <li><p>يمكنك استخدام برنامج استعراض انترنت لزيارة موقع تحميل MySQL،<br/>وايجاد المصدر وتحميل بشكل ثنائي رابط نسق التخزين الذي تريد استخدامه<br/>(عادة zip for Microsoft Windows systems or a gzipped tarball for Linux systems). اضغط على ذلك الرابط لبدء عملية التحميل. قد يكون مطلوب تسجيل.</p></li>
+  <li><p>يمكن استخدام الأمر المناسب ‏‎<code>unzip archive-file-name</code> أو ‏‎<code>tar zxf archive-file-name</code>‎‏ لاستخراج محتويات هذ التخزين، وفقا لنوع واسم ملف التخزين الذي قمت بتحميله.</p></li>
+  <li><p>قم بالتغيير الى الدليل الذي تم استخراجه من ملف التخزين، وقم بنسخ ملف JAR من هذا الدليلالى الدليل الفرعي ‏‎<code>lib/java</code>‎‏ الخاص بدليل تركيب data crawler الخاص بك، أو يمكنك استخدام المحددات ‏‎<code>extra_jars_dir</code>‎‏ التي في الملف ‏‎<code>crawler.conf</code>‎‏ لتحديد مكان أخر.</p></li>
+</ol><p>فيما يلي اختيارات التوصيف الأساسية المطلوبة لاستخدام Database connector. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/connectors/database.conf</code>‎‏ وتعديل القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>protocol</strong> - هو اسم بروتوكول الموصل الذي يتم استخدامه لبحث صفحات الانترنت. تعتمد قيمة هذا الموصل على نظام قاعدة البيانات المراد التوصل اليه.</li>
+  <li><strong>collection</strong> - يتم استخدام هذه الخاصية المميزة لفك الملفات المؤقته.</li>
+  <li><strong>classname</strong> - اسم فئة Java للموصل. يجب أن تكون القيمة لاستخدام هذا الموصل هي ‏‎<code>plugin:database.plugin@database</code>‎‏.</li>
+  <li><strong>logging-config</strong> - يقوم بتحديد الملفات المستخدمة لتوصيف اختيارات التسجيل؛ يجب تنسيقها كمجموعة حروف ‏‎<code>log4j</code> XML‎‏.</li>
+</ul><h3>توصيف CMIS Connector</h3><p>يسمح لك الموصل ‏‎CMIS (Content Management Interoperability Services)‎‏ البحث في مستودعات تخزين ‏‎CMIS-enabled CMS (Content Management System)‎‏، مثل Alfresco، أو Documentum أو IBM Content Manager، وفهرسة البيانات التي تتضمنها.</p><p>فيما يلي اختيارات التوصيف الأساسية المطلوبة لاستخدام CMIS Connector. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/connectors/cmis.conf</code>‎‏ وتعديل القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>protocol</strong> - هو اسم بروتوكول الموصل الذي يتم استخدامه لبحث صفحات الانترنت. استخدم <code>cmis</code> لهذا الموصل.</li>
+  <li><strong>collection</strong> - يتم استخدام هذه الخاصية المميزة لفك الملفات المؤقته.</li>
+  <li><strong>dns</strong> - اختيار غير مستخدم.</li>
+  <li><strong>classname</strong> - اسم فئة Java للموصل. يجب أن تكون القيمة لاستخدام هذا الموصل هي ‏‎<code>plugin:cmis-v1.1.plugin@connector</code>‎‏.</li>
+  <li><strong>logging-config</strong> - يقوم بتحديد الملفات المستخدمة لتوصيف اختيارات التسجيل؛ يجب تنسيقها كمجموعة حروف ‏‎<code>log4j</code> XML‎‏.</li>
+  <li><strong>endpoint</strong> - هو عنوان URL نقطة نهاية الخدمة الخاص بمستودع التخزين المتوافق مع CMIS. على سبيل المثال، هياكل عناوين URL بالنسبة الى SharePoint هي:</li>
+  <li>بالنسبة الى ربط AtomPub:<br/> http://<server>:<port>/_vti_bin/cmis/rest?getRepositories</li>
+  <li>بالنسبة الى ربط WebServices:<br/> http://<server>:<port>/_vti_bin/cmissoapwsdl.aspx</li>
+  <li><p><strong>اسم المستخدم</strong> - اسم المستخدم لمستخدم مستودع تخزين CMIS الذي يتم استخدامه للتوصل الى المحتويات. يجب أن يتوافر لهذا المستخدم امكانية توصل لكل الحافظات والوثائق المستهدفة ليتم بحثها وفهرستها.</p></li>
+  <li><strong>كلمة السرية</strong> - كلمة السرية لمستودع تخزين CMIS الذي يتم استخدامه للتوصل الى المحتويات. لا يجب تشفير كلمة السرية؛ ويجب ادخالها بنص عادي.</li>
+  <li><strong>repositoryid</strong> - كود التعريف لمستودع تخزين CMIS الذي يتم استخدامه للتوصل الى المحتويات الخاصة بمستودع التخزين هذا.</li>
+  <li><strong>bindingtype</strong> - يقوم بتعريف ما هو نوع الربط الذي يمكن استخدامه للتوصل مع مستودع تخزين CMIS. القيمة اما <code>AtomPub</code> أو <code>WebServices</code>.</li>
+  <li><strong>authentication</strong> - يقوم بتعريف نوع آلية التوثيق التي يمكن استخدامها أثناء الاتصال بمستودع التخزين المتوافق مع CMIS: ‏‎<code>Basic HTTP Authentication</code>‎‏، أو ‏‎<code>NTLM</code>‎‏، أو ‏‎<code>WS-Security(Username token)</code>‎‏.</li>
+  <li><strong>enable-acl</strong> - يتيح استرجاع كشوف التحكم في امكانية التوصل بالنسبة للبيانات التي يتم بحثها. اذا لم يكن تعنيك سرية الوثائق في هذه المجموعة، فان قيامك بالغاء اتاحة هذا الاختيار سيؤدي الى زيادة الأداء بواسطة عدم طلب هذه المعلومات مع الوثيقة وعدم استرجاع وتشفير هذه المعلومات. القيمة اما <code>true</code> أو <code>false</code>.</li>
+  <li><strong>user-agent</strong> - نص الرأس الذي تم ارساله الى وحدة الخدمة عند بحث الوثائق.</li>
+  <li><strong>method</strong> - الطريقة (‏‎<code>GET</code>‎‏ أو ‏‎<code>POST</code>‎‏) التي سيتم تمرير المعاملات بواسطتها.</li>
+  <li><strong>url-logging</strong> - هو الامتداد الذي يتم تسجيل عناوين URL التي تم بحثها به. القيم المحتملة هي:</li>
+  <li><p><strong><em>full-logging</em></strong> - تسجيل كل المعلومات الخاصة بعنوان URL.</p></li>
+  <li><strong><em>refined-logging</em></strong> - يقوم بتسجيل فقط المعلومات الضرورية لاستعراض سجل أداة البحث واللازمة لقيام الموصل بالعمل بشكل صحيح؛ وهذه هي القيمة المفترضة.</li>
+  <li><strong><em>minimal-logging</em></strong> - يقوم بتسجيل فقط الحد الأدنى من المعلومات الضرورية لقيام الموصل بالعمل بشكل صحيح.</li>
+</ul><p>ان اعداد هذا الاختيار على الحد الأدنى من التسجيل يؤدي الى تقليل حجم السجلات وزيادة الأداء مرة أخرى بشكل طفيف بسبب المدخلات/المخرجات الصغيرة المرفقة بتصغير حجم البيانات التي يتم تسجيلها.<br/>* <strong>ssl-version</strong> - يقوم بتحديد نسخة SSL للاستخدام لاتصالات HTTPS. بصفة مفترضة يتم استخدام البروتوكول الأقوى المتاح.</p><h3>توصيف ‏‎SMB/CIFS/Samba Connector‎‏</h3><p>يسمح لك The Samba connector بالبحث في مشاركات الملفات ‏‎Server Message Block (SMB)‎‏ و ‏‎Common Internet Filesystem (CIFS)‎‏ fileshares. يعد هذا النوع من مشاركة الملف شائع على شبكات اتصال Windows، ويتم ادخاله أيضا من خلال مشروع المصدر مفتوح <a href="https://www.samba.org/">Samba</a>.</p><p>فيما يلي اختيارات التوصيف الأساسية المطلوبة لاستخدام Samba Connector. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/connectors/samba.conf</code>‎‏ وتعديل القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>protocol</strong> - هو اسم بروتوكول الموصل الذي يتم استخدامه لبحث صفحات الانترنت. القيمة لاستخدام هذا الموصل هي ‏‎<code>smb</code>‎‏.</li>
+  <li><strong>collection</strong> - يتم استخدام هذه الخاصية المميزة لفك الملفات المؤقته.</li>
+  <li><strong>classname</strong> - اسم فئة Java للموصل. يجب أن تكون القيمة لاستخدام هذا الموصل هي ‏‎<code>plugin:smb.plugin@connector</code>‎‏.</li>
+  <li><strong>logging-config</strong> - يقوم بتحديد الملفات المستخدمة لتوصيف اختيارات التسجيل؛ يجب تنسيقها كمجموعة حروف ‏‎<code>log4j</code> XML‎‏.</li>
+  <li><strong>username</strong> - اسم المستخدم الى Samba الذي سيتم التوثيق باستخدامه. اذا تتطلب الأمر، يجب أيضا ادخال النطاق وكلمة السرية. اذا لم يتطلب الأمر، يتم استخدام حساب الضيف.</li>
+  <li><strong>password</strong> - كلمة السرية الى Samba الذي سيتم التوثيق باستخدامه. اذا تم ادخال اسم المستخدم، فسيعد ذلك مطلوبا. يجب تشفير كلمة السرية باستخدام مكتبة VCrypt التي تم شحنها مع data crawler.</li>
+  <li><strong>archive</strong> - يتيح الى Samba connector بحث وفهرسة الملفات التي تم ضغطها في ملفات التخزين. القيمة اما <code>true</code> أو <code>false</code>؛ القيمة المفترضة هى <code>false</code>.</li>
+  <li><strong>max-policies-per-handle</strong> - يقوم بتحديد الحد الأقصى لعدد سياسات ‏‎Local Security Authority (LSA)‎‏ التي يمكن فتحها لمعالجة استدعاء اجراء عن بعد واحد. تقوم هذه السياسات بتعريف التصريحات الخاصة بالتوصل المطلوبة للاستعلام أو تعديل نظام محدد في ظل ظروف متنوعة. القيمة المفترضة لهذا الاختيار هي <code>255</code>.</li>
+  <li><strong>crawl-fs-metadata</strong> - سيتسبب تشغيل هذا الاختيار في قيام data crawler باضافة وثيقة VXML تتضمن بيانات التوصيف المتاحة لنظام الملفات الخاصة بالملف (تاريخ التكوين، تاريخ أخر تعديل، الخصائص المميزة للملف، الخ.)</li>
+  <li><strong>enable-arc-connector</strong> - اختيار غير مستخدم.</li>
+  <li><strong>disable-indexes</strong> - كشف مفصول بسطر جديد للفهارس المراد الغاء اتاحتها، والتي قد ينتج عنها بحث صفحات انترنت أسرع، على سبيل المثال:</li>
+  <li><p>disable-url-index</p></li>
+  <li>disable-error-state-index</li>
+  <li>disable-crawl-time-index</li>
+  <li><strong>exact-duplicates-hash-size</strong> - يحدد حجم جدول hash المستخدم لحل التكرارات المطابقة تماما. كن حذرا جدا عند تعديل هذا الرقم. يجب أن تكون القيمة التي قمت بتحديدها اولية، ويمكن أن تؤدي الأحجام الأكبر الى عمليات بحث أسرع لكن سيتطلب الأمر المزيد من الذاكرة، بينما قد تؤدي الأحجام الأصغر الى بطء عمليات البحث لكنها ستقلل لحد كبير من الذاكرة المستخدمة.</li>
+  <li><strong>user-agent</strong> - اختيار غير مستخدم.</li>
+  <li><strong>timeout</strong> - اختيار غير مستخدم.</li>
+  <li><strong>n-concurrent-requests</strong> - هو عدد الطلبات التي سيتم ارسالها يالتوازي الى عنوان IP واحد. القيمة المفترضة هي <code>1</code>.</li>
+  <li><strong>enqueue-persistence</strong> - اختيار غير مستخدم.</li>
+</ul><h3>توصيف ‏‎SharePoint Connector‎‏</h3><p>يسمح لك SharePoint connector ببحث عناصر SharePoint Server و SharePoint Online وفهرسة المعلومات التي يتضمنوهم. يمكن فهرسة عنصر مثل وثيقة، وملف بيانات تعريف المستخدم، وتجميع الموقع، ومدونة، وبند كشف، كشف عضوية، صفحة الدليل، والمزيد، باستخدام بيانات التعريف المرفقة. بالنسبة لبنود الكشق والوثائق، قد تتضمن الفهرسة المرفقات.</p><p><strong>ملحوظة</strong>: يأخذ SharePoint connector بعين الاعتبار الخاصية المميزة <code>noindex</code> بكل عناصر SharePoint، بغض النظر عن نوعهم الخاص (مدونات، وثائق، ملفات بيانات تعريف المستخدم، والمزيد). يتم ارجاع وثيقة واحدة لكل نتيجة.</p><p><strong>هام</strong>: يجب أن يتوافر بحد أدنى لحساب SharePoint الذي تقوم باستخدامه لبحث مواقع SharePoint الخاصة بك امتيازات امكانية القراءة كاملة.</p><p>فيما يلي اختيارات التوصيف الأساسية المطلوبة لاستخدام SharePoint Connector. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/connectors/sharepoint.conf</code>‎‏ وتعديل القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>protocol</strong> - هو اسم بروتوكول الموصل الذي يتم استخدامه لبحث صفحات الانترنت. استخدم <code>io-sp</code> لهذا الموصل.</li>
+  <li><strong>collection</strong> - يتم استخدام هذه الخاصية المميزة لفك الملفات المؤقته.</li>
+  <li><strong>classname</strong> - اسم فئة Java للموصل. يجب أن تكون القيمة لاستخدام هذا الموصل هي ‏‎<code>plugin:io-sharepoint.plugin@connector</code>‎‏.</li>
+  <li><strong>logging-config</strong> - يقوم بتحديد الملفات المستخدمة لتوصيف اختيارات التسجيل؛ يجب تنسيقها كمجموعة حروف ‏‎<code>log4j</code> XML‎‏.</li>
+  <li><strong>seed-url-type</strong> - يقوم بتعريف ما هو نوع عنصر SharePoint الذي تشير اليه عناوين URL أساس الترقيم الآلى التي تم ادخالها: تجميعات الموقع أو تطبيقات الانترنت (معروفة أيضا بوحدات الخدمات الظاهرية).</li>
+  <li><p><strong><em>Site Collections</em></strong> - اذا تم تحديد نوع عنوان URL أساس الترقيم الآلى ليكون <code>Site Collections</code>، فسيتم فقط بحث العناصر التابعة لتجميع الموقع المشار اليه بواسطة عنوان URL.</p></li>
+  <li><strong><em>Web Applications</em></strong> - اذا تم تحديد نوع عنوان URL أساس الترقيم الآلى ليكون <code>Web Applications</code>، فسيتم بحث كل تجميعات الموقع (والعناصر التابعة لهم) التي تنتمي الى تطبيقات الانترنت المشار اليه بواسطة كل عنوان URL.</li>
+  <li><strong>auth-type</strong> - آلية التوثيق التي يتم استخدامها عند الاتصال بوحدة خدمة SharePoint: ‏‎<code>BASIC</code>‎‏، أو <code>NTLM2‎</code>، أو <code>KERBEROS</code>، أو <code>CBA</code>. نوع التوثيق المفترض هو ‏‎<code>NTLM2</code>‎‏.</li>
+  <li><strong>spUser</strong> - اسم المستخدم الخاص بمستخدم SharePoint الذي يتم استخدامه للتوصل الى المحتويات. يجب أن يتوافر لهذا المستخدم امكانية توصل لكل المواقع والكشوف المستهدفة ليتم بحثها وفهرستها، ويجب أن يكون قادر على استرجاع وحل التصريحات المرفقة. من الأفضل ادخاله باسم النطاق، على سبيل المثال: ‏‎<code>MYDOMAIN\\Administrator</code>‎‏.</li>
+  <li><strong>spPassword</strong> كلمة السرية الخاصة بمستخدم SharePoint والتي يتم استخدامها للتوصل الى المحتويات. يجب تشفير كلمة السرية باستخدام برنامج vcrypt الذي تم شحنه مع Data Crawler.</li>
+  <li><strong>cba-sts</strong> - عنوان URL نقطة نهاية ‏‎Security Token Service (STS)‎‏ لمحاولة توثيق مستخدم بحث صفحات الانترنت تجاهها. بالنسبة الى SharePoint المحلي باستخدام ADFS، يجب أن يكون هذا هو نقطة نهاية ADFS الخاصة بك. اذا تم تحديد نوع التوثيق ليكون ‏‎<code>CBA</code> (Claims Based Authentication)‎‏ فيعد هذا المجال مطلوبا.</li>
+  <li><strong>cba-realm</strong> - كود تعريف ‏‎relaying party trust‎‏ ليتم استخدامه عند طلب الرمز المميز للسرية من STS. يعرف ذلك في بعض الأحيان بالقيمة &ldquo;AppliesTo&rdquo; ، أو &ldquo;Realm&rdquo;. بالنسبة الى SharePoint Online، يجب أن يكون هذا هو عنوان URL للدليل الرئيسي لنسخة SharePoint Online (على سبيل المثال، ‏‎<code>https://mycompany.sharepoint.com</code>‎‏). بالنسبة الى ADFS، يعد هذا هو قيمة كود تعريف ‏‎Relying Party Trust‎‏ بين SharePoint و ADFS (على سبيل المثال، ‏‎<code>&quot;urn:SHAREPOINT:adfs&quot;</code>‎‏).</li>
+  <li><strong>everyone-group</strong> - عند تحديده، يتم استخدام اسم المجموعة هذا في كشوف التحكم في امكانية التوصل عندما يتم منح امكانية التوصل للجميع. يعد هذا المجال مطلوبا عندما يتم اتاحة بحث ملفات بيانات تعريف المستخدمين. <strong>ملحوظة</strong> - لا يتم تقدير السرية بعد بواسطة خدمة Retrieve و Rank.</li>
+  <li><strong>user-profile-master-url</strong> - عنوان URL الأساسي الذي يقوم الموصل باستخدامه لبناء وصلات لملفات بيانات تعريف المستخدمين. يجب توصيف ذلك ليشير الى نموذج العرض الخاص بملفات بيانات تعريف المستخدمين. اذا تم اكتشاف الرمز المتميز <code>%FIRST_SEED%</code>، فانه يتم استبداله بأول عنوان URL لأساس الترقيم الآلى. يعد مطلوبا عندما يتم اتاحة بحث ملفات بيانات تعريف المستخدمين.</li>
+  <li><strong>urls</strong> - كشف مفصول بسطر جديد لعناوين URL HTTP الخاصة بتطبيقات الانترنت SharePoint أو تجميعات المواقع ليتم بحثهم.</li>
+  <li><strong>ehcache-config</strong> - اختيار غير مستخدم.</li>
+  <li><strong>method</strong> - الطريقة (‏‎<code>GET</code>‎‏ أو ‏‎<code>POST</code>‎‏) التي سيتم تمرير المعاملات بواسطتها.</li>
+  <li><strong>cache-types</strong> - اختيار غير مستخدم.</li>
+  <li><strong>cache-size</strong> - اختيار غير مستخدم.</li>
+  <li><strong>enable-acl</strong> - يتيح بحث ملفات بيانات تعريف المستخدمين؛ القيم هي <code>true</code> أو <code>false</code>. القيمة المفترضة هى <code>false</code>.</li>
+</ul><h3>توصيف Box Connector</h3><p>يسمح لك Box Connector ببحث نسخة Enterprise Box الخاصة بك، وفهرسة المعلومات التي تتضمنها. فيما يلي اختيارات التوصيف الأساسية المطلوبة لاستخدام Box Connector. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/connectors/box.conf</code>‎‏ وتعديل القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>protocol</strong> - هو اسم بروتوكول الموصل الذي يتم استخدامه لبحث صفحات الانترنت. استخدم <code>box</code> لهذا الموصل.</li>
+  <li><strong>classname</strong> - اسم فئة Java للموصل. يجب أن تكون القيمة لاستخدام هذا الموصل هي ‏‎<code>plugin:box.plugin@connector</code>‎‏.</li>
+  <li><strong>logging-config</strong> - يقوم بتحديد الملفات المستخدمة لتوصيف اختيارات التسجيل؛ يجب تنسيقها كمجموعة حروف ‏‎<code>log4j</code> XML‎‏.</li>
+  <li><strong>box-crawl-seed-url</strong> - عنوان URL الأساسي الى Box. قيمة هذا الموصل هي ‏‎<code>box://app.box.com/</code>‎‏. يمكنك بحث أنواع مختلفة من عناوين URL، على سبيل المثال:</li>
+  <li><p><strong><em>لبحث مشروع بالكامل</em></strong>: ‏‎<code>box://app.box.com/</code>‎‏</p></li>
+  <li><strong><em>لبحث حافظة محددة</em></strong>: ‏‎<code>box://app.box.com/user/USER_ID/folder/FOLDER_ID/FolderName</code>‎‏</li>
+  <li><strong><em>لبحث مستخدم محدد</em></strong>: ‏‎<code>box://app.box.com/user/USER_ID/</code>‎‏</li>
+  <li><strong>client-id</strong> - أدخل كود تعريف الوحدة التابعة الذي تم ادخاله بواسطة Box عند قيامك بتكوين تطبيق Box الخاص بك.</li>
+  <li><strong>client-secret</strong> - أدخل سر الوحدة التابعة الذي تم ادخاله بواسطة Box عند قيامك بتكوين تطبيق Box الخاص بك.</li>
+  <li><strong>path-to-private-key</strong> - هذا هو المكان، الذي على نظام الملفات المحلي الخاص بك، المعني بالمفتاح الخاص الذي يعد جزءا من زوج المفاتيح الخاصة-العامة الذي تم تكوينه للاتصال مع Box.</li>
+  <li><strong>kid</strong> - يحدد كود تعريف المفتاح العام. هذا هو النصف الأخر لزوج المفاتيح الخاصة-العامة الذي تم تكوينه للاتصال مع Box.</li>
+  <li><strong>enterprise-id</strong> - المشروع المصرح به التطبيق الخاص بك. يتم عرض كود تعريف المشروع في الصفحة الرئيسية الى ‏‎Box Administrator Console‎‏.</li>
+  <li><strong>enable-acl</strong> - الاستخدام الداخلي فقط. يتيح استرجاع كشوف التحكم في امكانية التوصل بالنسبة للبيانات التي يتم بحثها.</li>
+  <li><strong>user-agent</strong> - نص الرأس الذي تم ارساله الى وحدة الخدمة عند بحث الوثائق.</li>
+  <li><strong>method</strong> - الطريقة (‏‎<code>GET</code>‎‏ أو ‏‎<code>POST</code>‎‏) التي سيتم تمرير المعاملات بواسطتها.</li>
+  <li><strong>url-logging</strong> - هو الامتداد الذي يتم تسجيل عناوين URL التي تم بحثها به. القيم المحتملة هي:</li>
+  <li><p><strong><em>full-logging</em></strong> - تسجيل كل المعلومات الخاصة بعنوان URL.</p></li>
+  <li><strong><em>refined-logging</em></strong> - يقوم بتسجيل فقط المعلومات الضرورية لاستعراض سجل أداة البحث واللازمة لقيام الموصل بالعمل بشكل صحيح؛ وهذه هي القيمة المفترضة.</li>
+  <li><strong><em>minimal-logging</em></strong> - يقوم بتسجيل فقط الحد الأدنى من المعلومات الضرورية لقيام الموصل بالعمل بشكل صحيح.</li>
+</ul><p>ان اعداد هذا الاختيار على الحد الأدنى من التسجيل يؤدي الى تقليل حجم السجلات وزيادة الأداء مرة أخرى بشكل طفيف بسبب المدخلات/المخرجات الصغيرة المرفقة بتصغير حجم البيانات التي يتم تسجيلها.<br/>* <strong>ssl-version</strong> - يقوم بتحديد نسخة SSL للاستخدام لاتصالات HTTPS. بصفة مفترضة يتم استخدام البروتوكول الأقوى المتاح.</p><p>لا يتوافر الى Box Connector بعض القيود:</p>
+<ul>
+  <li>لا يتم استرجاع التعقيبات أو المهام التي على الملفات.</li>
+  <li>يتم استرجاع تص محتويات Notes كأنه JSON. قد يكون هناك حاجة لتحويل اضافي من بيانات Notes.</li>
+  <li>لا يمكن استرجاع وثائق متفردة بواسطة TestIt. يمكن فقط استرجاع عناوين URL أساس الترقيم الآلى، وعناوين URL الحافظات، وعناوين URL المستخدمين بواسطة TestIt.</li>
+</ul><h2>يمكنك الاطلاع أيضا على</h2><p>‏‎crawler(1)‎‏</p><p>‏‎vcrypt(1)‎‏</p><p>‏‎crawler.conf(5)‎‏</p><p>‏‎crawler-seed.conf(5)‎‏</p><p>‏‎orchestration_service.conf(5)‎‏</p>

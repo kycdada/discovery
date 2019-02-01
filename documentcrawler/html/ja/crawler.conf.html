@@ -1,0 +1,85 @@
+<h1>データ・クローラーの構成</h1><p><code>crawler</code> を実行するには、オプションを指定した構成ファイルが必要です。構成のサンプルが <code>crawler</code> のインストール・ディレクトリーの<br/><code>share</code> ディレクトリーに用意されています。それらのサンプルをコピーして変更してください。*サンプル自体は変更しないでください。*</p><p><code>crawler.conf</code> ファイルにはクローラーに渡す情報を指定します。この情報には、クロールで使用するファイル (入力アダプター)、<br/>クロール完了後にクロール済みファイルのコレクションを送信する宛先 (出力アダプター)、その他のクロール管理オプションが含まれます。</p><p><strong>注</strong>: すべてのファイル・パスは、特に説明がない限り <code>config</code> ディレクトリーを基準にした相対パスです。</p><p>このファイルで設定できるオプションは、以下のとおりです。</p><h2>入力アダプター</h2>
+<ul>
+  <li><strong>class</strong> - 内部使用のみ。Data Crawler の入力アダプター・クラスを定義します。デフォルト値は <code>com.ibm.watson.crawler.connectorframeworkinputadapter.Crawl</code> です。</li>
+  <li><strong>config</strong> - 内部使用のみ。コネクター・フレームワーク構成を定義します。選択した入力アダプターに渡すこのブロック内のデフォルトの構成キーは <code>connector_framework</code> です。**注** - コネクター・フレームワークとは、データにアクセスするための機能です。これは、企業の内部データであることもあれば、Web 上やクラウド内の外部データであることもあります。コネクターにより複数の異なるデータ・ソースへのアクセスが可能になりますが、接続を実際に制御するのはクロール・プロセスです。</li>
+  <li><strong>重要</strong> - コネクター・フレームワークの入力アダプターで取得するデータは、ローカルのキャッシュに入れられます。暗号化された状態で保管されるわけではありません。デフォルトの場合、データは一時ディレクトリーにキャッシュされます。そのディレクトリーは、リブート時にクリアするように設定しておく必要があり、クローラー・コマンドを実行したユーザーだけが読み取れるように設定しておくべきです。コネクター・フレームワークがクリーンアップの前に終了してしまうと、クローラーの終了後にそのディレクトリーが存在し続ける可能性があります。データをキャッシュする場所を慎重に検討してください。暗号化されたファイル・システムに置くこともできますが、その場合はパフォーマンスへの影響に注意しなければなりません。クロールのスピードとセキュリティーのバランスをよく考えて決める必要があります。</li>
+  <li><strong>crawl_config_file</strong> - クロールに使用する構成ファイル。デフォルト値は <code>connectors/filesystem.conf</code> です。</li>
+  <li><strong>crawl_seed_file</strong> - クロールに使用するクロール・シード・ファイル。デフォルト値は <code>seeds/filesystem-seed.conf</code> です。</li>
+  <li><strong>id_vcrypt_file</strong> - クローラーでデータ暗号化に使用される鍵ファイル。クローラーに組み込まれているデフォルト鍵は <code>id_vcrypt</code> です。<br/>新規 id_vcrypt_file を生成する必要がある場合は、<code>bin</code> フォルダー内の vcrypt スクリプトを使用します。</li>
+  <li><strong>crawler_temp_dir</strong> - コネクター・ログ用の Crawler の一時フォルダー。デフォルト値 <code>tmp</code> が指定されています。このフォルダーがまだ存在しない場合は、現行作業ディレクトリーに <code>tmp</code> フォルダーが作成されます。</li>
+  <li><strong>extra_jars_dir</strong> - 内部使用のみ。コネクター・フレームワーク・クラスパスにさらに JAR を追加します。<br/>SharePoint コネクターを使用する場合は <code>oakland</code>、データベース・コネクターを使用する場合は <code>database</code> という値にしてください。その他のコネクターを使用する場合は、空の値 (空のストリング &quot;&quot;) のままでかまいません。<br/> <strong>注</strong>: コネクター・フレームワークの <code>lib/java</code> ディレクトリーを基準にした相対パスです。</li>
+  <li><strong>urls_to_filter</strong> - クロールする URL のホワイトリスト (正規表現形式)。改行で区切って指定します。Data Crawler では、指定した正規表現のいずれかに一致する URL のみがクロールされます。ドメイン・リストには、最も一般的な最上位ドメインが含まれているので、必要に応じてこれを追加します。ファイル拡張子タイプのリストには、Data Crawler のリリース時点でオーケストレーション・サービスがサポートしているファイル拡張子が含まれています。ご使用のシード URL のドメインがこのフィルターで許可されていることを確認してください。例えば、<code>http://testdomain.test.in</code> のようなシード URL の場合は、ドメイン・フィルターに「<code>in</code>」を追加します。Crawler がハングする場合があるため、シード URL がフィルターで除外されないようにしてください。</li>
+  <li><strong>max_text_size</strong> - 文書に許容される最大サイズ (バイト)。これを超えると、コネクター・フレームワークによってディスクに文書が書き込まれます。この値を調整して増やすと、ディスクに書き込まれる文書の量が少なくなりますが、メモリー所要量は増えます。</li>
+  <li><strong>extra_vm_params</strong> - コネクター・フレームワークを起動するために使用するコマンドにさらに Java パラメーターを追加できます。</li>
+  <li><strong>bootstrap_logging</strong> - コネクター・フレームワークの開始ログを書き込みます。拡張デバッグの場合にのみ便利です。値は <code>true</code> と <code>false</code> のいずれかです。ログ・ファイルは <code>crawler_temp_dir</code> に書き込まれます。</li>
+</ul><h2>ストレージ・アダプター</h2><p>クローラーの内部状態をデータベースに格納します。クロールの <code>restart</code> オプションと <code>resume</code> オプションを正しく実行するために、この設定が必要です。</p>
+<pre><code class="javascript">storage_adapter {
+ config = &quot;storage_in_db&quot;
+  storage_in_db {
+    include &quot;storage/database_storage.conf&quot;
+  } 
+}
+</code></pre><p>参照先のファイル <code>storage/database_storage.conf</code> は、デフォルトで H2 データベースを使用します。JDBC ドライバーを使用すれば、デフォルトのデータベースの代わりにどんなデータベースでも利用できます。設定に関する具体的な情報については、JDBC ドライバーの資料を参照してください。デフォルト・オプションを直接変更する場合は、<code>config/storage/database_storage.conf</code> ファイルを開いて、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>class</strong> - このクラスは使用するデータベース・アダプター・クラスを参照します。デフォルト値は <code>com.ibm.watson.crawler.storageadapters.DatabasePersistAdapter</code> です。</li>
+  <li><strong>driver</strong> - JDBC ドライバーのクラス。デフォルト値は <code>org.h2.Driver</code> です (H2 を使用します)。</li>
+  <li><strong>url</strong> - ドライバーの JDBC オプションを参照します。これは JDBC 接続ストリングの URL 接頭部です。デフォルトは <code>jdbc:h2:file:</code> です。</li>
+  <li><strong>database_location</strong> - データベースの場所。sqlite や H2 などのファイル・ベースのデータベースだけが対象になります。デフォルト値は <code>./storage/database</code> です。</li>
+  <li><strong>database_name</strong> - データベースの名前。デフォルト値は <code>ActivityDB</code> です。</li>
+  <li><strong>table_name</strong> - 使用するテーブルの名前。デフォルト値は <code>Ledger</code> です。</li>
+  <li><strong>username</strong> - データベースに接続するユーザー名。</li>
+  <li><strong>password</strong> - データベースに接続するパスワード。</li>
+</ul><p>ほとんどのアクティビティーではデフォルトの構成で十分です。</p><h2>出力アダプター</h2><p>いくつかの*出力アダプター*の中から選択できます。<code>crawler.conf</code> の <code>output_adapter.class</code> で<br/>出力アダプターを設定してください。オプションは以下のとおりです。</p>
+<ul>
+  <li><strong>class</strong> - Data Crawler の出力アダプター・クラスを定義します。デフォルト値は <code>com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter</code> です。</li>
+  <li><strong>config</strong> - 出力アダプターに渡す構成キーを定義します。この構成オブジェクト内のキーに対応するストリングを指定してください。以下に、コード例を示します。</li>
+</ul>
+<pre><code class="javascript">  orchestration_service {
+    include &quot;orchestration_service.conf&quot;
+          },
+          test {
+             output_directory = &quot;/tmp/crawler-test-output&quot;
+          }
+         }
+</code></pre><p>構成キーは <code>orchestration_service</code> です。デフォルト値は <code>discovery_service</code> です。</p><p>出力アダプターを選択するには、<code>class</code> パラメーターと <code>config</code> キーを指定しなければなりません。</p>
+<ul>
+  <li><strong>オーケストレーション・サービス出力アダプター</strong>: クロール済みの文書を Watson Developer Cloud のオーケストレーション・サービスにアップロードします。このアダプターを選択する場合は、<code>class</code> パラメーターと <code>config</code> キーを以下のように設定します。<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.orchestrationserviceoutputadapter.oneatatime.OrchestrationServiceOutputAdapter&quot;
+  config = &quot;orchestration_service&quot;
+  orchestration_service {
+include &quot;orchestration/orchestration_service.conf&quot;
+  }
+</code></li>
+  <li><strong>ディスカバリー・サービス出力アダプター</strong>: クロール済みの文書を Watson Developer Cloud のディスカバリー・サービスにアップロードします。このアダプターを選択する場合は、<code>class</code> パラメーターと <code>config</code> キーを以下のように設定します。<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter&quot;
+  config = &quot;discovery_service&quot;
+  discovery_service {
+include &quot;discovery/discovery_service.conf&quot;
+  }
+</code></li>
+  <li><strong>Watson テスト出力アダプター</strong>: クロール済みのファイルを表現した項目をディスク内の指定の場所に書き込みます。このアダプターを選択する場合は、<code>class</code> パラメーターと <code>config</code> キーを以下のように設定します。</li>
+</ul><p><strong>注</strong> - 追加のパラメーター <code>output_directory</code> を使用して、クロール済みのデータを表現した項目を書き込むディレクトリーを選択できます。<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.testoutputadapter.TestOutputAdapter&quot;
+  config = &quot;test&quot;
+  output_directory = &quot;/tmp/crawler-test-output&quot;
+</code><br/>* <strong>retry</strong> - 出力アダプターにプッシュする処理が失敗した場合の再試行のオプションを指定します。<br/> * max_attempts - 再試行の最大数。デフォルト値は <code>10</code> です。<br/> * delay - 再試行と再試行の間の最小遅延時間 (秒)。デフォルト値は <code>2</code> です。<br/> * exponent_base - 試行失敗のたびに遅延時間を長く設定するための係数。デフォルト値は <code>2</code> です。</p><p>数式は以下のとおりです。<br/><code>
+ d(nth_retry) = delay * (exponent_base ^ nth_retry)
+</code></p><p>例えば、delay を 1 秒、exponent base を 2 に設定すると、2 回目の再試行と 3 回目の再試行の間の<br/>遅延時間は 1 秒ではなく 2 秒になり、その次の遅延時間は 4 秒になります。<br/> <code>
+ d(0) = 1 * (2 ^ 0) = 1 秒
+ d(1) = 1 * (2 ^ 1) = 2 秒
+ d(2) = 1 * (2 ^ 2) = 4 秒
+</code><br/>デフォルト設定の場合、実行依頼の最大試行回数は 10 回になり、約 1,022 秒 (17 分と少し) の待ち時間が生じます。この時間が概数になるのは、複数の再実行依頼の同時実行を避けるために余分の時間が追加されるからです。その追加の時間は最大で 10% なので、前の例の最後の再試行の遅延時間は最大で 4.4 秒になります。この待ち時間には、サービスへの接続やデータのアップロードにかかる時間や応答待ちの時間は含まれていません。</p><p><em>警告:</em> デフォルト値よりも小さい値を設定して待ち時間を短くすると、構成済みの出力アダプターを使用すると文書が<br/>正常にアップロードされなくなる危険があります。Watson Developer Cloud サービスを使用している場合、<br/>そのような状況になると、速度制限に関する「429 Too Many Requests」という RetryFailure メッセージがログに書き込まれます。</p><h2>デバッグ・オプション</h2>
+<ul>
+  <li><strong>full_node_debugging</strong> - デバッグ・モードをアクティブにします。可能な値は <code>true</code> または <code>false</code> です。**警告**: この設定の場合、クロール済みのすべての文書の全データがログに書き込まれます。</li>
+  <li><strong>heartbeat_wait_time</strong> - 文書取り込み統計のレポート間隔の時間 (ミリ秒) (デバッグ・モードのみ)。デフォルト値は 1000 ミリ秒です。</li>
+</ul><h2>ロギング・オプション</h2>
+<ul>
+  <li><strong>configuration_file</strong> - ロギングに使用する構成ファイル。サンプルの <code>crawler.conf</code> ファイルでは、このオプションは <code>logging.log4j</code> 内に定義され、そのデフォルト値は <code>log4j_custom.properties</code> です。<br/>このオプションは、<code>.properties</code> ファイルまたは <code>.conf</code> ファイルのいずれを使用するかに関わらず、同様に定義する必要があります。</li>
+</ul><h2>追加のクロール管理オプション</h2>
+<ul>
+  <li><strong>shutdown_timeout</strong> - アプリケーションがシャットダウンされるまでのタイムアウト値 (分) を指定します。デフォルト値は <code>10</code> です。</li>
+  <li><strong>output_limit</strong> - Crawler で出力アダプターへの同時送信が試行されるインデックス付け可能な項目の最大数。これは、処理に使用できるコア数によってさらに制限される場合があります。これは、いずれの時点でも、出力アダプターに送信され、返されるまで待機しているインデックス付け可能な項目が「x」個以下であることを示します。デフォルト値は <code>10</code> です。</li>
+  <li><strong>input_limit</strong> - コネクターから一度に要求できる URL の数を制限します。デフォルト値は <code>3</code> です。</li>
+  <li><strong>output_timeout</strong> - Data Crawler が出力アダプターへの要求を中止し、後続の処理のために出力アダプター・キューから項目を削除するまでの時間の長さ (秒) です。デフォルト値は <code>1200</code> です。**注** - 出力アダプターによる制約を考慮してください。その制約は、ここで定義する制限値に関係する場合があるからです。前述の定義された <code>output_limit</code> は、出力アダプターに一度に送信できるインデックス付け可能なオブジェクト数にのみ関係があります。インデックス付け可能なオブジェクトが出力アダプターに送信されると、<code>output_timeout</code> 変数で定義されている「クロックによるカウント」が開始されます。<br/>出力アダプター自体にスロットルがあり、受け取った数と同数の入力が処理されないようになっている場合があります。例えば、オーケストレーション出力アダプターには、サービスへの HTTP 接続用に構成できる接続プールがある場合があります。例えば、これがデフォルトで 8 に設定されている場合に <code>output_limit</code> を 8 より大きい数値に設定すると、実行の順番を待機中で、クロックによるカウントが開始されるプロセスが出てきます。その後、タイムアウトになる場合があります。</li>
+  <li><strong>num_threads</strong> - 一度に実行できる並行スレッドの数。この値は、整数 (並行スレッドの数を直接指定)、またはストリング (&ldquo;xNUM&rdquo; というフォーマットで、使用可能なプロセッサー数の倍数を指定) のいずれかになります (&ldquo;x1.5&rdquo; など)。デフォルト値は <code>&quot;30&quot;</code> です。</li>
+</ul><h2>関連資料</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

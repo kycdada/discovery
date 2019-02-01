@@ -1,0 +1,83 @@
+<h1>De Data Crawler configureren</h1><p>Voor opties van de <code>crawler</code> is een configuratiebestand vereist. Voorbeelden van configuratie vindt u in de directory <code>share</code> in de installatiedirectory van de <code>crawler</code>. Kopieer deze voorbeelden en wijzig ze. <em>Breng geen wijzigingen ter plekke in de voorbeelden aan.</em></p><p>Het bestand <code>crawler.conf</code> bevat informatie die de crawler instrueert welke bestanden moeten worden gebruikt voor het crawlen (invoeradapter), waar de verzameling van gecrawlde bestanden naartoe verzonden wordt als de crawl voltooid is (uitvoeradapter) en andere opties voor het beheren van crawls.</p><p><strong>Opmerking</strong>: Alle paden zijn relatief ten opzichte van de directory <code>config</code>, behalve waar aangegeven.</p><p>De opties die in dit bestand kunnen worden ingesteld, zijn:</p><h2>Invoeradapter</h2>
+<ul>
+  <li><strong>class</strong> - Alleen intern gebruik; definieert de invoeradapterklasse van Data Crawler. De standaardwaarde is: <code>com.ibm.watson.crawler.connectorframeworkinputadapter.Crawl</code>.</li>
+  <li><strong>config</strong> - Alleen intern gebruik; definieert de configuratie van het Connector Framework. De standaard configuratiesleutel in dit blok die wordt doorgegeven aan de gekozen invoeradapter is: <code>connector_framework</code>. <strong>Opmerking</strong> - Het connectorframework maakt het mogelijk om met uw gegevens te communiceren. Dit kunnen interne gegevens binnen het bedrijf zijn, of externe gegevens op het web of in de cloud. De connectors geven toegang tot een aantal verschillende gegevensbronnen. Het maken van de verbinding wordt feitelijk bestuurd door het crawlproces.</li>
+  <li><strong>BELANGRIJK</strong> - Gegevens die door de Connector Framework Input Adapter worden opgehaald, worden in de lokale cache opgeslagen. Ze worden niet versleuteld opgeslagen. Standaard worden de gegevens in cache geplaatst in een tijdelijke directory die moet worden gewist bij het opstarten en die alleen mag worden gelezen door de gebruiker die de crawlopdracht heeft uitgevoerd. Er is een kans dat deze directory de crawler overleeft als het connectorframework zou verdwijnen voordat het een opschoonbewerking zou uitvoeren. U moet de locatie van cachegegevens zorgvuldig overwegen - u kunt ze op een versleuteld bestandssysteem zetten, maar houd er in dat geval rekening mee dat dat ten koste van de prestaties kan gaan. Alleen u kunt de juiste balans tussen snelheid en beveiliging van uw crawls bepalen.</li>
+  <li><strong>crawl_config_file</strong> - Het configuratiebestand dat moet worden gebruikt voor het crawlproces. De standaardwaarde is: <code>connectors/filesystem.conf</code>.</li>
+  <li><strong>crawl_seed_file</strong> - Het crawlseedbestand dat moet worden gebruikt voor het crawlproces. De standaardwaarde is: <code>seeds/filesystem-seed.conf</code>.</li>
+  <li><strong>id_vcrypt_file</strong> - Het sleutelbestand dat door de crawler wordt gebruikt om gegevens te versleutelen; de standaardsleutel die in de crawler is opgenomen is <code>id_vcrypt</code>.<br/>Gebruik het script vcrypt in de map <code>bin</code> als u een nieuw id_vcrypt_file wilt genereren.</li>
+  <li><strong>crawler_temp_dir</strong> - De tijdelijke crawlermap voor connectorlogboeken. Er is een standaardwaarde, <code>tmp</code>, beschikbaar. Als de map <code>tmp</code> nog niet aanwezig is, wordt hij in de actieve directory gemaakt.</li>
+  <li><strong>extra_jars_dir</strong> - Alleen intern gebruik; voegt extra JAR-bestanden toe aan het klassenpad van het Connector Framework.<br/>Deze waarde moet <code>oakland</code> zijn bij gebruik van de SharePoint-connector en <code>database</code> wanneer u de databaseconnector gebruikt. U kunt hem leeg laten (d.w.z. een lege string &quot;&quot;) als u andere connectors gebruikt. <strong>Opmerking</strong>: Relatief ten opzichte van de directory <code>lib/java</code> van het connectorframework.</li>
+  <li><strong>urls_to_filter</strong> - Door terugloop-met-nieuwe-regel gescheiden goedgekeurde lijst van URL&rsquo;s die gecrawld worden, in de vorm van een expressie. De Data Crawler crawlt alleen URL&rsquo;s die overeenkomen met een van de expressies. De domeinlijst bevat de meest voorkomende domeinen van het hoogste niveau; indien nodig kunt u items toevoegen. De lijst met bestandsextensietypen bevat de extensies van bestanden die de Orchestration Service ondersteunt, vanaf deze release van de Data Crawler. Zorg ervoor dat het domein van de seed-URL door het filter wordt toegestaan. Als de seed-URL er bijvoorbeeld als volgt uitziet <code>http://testdomain.test.in</code>, voegt u &ldquo;<code>in</code>&rdquo; toe aan het domeinfilter. Zorg ervoor dat de seed-URL niet door een filter wordt uitgesloten, anders kan de crawler vastlopen.</li>
+  <li><strong>max_text_size</strong> - De maximumgrootte, in bytes, van een document voordat het door het Connector Framework wordt weggeschreven naar een lokale schijf. Het aanpassen van deze waarde naar een hogere waarde vermindert de hoeveelheid documenten die naar schijf worden geschreven, maar vergroot het vereiste geheugen.</li>
+  <li><strong>extra_vm_params</strong> - Hiermee voegt u extra Java-parameters toe aan de opdracht die wordt gebruikt voor het starten van het Connector Framework.</li>
+  <li><strong>bootstrap_logging</strong> - Schrijft het opstartlogboek van het connectorframework; dit is alleen nuttig bij geavanceerde foutopsporing. Waarden zijn <code>true</code> of <code>false</code>. Het logbestand wordt weggeschreven naar <code>crawler_temp_dir</code>.</li>
+</ul><h2>Opslagadapter</h2><p>Hiermee kunt u de interne status van de crawler opslaan in een database. Deze instelling is vereist om de opties <code>opnieuw starten</code> en <code>hervatten</code> voor het crawlproces correct te laten werken.</p>
+<pre><code class="javascript">storage_adapter {
+ config = &quot;storage_in_db&quot;
+  storage_in_db {
+    include &quot;storage/database_storage.conf&quot;
+  } 
+}
+</code></pre><p>Het bestand waarnaar wordt verwezen, <code>storage/database_storage.conf</code>, gebruikt standaard een H2-database. U kunt elke database met een JDBC-stuurprogramma gebruiken in plaats van de standaardwaarden. Raadpleeg de documentatie bij uw JDBC-stuurprogramma om specifieke informatie over een aantal van deze instellingen op te zoeken. De standaardopties kunnen rechtstreeks worden gewijzigd door het openen van het bestand <code>config/storage/database_storage.conf</code> en de volgende waarden voor uw gebruiksvoorbeeld te wijzigen:</p>
+<ul>
+  <li><strong>class</strong> - Deze klasse verwijst naar de databaseadapterklasse die u wilt gebruiken. De standaardwaarde is <code>com.ibm.watson.crawler.storageadapters.DatabasePersistAdapter</code></li>
+  <li><strong>driver</strong> - De klasse voor het JDBC-stuurprogramma. De standaardwaarde is <code>org.h2.Driver</code> voor het gebruik van H2</li>
+  <li><strong>erl</strong> - Zie de JDBC-opties voor uw stuurprogramma. Dit is de URL-prefix voor de JDBC-verbindingsreeks. De standaardwaarde is <code>jdbc:h2:file:</code></li>
+  <li><strong>database_location</strong> - De locatie waar uw database zich moet bevinden. Dit geldt alleen voor databases op basis van bestanden, zoals sqlite en H2. De standaardwaarde is <code>./storage/database</code></li>
+  <li><strong>database_name</strong> - Naam van de database. De standaardwaarde is<code>ActivityDB</code></li>
+  <li><strong>table_name</strong> - Naam van de tabel die moet worden gebruikt. De standaardwaarde is <code>Ledger</code></li>
+  <li><strong>username</strong> - Gebruikersnaam om verbinding te maken met de database</li>
+  <li><strong>password</strong> - Wachtwoord om verbinding te maken met de database</li>
+</ul><p>De standaardconfiguratie voldoet voor de meeste activiteiten</p><h2>Uitvoeradapter</h2><p>Er is een aantal <em>uitvoeradapters</em> waaruit u kunt kiezen. Stel de uitvoeradapter in door <code>output_adapter.class</code> in <code>crawler.conf</code> in te stellen. De opties zijn:</p>
+<ul>
+  <li><strong>class</strong> - Definieert de uitvoeradapterklasse van de Data Crawler. De standaardwaarde is <code>com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter</code></li>
+  <li><strong>config</strong> - Geeft aan welke configuratiesleutel aan de uitvoeradapter moet worden doorgegeven. De tekenreeks moet overeenkomen met een sleutel in dit configuratieobject. Zie het volgende codevoorbeeld:<br/><code>javascript
+  orchestration_service {
+include &quot;orchestration_service.conf&quot;
+  },
+  test {
+output_directory = &quot;/tmp/crawler-test-output&quot;
+  }
+}
+</code><br/>de configuratiesleutel is <code>orchestration_service</code>. De standaardwaarde is <code>discovery_service</code><br/>U moet een uitvoeradapter selecteren door het opgeven van de parameter <code>class</code> en de sleutel <code>config</code>.</li>
+  <li><p><strong>Orchestration Service-uitvoeradapter</strong>: Hiermee uploadt u gecrawlde documenten naar de Orchestration Service van Watson Developer Cloud. Selecteer deze adapter door de parameter <code>class</code> en de sleutel <code>config</code> als volgt in te stellen:<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.orchestrationserviceoutputadapter.oneatatime.OrchestrationServiceOutputAdapter&quot;
+  config = &quot;orchestration_service&quot;
+  orchestration_service {
+include &quot;orchestration/orchestration_service.conf&quot;
+  }
+</code></p></li>
+  <li><strong>Discovery Service-uitvoeradapter</strong>: Hiermee uploadt u gecrawlde documenten naar de Discovery Service van Watson Developer Cloud. Selecteer deze adapter door de parameter <code>class</code> en de sleutel <code>config</code> als volgt in te stellen:<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter&quot;
+  config = &quot;discovery_service&quot;
+  discovery_service {
+include &quot;discovery/discovery_service.conf&quot;
+  }
+</code></li>
+  <li><strong>Watson Test-uitvoeradapter</strong>: Schrijft een weergave van de gecrawlde bestanden naar schijf op een opgegeven locatie. Selecteer deze adapter door de parameter <code>class</code> en de sleutel <code>config</code> als volgt in te stellen:</li>
+</ul><p><strong>Opmerking</strong> - Met een extra parameter, <code>output_directory</code>, selecteert u de directory waarin de weergave van de gecrawlde gegevens moet worden geschreven.<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.testoutputadapter.TestOutputAdapter&quot;
+  config = &quot;test&quot;
+  output_directory = &quot;/tmp/crawler-test-output&quot;
+</code><br/>* <strong>retry</strong> - Geeft de opties aan voor nieuwe pogingen als er mislukte pogingen zijn geweest om items naar de uitvoeradapter te pushen.<br/> * max_attempts - Maximumaantal nieuwe pogingen. De standaardwaarde is <code>10</code><br/> * delay - Minimale vertraging tussen pogingen, in seconden. De standaardwaarde is <code>2</code><br/> * exponent_base - Factor die de groei van de vertragingstijd vaststelt met betrekking tot elke mislukte poging. De standaardwaarde is <code>2</code></p><p>De formule is:<br/><code>
+ d(aantal_nieuwe_pogingen) = vertraging * (exponentbasis ^ aantal_nieuwe_pogingen)
+</code></p><p>Als de vertraging bijvoorbeeld 1 seconde is bij een exponentbasis van 2, is de tweede nieuwe poging - de derde poging dus - 2 seconden vertraagd in plaats van 1, en de volgende is 4 seconden vertraagd.<br/> <code>
+ d(0) = 1 * (2 ^ 0) = 1 seconde
+ d(1) = 1 * (2 ^ 1) = 2 seconden
+ d(2) = 1 * (2 ^ 2) = 4 seconden
+</code><br/>Met de standaardinstellingen wordt een ingezonden item tot maximaal tien keer opnieuw geprobeerd, en wordt er gewacht tot ongeveer 1.022 seconden (iets meer dan 17 minuten). Deze tijd is bij benadering aangegeven, omdat er extra tijd toegevoegd wordt om te vermijden dat meerdere nieuwe inzendingen gelijktijdig uitgevoerd worden. Deze extra tijd kan oplopen tot 10%, , waardoor de laatste nieuwe poging in het vorige voorbeeld een vertraging tot 4,4 seconden kan krijgen. De wachttijd is exclusief de tijd die is besteed aan het maken van verbinding met de service, het uploaden van gegevens, of het wachten op een antwoord.</p><p><em>Waarschuwing:</em> het verminderen van de wachttijd door het verlagen van een van deze standaardwaarden kan ertoe leiden dat documenten niet via de geconfigureerde uitvoeradapter worden geüpload. Bewijs hiervoor bij het gebruik van Watson Developer Cloud Services ziet u in de vorm van RetryFailure-berichten in het logboek waarbij een snelheidsbeperking vanwege &ldquo;429 Too Many Requests&rdquo; genoemd wordt. </p><h2>Foutopsporingsopties</h2>
+<ul>
+  <li><strong>full_node_debugging</strong> - Hiermee activeert u de foutopsporingsmodus; mogelijke waarden zijn <code>true</code> of <code>false</code>. <strong>Waarschuwing</strong>: Hiermee worden de volledige gegevens van elk gecrawld document in logbestanden geplaatst.</li>
+  <li><strong>heartbeat_wait_time</strong> - Tijdsinterval in milliseconden tussen opnamestatistieken voor rapportagedocumenten (alleen foutopsporingsmodus). De standaardwaarde is 1000 milliseconden.</li>
+</ul><h2>Opties voor logboekregistratie</h2>
+<ul>
+  <li><strong>configuration_file</strong> - Het configuratiebestand dat moet worden gebruikt voor logboekregistratie. In het voorbeeldbestand <code>crawler.conf</code> is deze optie gedefinieerd in <code>logging.log4j</code> en is de standaardwaarde ervan <code>log4j_custom.properties</code>.<br/>Deze optie moet op soortgelijke wijze gedefinieerd worden - ofwel met een <code>.properties</code>-bestand of met een <code>.conf</code>-bestand.</li>
+</ul><h2>Aanvullende opties voor het beheren van crawls</h2>
+<ul>
+  <li><strong>shutdown_timeout</strong> - Hiermee geeft u de timeoutwaarde in minuten aan, voordat de toepassing wordt afgesloten. De standaardwaarde is <code>10</code>.</li>
+  <li><strong>output_limit</strong> - Het hoogste aantal indexeerbare items dat de crawler probeert tegelijkertijd naar de uitvoeradapter te sturen. Dit aantal kan verder worden beperkt door het aantal kernen dat beschikbaar is om het werk uit te voeren. Het geeft aan dat er op een bepaald tijdstip niet meer dan &ldquo;x&rdquo; indexeerbare items die naar de uitvoeradapter zijn gezonden, wachten op retourzending. De standaardwaarde is <code>10</code>.</li>
+  <li><strong>input_limit</strong> - Beperkt het aantal URL&rsquo;s dat in één keer kan worden aangevraagd vanaf de connector. De standaardwaarde is <code>3</code>.</li>
+  <li><strong>output_timeout</strong> - Het aantal seconden voordat de Data Crawler een aanvraag voor de uitvoeradapter staakt en vervolgens het item uit de wachtrij van de uitvoeradapter verwijdert; hierdoor kan er meer verwerkt worden. De standaardwaarde is <code>1200</code>. <strong>Opmerking</strong> - Er dient aandacht te worden besteed aan de voorwaarden die door de uitvoeradapter opgelegd worden, aangezien deze voorwaarden betrekking kunnen hebben op de limieten die hier gedefinieerd zijn. De <code>output_limit</code> die hierboven is gedefinieerd, heeft alleen betrekking op de hoeveelheid indexeerbare objecten die tegelijk naar de uitvoeradapter kunnen worden verzonden. Als een indexeerbaar object eenmaal naar de uitvoeradapter is verzonden, wordt &ldquo;de klok gezet&rdquo; zoals gedefinieerd door de variabele <code>output_timeout</code>. Het kan zijn dat de uitvoeradapter zelf een snelheidsregeling heeft die voorkomt dat hij evenveel invoeritems verwerkt als dat hij ontvangt. De Orchestration Output Adapter kan bijvoorbeeld een verbindingspool hebben die geconfigureerd kan worden voor HTTP-verbindingen met de service. Als de standaardwaarde bijvoorbeeld 8 is en u de<br/><code>output_limit</code> instelt op een getal dat hoger is dan 8, zijn er processen op de klok die wachten op hun beurt om uitgevoerd te worden. U kunt dan timeouts krijgen.</li>
+  <li><strong>num_threads</strong> - Het aantal parallelle threads dat tegelijk kan worden uitgevoerd. Deze waarde kan een geheel getal zijn dat het aantal parallelle threads rechtstreeks aangeeft, of een tekenreeks met de indeling &ldquo;xNUM&rdquo;, die de vermenigvuldigingsfactor van het aantal beschikbare processors aangeeft, bijvoorbeeld &ldquo;x1.5&rdquo;. De standaardwaarde is <code>&quot;30&quot;</code>.</li>
+</ul><h2>ZIE OOK</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

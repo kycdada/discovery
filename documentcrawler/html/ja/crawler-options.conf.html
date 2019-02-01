@@ -1,0 +1,128 @@
+<h1>クロール・オプションの構成</h1><p>データ・クローラーは、最終的に Retrieve and Rank サービスの検索結果の形成に使用される生データを収集します。</p><p>データ・クローラーには、以下のリポジトリーからのデータ収集をサポートするコネクターが用意されています。</p>
+<ul>
+  <li>ファイル・システム</li>
+  <li>データベース (JDBC 経由)</li>
+  <li>CMIS (Content Management Interoperability Services)</li>
+  <li>SMB (Server message Block)、CIFS (Common Internet File System)、または Samba ファイル共有</li>
+  <li>SharePoint および SharePoint Online</li>
+  <li>BOX</li>
+</ul><p>コネクターをカスタマイズできるコネクター構成テンプレートも用意されています。</p><h2>はじめに:</h2><p>クローラーは、データ・リポジトリーをクロールする時に、ユーザー指定の開始シード URL から処理を始めて、情報のページをダウンロードしていきます。クローラーは、ダウンロードしたページに含まれているリンクも見つけて、新しくディスカバーしたページをさらにクロールするためのスケジュールを設定します。</p><p>構成情報を使用して、クロールする必要のあるページやクロールの方法が決定されます。コネクターごとに構成できるオプションをこのファイルで説明します。</p><p><strong>注</strong>: 各コネクターには、対応するシード構成ファイルもあります。シード構成オプションについては、別途説明します。</p><h3>ファイル・システム・コネクターの構成</h3><p>ファイル・システム・コネクターを使用すると、データ・クローラーのインストール済み環境に対してローカルのファイルをクロールできます。以下に、ファイル・システム・コネクターを使用する際に必要な基本構成オプションを示します。<br/>これらの値を設定するには、<code>config/connectors/filesystem.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>protocol</strong> - クロールに使用するコネクター・プロトコルの名前。このコネクターには、<code>sdk-fs</code> を使用します。</li>
+  <li><strong>collection</strong> - この属性は、一時ファイルの解凍に使用します。</li>
+  <li><strong>logging-config</strong> - ロギング・オプションの構成に使用するファイルを指定します。これは、<code>log4j</code> XML ストリングとしてフォーマット設定する必要があります。</li>
+  <li><strong>classname</strong> - コネクターの Java クラス名。このコネクターを使用する場合の値は、<code>plugin:filesystem.plugin@filesystem</code> でなければなりません。</li>
+</ul><h3>データベース・コネクターの構成</h3><p>データベース・コネクターを使用すると、カスタム SQL コマンドを実行して、行 (レコード) ごとに 1 つの文書、および列 (フィールド) ごとに 1 つのコンテンツ・エレメントを作成することにより、データベースをクロールできます。固有キーとして使用する列のほかに、各レコードの最終変更日を表すタイム・スタンプを含む列も指定できます。このコネクターは、指定したデータベースからすべてのレコードを取得します。また、このコネクターを SQL ステートメント内の特定のテーブル、結合などに制限することもできます。</p><p>データベース・コネクターを使用すると、以下のデータベースをクロールできます。</p>
+<ul>
+  <li>IBM DB2</li>
+  <li>MySQL</li>
+  <li>Oracle</li>
+  <li>PostgreSQL</li>
+  <li>Microsoft SQL Server</li>
+  <li>Sybase</li>
+  <li>その他の SQL 準拠のデータベース (JDBC 3.0 準拠のドライバーを経由)</li>
+</ul><p>このコネクターは、指定したデータベースとテーブルからすべてのレコードを取得します。</p><p><strong>JDBC ドライバー</strong><br/>データベース・コネクターは、Oracle JDBC (Java Database Connectivity) ドライバーのバージョン 1.5 に付属しています。<br/>データ・クローラーに付属のサード・パーティー JDBC ドライバーは、データ・クローラーをインストールしたディレクトリーの <code>/lib/java/database</code> にあります。このディレクトリーで、これらのドライバーを必要に応じて追加、削除、変更できます。<code>crawler.conf</code> ファイル内の <code>extra_jars_dir</code> 設定を使用して、別の場所を指定することもできます。</p><p><strong><em>DB2 JDBC ドライバー</em></strong><br/>ライセンスの問題により、データ・クローラーには、DB2 用の JDBC ドライバーは付属していません。ただし、JDBC サポートがインストールされているすべての DB2 インストール済み環境には、データ・クローラーが DB2 インストール済み環境をクロールできるようにするために必要な JAR ファイルが含まれています。DB2 インスタンスをクロールするには、データ・クローラーのインストール済み環境内の該当するディレクトリーにこれらのファイルをコピーして、データベース・コネクターでこれらのファイルを使用できるようにする必要があります。</p><p>データ・クローラーで DB2 インストール済み環境をクロールできるようにするには、DB2 インストール済み環境内で <code>db2jcc.jar</code> とライセンス (通常は <code>db2jcc_license_cu.jar</code>) JAR ファイルを見つけ、これらのファイルをデータ・クローラーのインストール・ディレクトリーの <code>lib/java</code> サブディレクトリーにコピーします。あるいは、<code>crawler.conf</code> ファイルにある <code>extra_jars_dir</code> 設定を使用して、別の場所を指定できます。</p><p><strong><em>MySQL JDBC ドライバー</em></strong><br/>製品の一部として配布された場合にライセンスの問題が生じる可能性があるため、data crawler には MySQL 用の JDBC ドライバーは付属していません。ただし、以下のように、MySQL JDBC ドライバーが含まれている JAR ファイルをダウンロードして、その JAR ファイルをデータ・クローラーのインストール済み環境に統合するのは、極めて簡単です。</p>
+<ol>
+  <li><p>Web ブラウザーを使用して MySQL のダウンロード・サイトにアクセスし、使用するアーカイブ形式 (通常、Microsoft Windows システムの場合は zip、Linux システムの場合は gzip された tarball) のソースとバイナリーのダウンロード・リンクを見つけます。そのリンクをクリックすると、ダウンロード・プロセスが開始されます。登録が必要な場合があります。</p></li>
+  <li><p>該当する <code>unzip archive-file-name</code> コマンドまたは <code>tar zxf archive-file-name</code> コマンドを使用し、ダウンロードしたアーカイブ・ファイルのタイプと名前に基づいて、そのアーカイブの内容を解凍します。</p></li>
+  <li><p>アーカイブ・ファイルの解凍先のディレクトリーに移動し、そのディレクトリーからデータ・クローラーのインストール・ディレクトリーの <code>lib/java</code> サブディレクトリーに JAR ファイルをコピーします。あるいは、<code>crawler.conf</code> ファイルの <code>extra_jars_dir</code> 設定を使用して別の場所を指定することもできます。</p></li>
+</ol><p>以下に、データベース・コネクターを使用する際に必要な基本構成オプションを示します。これらの値を設定するには、<code>config/connectors/database.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>protocol</strong> - クロールに使用するコネクター・プロトコルの名前。このコネクターの値は、アクセスするデータベース・システムに基づいています。</li>
+  <li><strong>collection</strong> - この属性は、一時ファイルの解凍に使用します。</li>
+  <li><strong>classname</strong> - コネクターの Java クラス名。このコネクターを使用する場合の値は、<code>plugin:database.plugin@database</code> でなければなりません。</li>
+  <li><strong>logging-config</strong> - ロギング・オプションの構成に使用するファイルを指定します。これは、<code>log4j</code> XML ストリングとしてフォーマット設定する必要があります。</li>
+</ul><h3>CMIS コネクターの構成</h3><p>CMIS (Content Management Interoperability Services) コネクターを使用すると、CMIS 対応の CMS (Content Management System) リポジトリー (Alfresco、Documentum、IBM Content Manager など) をクロールし、それらに含まれているデータにインデックスを付けることができます。</p><p>以下に、CMIS コネクターを使用する際に必要な基本構成オプションを示します。これらの値を設定するには、<code>config/connectors/cmis.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>protocol</strong> - クロールに使用するコネクター・プロトコルの名前。このコネクターには <code>cmis</code> を使用します。</li>
+  <li><strong>collection</strong> - この属性は、一時ファイルの解凍に使用します。</li>
+  <li><strong>dns</strong> - このオプションは使用されません。</li>
+  <li><strong>classname</strong> - コネクターの Java クラス名。このコネクターを使用する場合の値は、<code>plugin:cmis-v1.1.plugin@connector</code> でなければなりません。</li>
+  <li><strong>logging-config</strong> - ロギング・オプションの構成に使用するファイルを指定します。これは、<code>log4j</code> XML ストリングとしてフォーマット設定する必要があります。</li>
+  <li><strong>endpoint</strong> - CMIS 準拠のリポジトリーのサービス・エンドポイント URL。例えば、SharePoint の URL 構造は、以下のようになります。</li>
+  <li>AtomPub バインディングの場合:<br/> http://<server>:<port>/_vti_bin/cmis/rest?getRepositories</li>
+  <li>WebServices バインディングの場合:<br/> http://<server>:<port>/_vti_bin/cmissoapwsdl.aspx</li>
+  <li><p><strong>username</strong> - コンテンツへのアクセスに使用する CMIS リポジトリー・ユーザーのユーザー名。<br/>このユーザーは、クロールとインデックス付けの対象となるすべてのフォルダーと文書へのアクセス権限を持っている必要があります。</p></li>
+  <li><strong>password</strong> - コンテンツへのアクセスに使用する CMIS リポジトリーのパスワード。パスワードは暗号化せず、プレーン・テキストで指定してください。</li>
+  <li><strong>repositoryid</strong> - CMIS リポジトリーのコンテンツへのアクセスに使用する その具体的な CMIS リポジトリーの ID。</li>
+  <li><strong>bindingtype</strong> - CMIS リポジトリーへの接続に使用するバインディングのタイプを識別します。値は、<code>AtomPub</code> または <code>WebServices</code> のいずれかです。</li>
+  <li><strong>authentication</strong> - CMIS 互換リポジトリーへの接続時に使用する認証メカニズムのタイプ (<code>Basic HTTP Authentication</code>、<code>NTLM</code>、または <code>WS-Security(ユーザー名トークン)</code>) を識別します。</li>
+  <li><strong>enable-acl</strong> - クロールされたデータの ACL を取得できるようにします。このコレクション内の文書のセキュリティーを考慮しない場合は、このオプションを無効にすると、文書でこの情報が要求されず、この情報の取得やエンコードが行われないため、パフォーマンスが向上します。値は、<code>true</code> または <code>false</code> のいずれかです。</li>
+  <li><strong>user-agent</strong> - 文書をクロールする際にサーバーに送信されるヘッダー。</li>
+  <li><strong>method</strong> - パラメーターを渡すときに使用するメソッド (<code>GET</code> または <code>POST</code>)。</li>
+  <li><strong>url-logging</strong> - クロールされた URL をログに記録する範囲。可能な値は、以下のとおりです。</li>
+  <li><p><strong><em>full-logging</em></strong> - その URL に関する情報をすべてログに記録します。</p></li>
+  <li><strong><em>refined-logging</em></strong> - クローラー・ログの参照に必要な情報およびコネクターが正しく機能するために必要な情報のみをログに記録します。これがデフォルト値です。</li>
+  <li><strong><em>minimal-logging</em></strong> - コネクターが正しく機能するために必要な最小限の情報のみをログに記録します。</li>
+</ul><p>このオプションを minimal-logging に設定すると、ログのサイズが小さくなり、ログに記録されるデータ量が最少化されて入出力が減少するため、パフォーマンスが若干向上します。<br/>* <strong>ssl-version</strong> - HTTPS 接続に使用する SSL のバージョンを指定します。デフォルトでは、使用可能な最強のプロトコルが使用されます。</p><h3>SMB/CIFS/Samba コネクターの構成</h3><p>Samba コネクターを使用すると、Server Message Block (SMB) および Common Internet File System (CIFS) ファイル共有をクロールできます。このタイプのファイル共有は Windows ネットワーク上で一般的であり、オープン・ソース・プロジェクト <a href="https://www.samba.org/">Samba</a> を介しても提供されます。</p><p>以下に、Samba コネクターを使用する際に必要な基本構成オプションを示します。これらの値を設定するには、<code>config/connectors/samba.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>protocol</strong> - クロールに使用するコネクター・プロトコルの名前。このコネクターを使用する場合の値は、<code>smb</code> です。</li>
+  <li><strong>collection</strong> - この属性は、一時ファイルの解凍に使用します。</li>
+  <li><strong>classname</strong> - コネクターの Java クラス名。このコネクターを使用する場合の値は、<code>plugin:smb.plugin@connector</code> でなければなりません。</li>
+  <li><strong>logging-config</strong> - ロギング・オプションの構成に使用するファイルを指定します。これは、<code>log4j</code> XML ストリングとしてフォーマット設定する必要があります。</li>
+  <li><strong>username</strong> - 認証で使用する Samba ユーザー名。指定する場合は、ドメインとパスワードも指定する必要があります。指定しない場合は、ゲスト・アカウントが使用されます。</li>
+  <li><strong>password</strong> - 認証で使用する Samba パスワード。ユーザー名を指定する場合、これは必須です。パスワードは、データ・クローラーに付属の VCrypt プログラムを使用して暗号化する必要があります。</li>
+  <li><strong>archive</strong> - アーカイブ・ファイル内の圧縮されたファイルを Samba コネクターでクロールし、インデックスを付けられるようにします。値は <code>true</code> または <code>false</code> のいずれかで、デフォルト値は <code>false</code> です。</li>
+  <li><strong>max-policies-per-handle</strong> - 単一の RPC ハンドル用に開くことができるローカル・セキュリティー権限 (LSA) ポリシーの最大数を指定します。これらのポリシーによって、さまざまな条件下で特定のシステムを照会または変更する際に必要なアクセス許可が定義されます。このオプションのデフォルト値は <code>255</code> です。</li>
+  <li><strong>crawl-fs-metadata</strong> - このオプションをオンにすると、データ・クローラーによって、ファイルに関する使用可能なファイル・システムのメタデータ (作成日、最終変更日、ファイル属性など) を含む VXML 文書が追加されます。</li>
+  <li><strong>enable-arc-connector</strong> - このオプションは使用されません。</li>
+  <li><strong>disable-indexes</strong> - 無効化するインデックスの改行で区切られたリスト。これにより、クロールの速度が上がる場合があります。以下に例を示します。</li>
+  <li><p>disable-url-index</p></li>
+  <li>disable-error-state-index</li>
+  <li>disable-crawl-time-index</li>
+  <li><strong>exact-duplicates-hash-size</strong> - 完全重複を解決するためのハッシュ・テーブルのサイズを設定します。この数値を変更する場合は、十分な注意が必要です。選択する値は最適なものにする必要があります。サイズを大きくすると、検索の速度が上がる可能性がありますが、より多くのメモリーが必要になります。サイズを小さくすると、クロールの速度が低下する可能性がありますが、メモリー使用量がかなり削減されます。</li>
+  <li><strong>user-agent</strong> - このオプションは使用されません。</li>
+  <li><strong>timeout</strong> - このオプションは使用されません。</li>
+  <li><strong>n-concurrent-requests</strong> - 単一の IP アドレスと同時に送信される要求の数。デフォルトは <code>1</code> です。</li>
+  <li><strong>enqueue-persistence</strong> - このオプションは使用されません。</li>
+</ul><h3>SharePoint コネクターの構成</h3><p>SharePoint コネクターを使用すると、SharePoint Server と SharePoint Online オブジェクトをクロールし、それらのオブジェクトに含まれる情報にインデックスを付けることができます。文書、ユーザー・プロファイル、サイト・コレクション、ブログ、リスト項目、メンバーシップ・リスト、ディレクトリー・ページなどのオブジェクトには、それに関連付けられたメタデータとともにインデックスを付けることができます。リスト項目と文書の場合、インデックスに添付ファイルを含めることができます。</p><p><strong>注</strong>: SharePoint コネクターでは、SharePoint オブジェクトの具体的なタイプ (ブログ、文書、ユーザー・プロファイルなど) とは関係なく、すべての SharePoint オブジェクト上の <code>noindex</code> 属性が重視されます。それぞれの結果ごとに単一の文書が返されます。</p><p><strong>重要</strong>: SharePoint サイトのクロールに使用する SharePoint アカウントには、少なくとも完全な読み取りアクセス特権が必要です。</p><p>以下に、SharePoint コネクターを使用する際に必要な基本構成オプションを示します。<br/>これらの値を設定するには、<code>config/connectors/sharepoint.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>protocol</strong> - クロールに使用するコネクター・プロトコルの名前。このコネクターには、<code>io-sp</code> を使用します。</li>
+  <li><strong>collection</strong> - この属性は、一時ファイルの解凍に使用します。</li>
+  <li><strong>classname</strong> - コネクターの Java クラス名。このコネクターを使用する場合の値は、<code>plugin:io-sharepoint.plugin@connector</code> でなければなりません。</li>
+  <li><strong>logging-config</strong> - ロギング・オプションの構成に使用するファイルを指定します。これは、<code>log4j</code> XML ストリングとしてフォーマット設定する必要があります。</li>
+  <li><strong>seed-url-type</strong> - 指定されたシード URL が指す SharePoint オブジェクトのタイプ (サイト・コレクションまたは Web アプリケーション (仮想サーバーとも呼ばれます)) を識別します。</li>
+</ul>
+<ul>
+  <li><strong><em>Site Collections</em></strong> - シード URL のタイプが<code>サイト・コレクション</code>に設定されている場合は、URL によって参照されるサイト・コレクションの<br/> 子のみがクロールされます。</li>
+  <li><strong><em>Web Applications</em></strong> - シード URL のタイプが <code>Web アプリケーション</code>に設定されている場合は、各 URL によって参照される Web アプリケーションに属するすべてのサイト・コレクション (およびそれらの子) がクロールされます。</li>
+  <li><strong>auth-type</strong> - SharePoint サーバーに接続する際に使用する認証メカニズム (<code>BASIC</code>、<code>NTLM2</code>、<code>KERBEROS</code>、または <code>CBA</code>)。デフォルトの認証タイプは <code>NTLM2</code> です。</li>
+  <li><strong>spUser</strong> - コンテンツへのアクセスに使用する SharePoint ユーザーのユーザ名。このユーザーは、クロールとインデックス付けの対象となるすべてのサイトとリストへのアクセス権限を持っている必要があります。また、関連する許可を取得し、解決できなければなりません。<code>MYDOMAIN\\Administrator</code> のように、ドメイン名を付けて入力することをお勧めします。</li>
+  <li><strong>spPassword</strong> - コンテンツへのアクセスに使用する SharePoint ユーザーのパスワード。パスワードは、Data Crawler に付属の vcrypt プログラムを使用して暗号化する必要があります。</li>
+  <li><strong>cba-sts</strong> - クロール・ユーザーの認証を試みる際に使用されるセキュリティー・トークン・サービス (STS) エンドポイントの URL。ADFS を使用する SharePoint オンプレミスの場合、これは ADFS エンドポイントでなければなりません。認証タイプが <code>CBA</code> (クレーム・ベース認証) に設定されている場合、このフィールドは必須です。</li>
+  <li><strong>cba-realm</strong> - STS からセキュリティー・トークンを要求する際に使用する中継パーティー・トラスト ID。これは、「AppliesTo」値、または「レルム」とも呼ばれます。SharePoint Online の場合、これは、SharePoint Online インスタンスのルートへの URL (例えば <code>https://mycompany.sharepoint.com</code>) でなければなりません。ADFS の場合、これは、SharePoint と ADFS の間の中継パーティー・トラストの ID 値 (例えば <code>&quot;urn:SHAREPOINT:adfs&quot;</code>) です。</li>
+  <li><strong>everyone-group</strong> - 指定すると、すべてのユーザーにアクセス権限を付与する必要がある場合に、ACL でこのグループ名が使用されます。ユーザー・プロファイルのクロールが有効である場合、このフィールドは必須です。<br/><strong>注</strong> - Retrieve and Rank サービスでは、セキュリティーはまだ重視されていません。</li>
+  <li><strong>user-profile-master-url</strong> - ユーザー・プロファイルへのリンクを構築する際にコネクターで使用されるベース URL。これは、ユーザー・プロファイルの表示画面形式を指すように構成する必要があります。トークン <code>%FIRST_SEED%</code> が検出されると、これは最初のシード URL に置き換えられます。ユーザー・プロファイルのクロールが有効である場合は必須です。</li>
+  <li><strong>urls</strong> - クロールする SharePoint Web アプリケーションまたはサイト・コレクションの HTTP URL の改行で区切られたリスト。</li>
+  <li><strong>ehcache-config</strong> - このオプションは使用されません。</li>
+  <li><strong>method</strong> - パラメーターを渡すときに使用するメソッド (<code>GET</code> または <code>POST</code>)。</li>
+  <li><strong>cache-types</strong> - このオプションは使用されません。</li>
+  <li><strong>cache-size</strong> - このオプションは使用されません。</li>
+  <li><strong>enable-acl</strong> - SharePoint ユーザー・プロファイルのクロールを有効にします。値は、<code>true</code> または <code>false</code>です。デフォルト値は <code>false</code> です。</li>
+</ul><h3>Box コネクターの構成</h3><p>Box コネクターを使用すれば、社内の Box インスタンスをクロールし、そこに含まれている情報のインデックスを生成できます。以下に、Box コネクターを使用する際に必要な基本構成オプションを示します。これらの値を設定するには、<code>config/connectors/box.conf</code> ファイルを開き、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>protocol</strong> - クロールに使用するコネクター・プロトコルの名前。このコネクターには <code>box</code> を使用します。</li>
+  <li><strong>classname</strong> - コネクターの Java クラス名。このコネクターを使用する場合の値は、<code>plugin:box.plugin@connector</code> でなければなりません。</li>
+  <li><strong>logging-config</strong> - ロギング・オプションの構成に使用するファイルを指定します。これは、<code>log4j</code> XML ストリングとしてフォーマット設定する必要があります。</li>
+  <li><strong>box-crawl-seed-url</strong> - Box のベース URL。このコネクターの値は、<code>box://app.box.com/</code> です。さまざまなタイプの URL をクロールできます。例えば、以下のようなタイプがあります。</li>
+  <li><p><strong><em>全社レベルでクロールする場合</em></strong>: <code>box://app.box.com/</code></p></li>
+  <li><strong><em>特定のフォルダーをクロールする場合</em></strong>: <code>box://app.box.com/user/USER_ID/folder/FOLDER_ID/FolderName</code></li>
+  <li><strong><em>特定のユーザーをクロールする場合</em></strong>: <code>box://app.box.com/user/USER_ID/</code></li>
+  <li><strong>client-id</strong> - Box アプリケーションの作成時に Box から提供されたクライアント ID を入力します。</li>
+  <li><strong>client-secret</strong> - Box アプリケーションの作成時に Box から提供されたクライアント秘密鍵を入力します。</li>
+  <li><strong>path-to-private-key</strong> - ローカル・ファイル・システム上の秘密鍵の場所です。これは、Box との通信のために生成される秘密鍵/公開鍵ペアの一方となります。</li>
+  <li><strong>kid</strong> - 公開鍵 ID を指定します。これは、Box との通信のために生成される秘密鍵/公開鍵ペアのもう一方となります。</li>
+  <li><strong>enterprise-id</strong> - アプリケーションを許可した企業。企業 ID は、Box の管理者コンソールのメインページに表示されます。</li>
+  <li><strong>enable-acl</strong> - 内部使用のみ。クロールしたデータの ACL の取得を有効にします。</li>
+  <li><strong>user-agent</strong> - 文書をクロールする際にサーバーに送信されるヘッダー。</li>
+  <li><strong>method</strong> - パラメーターを渡すときに使用するメソッド (<code>GET</code> または <code>POST</code>)。</li>
+  <li><strong>url-logging</strong> - クロールされた URL をログに記録する範囲。可能な値は、以下のとおりです。</li>
+  <li><p><strong><em>full-logging</em></strong> - その URL に関する情報をすべてログに記録します。</p></li>
+  <li><strong><em>refined-logging</em></strong> - クローラー・ログの参照に必要な情報およびコネクターが正しく機能するために必要な情報のみをログに記録します。これがデフォルト値です。</li>
+  <li><strong><em>minimal-logging</em></strong> - コネクターが正しく機能するために必要な最小限の情報のみをログに記録します。</li>
+</ul><p>このオプションを minimal-logging に設定すると、ログのサイズが小さくなり、ログに記録されるデータ量が最少化されて入出力が減少するため、パフォーマンスが若干向上します。<br/>* <strong>ssl-version</strong> - HTTPS 接続に使用する SSL のバージョンを指定します。デフォルトでは、使用可能な最強のプロトコルが使用されます。</p><p>Box コネクターには以下のような制限事項があります。</p>
+<ul>
+  <li>ファイルのコメントやタスクは取得されません。</li>
+  <li>Lotus Notes のコンテンツ本体は JSON で取得されます。Lotus Notes データをさらに変換しなければならない場合もあります。</li>
+  <li>TestIt で個々の文書を取得することはできません。TestIt で取得できるのは、シード URL、フォルダー URL、ユーザー URL に限られます。</li>
+</ul><h2>関連資料</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

@@ -1,0 +1,126 @@
+<h1>配置搜寻选项</h1><p>Data Crawler 将收集最终用于形成 IBM Watson Retrieve and Rank 服务的搜索结果的原始数据。</p><p>目前，Data Crawler 提供了一些连接器以用于从以下存储库收集数据：</p>
+<ul>
+  <li>文件系统</li>
+  <li>使用 JDBC 的数据库</li>
+  <li>CMIS（内容管理互操作性服务）</li>
+  <li>SMB（服务器消息块）、CIFS（公共因特网文件系统）或 Samba 文件共享</li>
+  <li>SharePoint 和 SharePoint Online</li>
+  <li>Box</li>
+</ul><p>此外还提供了一个连接器配置模板，您可以使用此模板来定制连接器。</p><h2>入门：</h2><p>在搜寻数据存储库时，搜寻器从用户指定的起始种子 URL 开始，并开始下载信息页面。另外，搜寻器还会查找已下载页面中的链接，并安排进一步搜寻新发现的页面。</p><p>系统将使用配置信息来确定要搜寻的页面及其搜寻方式。此文件解释了每个连接器的可配置选项。</p><p><strong>注</strong>：每个连接器还有一个对应的种子配置文件；在其他位置会单独描述种子配置选项。</p><h3>配置文件系统连接器</h3><p>您可以使用文件系统连接器来搜寻 Data Crawler 安装的本地文件。下面是使用文件系统连接器时需要设置的基本配置选项。要设置这些值，请打开文件 <code>config/connectors/filesystem.conf</code>，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><strong>protocol</strong> - 用于搜寻的连接器协议的名称。请对此连接器使用 <code>sdk-fs</code>。</li>
+  <li><strong>collection</strong> - 该属性用于解包临时文件。</li>
+  <li><strong>logging-config</strong> - 指定用于配置日志记录选项的文件；它必须格式化为 <code>log4j</code> XML 字符串。</li>
+  <li><strong>classname</strong> - 连接器的 Java 类名。使用此连接器时，该值必须为 <code>plugin:filesystem.plugin@filesystem</code>。</li>
+</ul><h3>配置数据库连接器</h3><p>您可以使用数据库连接器，通过执行定制 SQL 命令并针对每行（记录）创建一个文档且针对每列（字段）创建一个内容元素，以搜寻数据库。您可以指定要用作唯一键的列，还可以指定包含时间戳记（表示每个记录的上次修改日期）的列。该连接器将从指定数据库中检索所有记录，也可以通过 SQL 语句限制为特定的表和连接等。</p><p>您可以使用数据库连接器来搜寻以下数据库：</p>
+<ul>
+  <li>IBM DB2</li>
+  <li>MySQL</li>
+  <li>Oracle</li>
+  <li>PostgreSQL</li>
+  <li>Microsoft SQL Server</li>
+  <li>Sybase</li>
+  <li>使用 JDBC 3.0 兼容驱动程序的其他 SQL 兼容数据库</li>
+</ul><p>该连接器将从指定数据库和表中检索所有记录。</p><p><strong>JDBC 驱动程序</strong> 数据库连接器随附了 Oracle JDBC（Java 数据库连接）驱动程序 V1.5。Data Crawler 随附的所有第三方 JDBC 驱动程序均位于 Data Crawler 安装目录的 <code>/lib/java/database</code> 目录中，您可以根据需要在此目录中添加、移除和修改驱动程序。您也可以使用 <code>crawler.conf</code> 文件中的 <code>extra_jars_dir</code> 设置来指定其他位置。</p><p><strong><em>DB2 JDBC 驱动程序</em></strong> 由于许可问题，Data Crawler 未随附适用于 DB2 的 JDBC 驱动程序。但是，已安装 JDBC 支持的所有 DB2 安装都包含 Data Crawler 所需的 JAR 文件，因此能够搜寻 DB2 安装。要搜寻 DB2 实例，您必须将这些文件复制到 Data Crawler 安装目录中的相应目录中，这样，数据库连接器才能使用这些文件。</p><p>要使 Data Crawler 能够搜寻 DB2 安装，请找到 DB2 安装目录中的 <code>db2jcc.jar</code> 和许可证（通常为 <code>db2jcc_license_cu.jar</code>）JAR 文件，然后将这些文件复制到 Data Crawler 安装目录中的 <code>lib/java</code> 子目录中，或者您可以使用 <code>crawler.conf</code> 文件中的 <code>extra_jars_dir</code> 设置来指定其他位置。</p><p><strong><em>MySQL JDBC 驱动程序</em></strong><br/>如果驱动程序作为产品的一部分交付，那么 Data Crawler 可能会因为许可问题而未随附适用于 MySQL 的 JDBC 驱动程序。但是，下载包含 MySQL JDBC 驱动程序的 JAR 文件并将该 JAR 文件集成到 Data Crawler 安装中是一件非常容易的事情：</p>
+<ol>
+  <li><p>使用 Web 浏览器访问 MySQL 下载站点，找到您要使用的归档格式（通常，对于 Microsoft Windows 系统，格式为 zip；对于 Linux 系统，格式为 gzipped tarball）的源文件和二进制文件下载链接。单击此链接以启动下载过程。可能需要进行注册。</p></li>
+  <li><p>根据您下载的归档文件的类型和名称，使用相应的 <code>unzip archive-file-name</code> 或 <code>tar zxf archive-file-name</code> 命令来解压缩该归档文件的内容。</p></li>
+  <li><p>切换该归档文件解压到的目录，然后将 JAR 文件从此目录复制到 Data Crawler 安装目录中的 <code>lib/java</code> 子目录中，或者您可以使用 <code>crawler.conf</code> 文件中的 <code>extra_jars_dir</code> 设置来指定其他位置。</p></li>
+</ol><p>下面是使用数据库连接器时需要设置的基本配置选项。要设置这些值，请打开文件 <code>config/connectors/database.conf</code>，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><strong>protocol</strong> - 用于搜寻的连接器协议的名称。此连接器的该值取决于要访问的数据库系统。</li>
+  <li><strong>collection</strong> - 该属性用于解包临时文件。</li>
+  <li><strong>classname</strong> - 连接器的 Java 类名。使用此连接器时，该值必须为 <code>plugin:database.plugin@database</code>。</li>
+  <li><strong>logging-config</strong> - 指定用于配置日志记录选项的文件；它必须格式化为 <code>log4j</code> XML 字符串。</li>
+</ul><h3>配置 CMIS 连接器</h3><p>您可以使用 CMIS（内容管理互操作性服务）连接器来搜寻支持 CMIS 的 CMS（内容管理系统）存储库（如 Alfresco、Documentum 或 IBM Content Manager），然后对其包含的数据建立索引。</p><p>下面是使用 CMIS 连接器时需要设置的基本配置选项。要设置这些值，请打开文件 <code>config/connectors/cmis.conf</code>，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><strong>protocol</strong> - 用于搜寻的连接器协议的名称。请对此连接器使用 <code>cmis</code>。</li>
+  <li><strong>collection</strong> - 该属性用于解包临时文件。</li>
+  <li><strong>dns</strong> - 未使用的选项。</li>
+  <li><strong>classname</strong> - 连接器的 Java 类名。使用此连接器时，该值必须为 <code>plugin:cmis-v1.1.plugin@connector</code>。</li>
+  <li><strong>logging-config</strong> - 指定用于配置日志记录选项的文件；它必须格式化为 <code>log4j</code> XML 字符串。</li>
+  <li><strong>endpoint</strong> - 与 CMIS 兼容的存储库的服务端点 URL。例如，SharePoint 的 URL 结构包括：</li>
+  <li>对于 AtomPub 绑定：<br/> http://<server>:<port>/_vti_bin/cmis/rest?getRepositories</li>
+  <li>对于 WebService 绑定：<br/> http://<server>:<port>/_vti_bin/cmissoapwsdl.aspx</li>
+  <li><p><strong>username</strong> - 用于访问内容的 CMIS 存储库用户的用户名。该用户必须有权访问要搜寻和建立索引的所有目标文件夹和文档。</p></li>
+  <li><strong>password</strong> - 用于访问内容的 CMIS 存储库的密码。此密码不得加密，应以纯文本格式提供。</li>
+  <li><strong>repositoryid</strong> - 要访问其内容的 CMIS 存储库的标识。</li>
+  <li><strong>bindingtype</strong> - 标识在连接 CMIS 存储库时要使用的绑定类型。值为 <code>AtomPub</code> 或 <code>WebServices</code>。</li>
+  <li><strong>authentication</strong> - 标识在联系与 CMIS 兼容的存储库时要使用的认证机制类型：<code>基本 HTTP 认证</code>、<code>NTLM</code> 或 <code>WS-Security（用户名令牌）</code>。</li>
+  <li><strong>enable-acl</strong> - 启用用于检索已搜寻数据 ACL 的功能。如果您不担心此集合中文档的安全性，那么禁用此选项可以提高性能，因为将不会向文档请求这些信息，也不会对这些信息进行检索和编码。值为 <code>true</code> 或 <code>false</code>。</li>
+  <li><strong>user-agent</strong> - 搜寻文档时发送到服务器的头。</li>
+  <li><strong>method</strong> - 用于传递参数的方法（<code>GET</code> 或 <code>POST</code>。</li>
+  <li><strong>url-logging</strong> - 已搜寻 URL 的日志记录范围。可能的值包括：</li>
+  <li><p><strong><em>full-logging</em></strong> - 记录有关 URL 的所有信息。</p></li>
+  <li><strong><em>refined-logging</em></strong> - 只记录浏览搜寻器日志所需的信息以及使连接器正常运作所需的信息；这是缺省值。</li>
+  <li><strong><em>minimal-logging</em></strong> - 只记录使连接器正确运作所需的最少信息量。</li>
+</ul><p>因为将要记录的数据量降至最少将会减少相关 I/O，因此将此选项设置为 minimal-logging 将减小日志大小并能略微提升性能。<br/>* <strong>ssl-version</strong> - 指定要用于 HTTPS 连接的 SSL 版本。缺省情况下，会使用安全性最高的协议。</p><h3>配置 SMB/CIFS/Samba 连接器</h3><p>您可以使用 Samba 连接器来搜寻服务器消息块 (SMB) 和公共因特网文件系统 (CIFS) 文件共享。这种类型的文件共享在 Windows 网络上十分普遍，也可通过开放式源代码项目 <a href="https://www.samba.org/">Samba</a> 来提供。</p><p>下面是使用 Samba 连接器时需要设置的基本配置选项。要设置这些值，请打开文件 <code>config/connectors/samba.conf</code>，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><strong>protocol</strong> - 用于搜寻的连接器协议的名称。使用此连接器时，此值为 <code>smb</code>。</li>
+  <li><strong>collection</strong> - 该属性用于解包临时文件。</li>
+  <li><strong>classname</strong> - 连接器的 Java 类名。使用此连接器时，该值必须为 <code>plugin:smb.plugin@connector</code>。</li>
+  <li><strong>logging-config</strong> - 指定用于配置日志记录选项的文件；它必须格式化为 <code>log4j</code> XML 字符串。</li>
+  <li><strong>username</strong> - 用于进行认证的 Samba 用户名。如果已提供此选项，那么还必须提供域和密码。如果未提供此选项，那么将使用访客帐户。</li>
+  <li><strong>password</strong> - 用于进行认证的 Samba 密码。如果提供了用户名，那么此选项为必填。必须使用 Data Crawler 随附的 VCrypt 库来加密密码。</li>
+  <li><strong>archive</strong> - 可使 Samba 连接器搜寻归档文件中压缩的文件并对其建立索引。值为 <code>true</code> 或 <code>false</code>；缺省值为 <code>false</code>。</li>
+  <li><strong>max-policies-per-handle</strong> - 指定可以为单个 RPC 句柄打开的本地安全授权 (LSA) 策略的最大数量。这些策略定义在各种情况下查询或修改特定系统所需的访问许可权。此选项的缺省值为 <code>255</code>。</li>
+  <li><strong>crawl-fs-metadata</strong> - 开启此选项会使 Data Crawler 添加 VXML 文档，此文档中包含有关此文件的可用文件系统元数据（创建日期、上次修改日期、文件属性等）。</li>
+  <li><strong>enable-arc-connector</strong> - 未使用的选项。</li>
+  <li><strong>disable-indexes</strong> - 要禁用的索引的换行符分隔列表，此选项可能会加快搜寻，例如：</li>
+  <li><p>disable-url-index</p></li>
+  <li>disable-error-state-index</li>
+  <li>disable-crawl-time-index</li>
+  <li><strong>exact-duplicates-hash-size</strong> - 设置用于解析完全重复项的散列表的大小。修改此数字时请格外小心。您选择的值必须适宜；此值越大，查找速度越快但需要更多内存，反之，此值越小，搜寻速度越慢但会显著降低内存使用率。</li>
+  <li><strong>user-agent</strong> - 未使用的选项。</li>
+  <li><strong>timeout</strong> - 未使用的选项。</li>
+  <li><strong>n-concurrent-requests</strong> - 并行发送到单个 IP 地址的请求数。缺省值为 <code>1</code>。</li>
+  <li><p><strong>enqueue-persistence</strong> - 未使用的选项。</p></li>
+</ul><h3>配置 SharePoint 连接器</h3><p>您可以使用 SharePoint 连接器来搜寻 SharePoint Server 和 SharePoint Online 对象并对其包含的信息建立索引。可以使用与对象关联的元数据，对文档、用户概要文件、站点集合、博客、列表项、成员列表、目录页面等对象建立索引。对于列表项和文档，索引可以包含附件。</p><p><strong>注</strong>：SharePoint 连接器支持所有 SharePoint 对象上的 <code>noindex</code> 属性，无论其具体类型（博客、文档、用户概要文件等）如何。将针对每个结果返回一个文档。</p><p><strong>要点</strong>：用于搜寻 SharePoint 站点的 SharePoint 帐户必须至少拥有完全读访问权限。</p><p>下面是使用 SharePoint 连接器时需要设置的基本配置选项。要设置这些值，请打开文件 <code>config/connectors/sharepoint.conf</code>，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><strong>protocol</strong> - 用于搜寻的连接器协议的名称。请对此连接器使用 <code>io-sp</code>。</li>
+  <li><strong>collection</strong> - 该属性用于解包临时文件。</li>
+  <li><strong>classname</strong> - 连接器的 Java 类名。使用此连接器时，该值必须为 <code>plugin:io-sharepoint.plugin@connector</code>。</li>
+  <li><strong>logging-config</strong> - 指定用于配置日志记录选项的文件；它必须格式化为 <code>log4j</code> XML 字符串。</li>
+  <li><strong>seed-url-type</strong> - 标识所提供的种子 URL 所指向的 SharePoint 对象类型：站点集合或 Web 应用程序（也称为虚拟服务器）。</li>
+  <li><p><strong><em>站点集合</em></strong> - 如果种子 URL 类型设置为<code>站点集合</code>，那么只会搜寻该 URL 引用的站点集合的子代。</p></li>
+  <li><strong><em>Web 应用程序</em></strong> - 如果种子 URL 类型设置为 <code>Web 应用程序</code>，那么将搜寻属于各个 URL 所引用的 Web 应用程序的所有站点集合（及其子代）。</li>
+  <li><strong>auth-type</strong> - 在联系 SharePoint 服务器时要使用的认证机制：<code>BASIC</code>、<code>NTLM2</code>、<code>KERBEROS</code> 或 <code>CBA</code>。缺省认证类型为 <code>NTLM2</code>。</li>
+  <li><strong>spUser</strong> - 用于访问内容的 SharePoint 用户的用户名。该用户必须有权访问要搜寻和建立索引的所有目标站点和列表，并且必须能够检索和解析相关许可权。输入此用户名时最好带有域名，例如：<code>MYDOMAIN\\Administrator</code>。</li>
+  <li><strong>spPassword</strong> - 用于访问内容的 SharePoint 用户的密码。必须使用 Data Crawler 随附的 vcrypt 程序来加密密码。</li>
+  <li><strong>cba-sts</strong> - 尝试认证搜寻用户的安全性令牌服务 (STS) 端点的 URL。对于预置 ADFS 的 SharePoint，此值应该是 ADFS 端点。如果认证类型设置为 <code>CBA</code>（基于声明的认证），那么此字段为必填字段。</li>
+  <li><strong>cba-realm</strong> - 从 STS 请求安全性令牌时要使用的中继方信任标识。有时称为“AppliesTo”值或“域”。对于 SharePoint Online，此值应该是 SharePoint Online 实例根目录的 URL（例如，<code>https://mycompany.sharepoint.com</code>）。对于 ADF，此值是 SharePoint 和 ADF 之间的中继方信任的标识值（例如，<code>&quot;urn:SHAREPOINT:adfs&quot;</code>）。</li>
+  <li><strong>everyone-group</strong> - 如果指定此选项，那么当为所有人提供访问权时，ACL 中将使用该组名。如果启用了搜寻用户概要文件，那么此字段为必填字段。**注** - Retrieve and Rank 服务尚未考虑安全性。</li>
+  <li><strong>user-profile-master-url</strong> - 连接器用于构建用户概要文件链接的基本 URL。此 URL 应配置为指向用户概要文件的显示表单。如果发现令牌 <code>%FIRST_SEED%</code>，该令牌将替换为第一个种子 URL。启用了搜寻用户概要文件的功能时，这为必填项。</li>
+  <li><strong>urls</strong> - 要搜寻的 SharePoint Web 应用程序或站点集合的 HTTP URL 的换行符分隔列表。</li>
+  <li><strong>ehcache-config</strong> - 未使用的选项。</li>
+  <li><strong>method</strong> - 用于传递参数的方法（<code>GET</code> 或 <code>POST</code>。</li>
+  <li><strong>cache-types</strong> - 未使用的选项。</li>
+  <li><strong>cache-size</strong> - 未使用的选项。</li>
+  <li><strong>enable-acl</strong> - 启用用于搜寻 SharePoint 用户概要文件的功能；值为 <code>true</code> 或 <code>false</code>。缺省值为 <code>false</code>。</li>
+</ul><h3>配置 Box 连接器</h3><p>您可以使用 Box 连接器来搜寻 Enterprise Box 实例，并对其包含的信息建立索引。下面是使用 Box 连接器时需要设置的基本配置选项。要设置这些值，请打开文件 <code>config/connectors/box.conf</code>，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><strong>protocol</strong> - 用于搜寻的连接器协议的名称。请对此连接器使用 <code>box</code>。</li>
+  <li><strong>classname</strong> - 连接器的 Java 类名。使用此连接器时，该值必须为 <code>plugin:box.plugin@connector</code>。</li>
+  <li><strong>logging-config</strong> - 指定用于配置日志记录选项的文件；它必须格式化为 <code>log4j</code> XML 字符串。</li>
+  <li><strong>box-crawl-seed-url</strong> - Box 的基本 URL。对于此连接器，此值为 <code>box://app.box.com/</code>。您可以搜寻不同类型的 URL，例如：</li>
+  <li><p><strong><em>搜寻整个企业</em></strong>：<code>box://app.box.com/</code></p></li>
+  <li><strong><em>搜寻特定文件夹</em></strong>：<code>box://app.box.com/user/USER_ID/folder/FOLDER_ID/FolderName</code></li>
+  <li><strong><em>搜寻特定用户</em></strong>：<code>box://app.box.com/user/USER_ID/</code></li>
+  <li><strong>client-id</strong> - 输入创建 Box 应用程序时由 Box 提供的客户端标识。</li>
+  <li><strong>client-secret</strong> - 输入创建 Box 应用程序时由 Box 提供的客户端密钥。</li>
+  <li><strong>path-to-private-key</strong> - 这是本地文件系统上专用密钥的位置，该专用密钥是为与 Box 通信而生成的专用-公用密钥对的一部分。</li>
+  <li><strong>kid</strong> - 指定公用密钥标识。这是为与 Box 通信而生成的专用-公用密钥对的另一部分。</li>
+  <li><strong>enterprise-id</strong> - 为您的应用程序授权的企业。企业标识会在 Box 管理员控制台的主页中列出。</li>
+  <li><strong>enable-acl</strong> - 仅供内部使用。启用用于检索已搜寻数据 ACL 的功能。</li>
+  <li><strong>user-agent</strong> - 搜寻文档时发送到服务器的头。</li>
+  <li><strong>method</strong> - 用于传递参数的方法（<code>GET</code> 或 <code>POST</code>。</li>
+  <li><strong>url-logging</strong> - 已搜寻 URL 的日志记录范围。可能的值包括：</li>
+  <li><p><strong><em>full-logging</em></strong> - 记录有关 URL 的所有信息。</p></li>
+  <li><strong><em>refined-logging</em></strong> - 只记录浏览搜寻器日志所需的信息以及使连接器正常运作所需的信息；这是缺省值。</li>
+  <li><strong><em>minimal-logging</em></strong> - 只记录使连接器正确运作所需的最少信息量。</li>
+</ul><p>因为将要记录的数据量降至最少将会减少相关 I/O，因此将此选项设置为 minimal-logging 将减小日志大小并能略微提升性能。<br/>* <strong>ssl-version</strong> - 指定要用于 HTTPS 连接的 SSL 版本。缺省情况下，会使用安全性最高的协议。</p><p>Box 连接器确实存在一些限制：</p>
+<ul>
+  <li>不检索关于文件的注释或任务。</li>
+  <li>注释内容正文将作为 JSON 进行检索。可能需要另外转换注释数据。</li>
+  <li>不能通过 TestIt 检索单个文档。只能通过 TestIt 检索种子 URL、文件夹 URL 和用户 URL。</li>
+</ul><h2>另请参阅</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

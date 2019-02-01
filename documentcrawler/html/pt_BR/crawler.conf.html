@@ -1,0 +1,83 @@
+<h1>Configurando o Data Crawler</h1><p>O <code>crawler</code> requer um arquivo de configuração para suas opções. Exemplos de<br/>configuração são fornecidos no diretório <code>share</code> dentro do diretório de instalação do <code>crawler</code>. Copie esses exemplos e modifique-os. <em>Não modifique os exemplos no local.</em></p><p>O arquivo <code>crawler.conf</code> contém informações que dizem ao crawler quais arquivos usar<br/>para seu crawl (adaptador de entrada), onde enviar a coleção de arquivos passados por crawl depois do crawl ter sido concluído (adaptador de saída), e outras opções de gerenciamento de crawl.</p><p><strong>Nota</strong>: todos os caminhos de arquivo são relativos ao diretório <code>config</code>, exceto onde indicado.</p><p>As opções que podem ser configuradas neste arquivo são:</p><h2>Adaptador de entrada</h2>
+<ul>
+  <li><strong>class</strong> - Somente uso interno; define a classe do adaptador de entrada do Data Crawler. O valor padrão é: <code>com.ibm.watson.crawler.connectorframeworkinputadapter.Crawl</code>.</li>
+  <li><strong>config</strong> - Somente uso interno; define a configuração do Connector Framework. A chave de configuração padrão dentro desse bloco para passar para o adaptador de entrada escolhido é: <code>connector_framework</code>.**Nota** - O Connector Framework é o que permite falar com os dados. Podem ser dados internos dentro da empresa, ou pode ser dados externos na web ou na nuvem. Os conectores permitem acesso a várias origens de dados diferentes, enquanto a conexão é realmente controlada pelo processo de crawl.</li>
+  <li><strong>IMPORTANTE</strong> - Os dados recuperados pelo Adaptador de Entrada Connector Framework são armazenados em cache localmente. Eles não são armazenados criptografados. Por padrão, os dados são armazenados em cache em um diretório temporário que deve ser limpo na reinicialização, e devem ser legíveis somente pelo usuário que executou o comando do crawler. Há uma chance de que esse diretório possa sobreviver ao crawler, se a estrutura do conector desaparecesse antes que pudesse se limpar. Considere cuidadosamente o local para os dados em cache - você pode colocá-los em um sistema de arquivos criptografados, mas esteja ciente das implicações de desempenho ao fazer isso. É possível decidir somente o equilíbrio apropriado entre a velocidade e a segurança para os crawls.</li>
+  <li><strong>crawl_config_file</strong> - O arquivo de configuração a ser usado para o crawl. O valor padrão é: <code>connectors/filesystem.conf</code>.</li>
+  <li><strong>crawl_seed_file</strong> - O arquivo inicial de crawl a ser usado para o crawl. O valor padrão é: <code>seeds/filesystem-seed.conf</code>.</li>
+  <li><strong>id_vcrypt_file</strong> - O arquivo-chave usado para criptografia de dados pelo crawler; a chave padrão incluída com o crawler é <code>id_vcrypt</code>.<br/>Use o script vcrypt na pasta <code>bin</code>, se precisar gerar um novo id_vcrypt_file</li>
+  <li><strong>crawler_temp_dir</strong> - A pasta temporária do Crawler para logs do conector. O valor padrão, <code>tmp</code>, é fornecido. Se ele ainda não existir, a pasta <code>tmp</code> será criada no diretório atualmente em funcionamento.</li>
+  <li><strong>extra_jars_dir</strong> - Somente uso interno; inclui JARs extras no caminho de classe do Connector Framework.<br/>Esse valor deve ser <code>oakland</code> ao usar o conector SharePoint, e <code>database</code> ao usar o conector de banco de dados. É possível deixá-lo vazio (ou seja, sequência vazia &quot;&quot;) ao usar outros conectores.<br/> <strong>Nota</strong>: relativo ao diretório <code>lib/java</code> de estrutura do conector.</li>
+  <li><strong>urls_to_filter</strong> - Lista de desbloqueio separada por quebras de linha de URLs para efetuar crawl, na forma de expressão regular. O Data Crawler somente efetua crawl das URLs que correspondem a uma das expressões regulares fornecidas. A lista de domínio contém os domínios mais comuns de nível superior; inclua nela, se necessário. lista de tipos de extensão do arquivo contém as extensões dos arquivos que o Orchestration Service suporta, a partir dessa liberação do Data Crawler. Assegure-se de que o domínio da URL inicial seja permitido pelo filtro. Por exemplo, se a URL inicial se parecer com <code>http://testdomain.test.in</code>, inclua &ldquo;<code>in</code>&rdquo; no filtro de domínio. Assegure-se de que a URL inicial não seja excluída por um filtro ou o Crawler poderá ser interrompido.</li>
+  <li><strong>max_text_size</strong> - O tamanho máximo, em bytes, que um documento pode ter antes que ele seja gravado no disco pelo Connector Framework. Ajustando isso para mais alto, diminuirá a quantia de documentos gravados no disco, mas aumentará os requisitos de memória.</li>
+  <li><strong>extra_vm_params</strong> - Permite incluir parâmetros Java extras no comando usado para ativar o Connector Framework.</li>
+  <li><strong>bootstrap_logging</strong> - Grava o log de inicialização da estrutura do conector; útil somente para depuração avançada. Os valores são <code>true</code> ou <code>false</code>. O arquivo de log será gravado no <code>crawler_temp_dir</code>.</li>
+</ul><h2>Adaptador de armazenamento</h2><p>Permite o armazenamento do estado interno do crawler em um banco de dados. Essa configuração é necessária para que as opções <code>restart</code> e <code>resume</code> do crawl funcionem corretamente.</p>
+<pre><code class="javascript">storage_adapter {
+ config = &quot;storage_in_db&quot;
+  storage_in_db {
+    include &quot;storage/database_storage.conf&quot;
+  } 
+}
+</code></pre><p>O arquivo referenciado, <code>storage/database_storage.conf</code>, usa um banco de dados H2, por padrão. É possível usar qualquer banco de dados com um driver JDBC, em vez dos padrões fornecidos. Consulte a documentação para o driver JDBC para localizar informações específicas sobre algumas dessas configurações. As opções padrão podem ser mudadas abrindo diretamente o arquivo <code>config/storage/database_storage.conf</code> e modificando os valores a seguir, específicos para o caso de uso:</p>
+<ul>
+  <li><strong>class</strong> - Esta classe aponta para a classe do adaptador de banco de dados a ser usada. O valor padrão é <code>com.ibm.watson.crawler.storageadapters.DatabasePersistAdapter</code></li>
+  <li><strong>driver</strong> - A classe para o driver JDBC. O valor padrão é <code>org.h2.Driver</code> para usar H2</li>
+  <li><strong>url</strong> - Consulte as opções de JDBC para o driver. Esse é o prefixo da URL para a sequência de conexões JDBC. O padrão é <code>jdbc:h2:file:</code></li>
+  <li><strong>database_location</strong> - O local onde você deseja seu banco de dados. Isso se aplica somente aos bancos de dados baseados em arquivos como sqlite e H2. O valor padrão é <code>./storage/database</code></li>
+  <li><strong>database_name</strong> - Nome do banco de dados. O valor padrão é <code>ActivityDB</code></li>
+  <li><strong>table_name</strong> - Nome da tabela a ser usada. O valor padrão é <code>Ledger</code></li>
+  <li><strong>username</strong> - Nome do usuário a conectar-se ao banco de dados</li>
+  <li><strong>password</strong> - Senha para conectar-se ao banco de dados</li>
+</ul><p>A configuração padrão é suficiente para a maioria das atividades.</p><h2>Adaptador de saída</h2><p>Existem dois <em>adaptadores de saída</em> dos quais escolher. Defina o adaptador de saída<br/>configurando <code>output_adapter.class</code> em <code>crawler.conf</code>. As opções são:</p>
+<ul>
+  <li><strong>class</strong> - Define a classe do adaptador de saída Data Crawler. O valor padrão é <code>com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter</code></li>
+  <li><strong>config</strong> - Define qual chave de configuração passar para o adaptador de saída. A sequência deve corresponder a uma chave dentro desse objeto de configuração. No exemplo de código a seguir:<br/><code>javascript
+  orchestration_service {
+include &quot;orchestration_service.conf&quot;
+  },
+  test {
+output_directory = &quot;/tmp/crawler-test-output&quot;
+  }
+}
+</code><br/>a chave de configuração é <code>orchestration_service</code>. O valor padrão é <code>discovery_service</code><br/>Deve-se selecionar um adaptador de saída especificando seu parâmetro <code>class</code> e a chave <code>config</code>.</li>
+  <li><p><strong>Orchestration Service Output Adapter</strong>: Faz upload de documentos passados por crawl para o Orchestration Service do Watson Developer Cloud. Selecione esse adaptador configurando o parâmetro <code>class</code> e a chave <code>config</code> da maneira a seguir:<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.orchestrationserviceoutputadapter.oneatatime.OrchestrationServiceOutputAdapter&quot;
+  config = &quot;orchestration_service&quot;
+  orchestration_service {
+include &quot;orchestration/orchestration_service.conf&quot;
+  }
+</code></p></li>
+  <li><strong>Discovery Service Output Adapter</strong>: faz upload de documentos passados por crawl para o Discovery Service do Watson Developer Cloud. Selecione esse adaptador configurando o parâmetro <code>class</code> e a chave <code>config</code> da maneira a seguir:<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter&quot;
+  config = &quot;discovery_service&quot;
+  discovery_service {
+include &quot;discovery/discovery_service.conf&quot;
+  }
+</code></li>
+  <li><strong>Adaptador de saída do Watson Test</strong>: grava uma representação dos arquivos passados por crawl no disco em um local especificado. Selecione esse adaptador configurando o parâmetro <code>class</code> e a chave <code>config</code> da maneira a seguir:</li>
+</ul><p><strong>Nota</strong> - Um parâmetro adicional, <code>output_directory</code>, seleciona o diretório no qual a representação dos dados passados por crawl deve ser gravada.<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.testoutputadapter.TestOutputAdapter&quot;
+  config = &quot;test&quot;
+  output_directory = &quot;/tmp/crawler-test-output&quot;
+</code><br/>* <strong>retry</strong> - Especifica as opções para tentar novamente em caso de tentativas com falha de envio por push para o adaptador de saída.<br/> * max_attempts - número máximo de novas tentativas. O valor padrão é <code>10</code><br/> * delay - Quantia mínima de atraso entre tentativas, em segundos. O valor padrão é <code>2</code><br/> * exponent_base - Fator que determina o crescimento do tempo de atraso sobre cada tentativa com falha. O valor padrão é <code>2</code></p><p>A fórmula é:<br/><code>
+ d(nth_retry) = delay * (exponent_base ^ nth_retry)
+</code></p><p>Por exemplo, as configurações com um atraso de 1 segundo e uma base de expoente de 2, fará com<br/>que a segunda tentativa e a terceira tentativa atrasem 2 segundos, em vez de 1, e a próxima atrase 4<br/>segundos.<br/> <code>
+ d(0) = 1 * (2 ^ 0) = 1 second
+ d(1) = 1 * (2 ^ 1) = 2 seconds
+ d(2) = 1 * (2 ^ 2) = 4 seconds
+</code><br/>Portanto, com as configurações padrão, haverá a tentativa de um envio até 10 vezes,<br/>aguardando até aproximadamente 1.022 segundos (um pouco mais de 17 minutos). Esse tempo é aproximado porque há tempo<br/>adicional incluído para evitar ter múltiplas execuções de reenvio simultaneamente. Esse tempo &ldquo;difuso&rdquo; é até 10%, portanto, a última nova tentativa no exemplo anterior pode atrasar até 4.4 segundos.<br/>O tempo de espera não inclui o tempo gasto conectando-se ao serviço, fazendo upload de dados ou aguardando<br/>uma resposta. <em>Aviso:</em> reduzir o tempo de espera diminuindo qualquer um desses<br/>padrões pode resultar em documentos que não estão sendo transferidos por upload com sucesso por meio do<br/>adaptador de saída configurado. A evidência disso ao usar serviços do Watson<br/>Developer Cloud serão mensagens de RetryFailure no log que cita a limitação de taxa de &ldquo;429 Muitas<br/>Solicitações&rdquo;.</p><h2>Opções de depuração</h2>
+<ul>
+  <li><strong>full_node_debugging</strong> - Ativa o modo de depuração; os valores possíveis são<br/><code>true</code> ou <code>false</code>. <strong>Aviso</strong>: isso colocará os dados<br/>integrais de cada documento passado por crawl para os logs.</li>
+  <li><strong>heartbeat_wait_time</strong> - Intervalo de tempo, em milissegundos, entre<br/>estatísticas de ingestão de documento de relatório (somente modo de depuração). O valor padrão é 1000 milissegundos.</li>
+</ul><h2>Opções de Criação de Log</h2>
+<ul>
+  <li><strong>configuration_file</strong> - O arquivo de configuração a ser usado para criação de<br/>log. No arquivo de amostra <code>crawler.conf</code>, essa opção é definida em<br/><code>logging.log4j</code> e seu valor padrão é <code>log4j_custom.properties</code>.<br/>Essa opção deve ser definida de maneira semelhante se usar um arquivo <code>.properties</code> ou<br/><code>.conf</code>.</li>
+</ul><h2>Opções adicionais de gerenciamento de crawl</h2>
+<ul>
+  <li><strong>shutdown_timeout</strong> - Especifica o valor de tempo limite, em minutos, antes de<br/>encerrar o aplicativo. O valor padrão é <code>10</code>.</li>
+  <li><strong>output_limit</strong> - O número mais alto de itens indexáveis que o Crawler tentará<br/>enviar simultaneamente ao adaptador de saída. Isso pode ser limitado ainda mais pelo número de núcleos<br/>disponíveis para executar o trabalho. Ele diz que em qualquer ponto fornecido haverá não mais que &ldquo;x&rdquo; itens<br/>indexáveis enviados ao adaptador de saída aguardando o retorno. O valor padrão é <code>10</code>.</li>
+  <li><strong>input_limit</strong> - Limita o número de URLs que podem ser solicitadas a partir do<br/>conector de uma vez. O valor padrão é <code>3</code>.</li>
+  <li><strong>output_timeout</strong> - A quantia de tempo, em segundos, antes que o Data Crawler<br/>desista de uma solicitação para o adaptador de saída e, em seguida, remova o item da fila do adaptador de<br/>saída, para permitir mais processamento. O valor padrão é <code>1200</code>. <strong>Nota</strong> - A consideração deve ser fornecida às restrições impostas pelo adaptador de saída, pois essas restrições podem se relacionar aos limites definidos aqui. O <code>output_limit</code> definido acima se relaciona somente à quantidade de objetos indexáveis que podem ser enviados ao adaptador de saída de uma vez. Quando um objeto indexável é enviado ao adaptador de saída, ele estará &ldquo;on the clock&rdquo;, conforme definido pela variável <code>output_timeout</code>. É possível que o próprio adaptador de saída tenha regulador que o impeça de poder processar tantas entradas quantas recebe. Por exemplo, o adaptador de saída de orquestração pode ter um conjunto de conexões, configuráveis para conexões HTTP com o serviço. Se ele for padronizado como 8, por exemplo, e se você configurar o <code>output_limit</code> para um número maior que 8, em seguida, você terá processos on the clock que aguardam que uma alternância seja executada. Em seguida, você pode experimentar os tempos limites.</li>
+  <li><strong>num_threads</strong> - O número de encadeamentos paralelos que podem ser executados de uma vez. Esse valor pode ser um número inteiro, que especifica o número de encadeamentos paralelos<br/>diretamente, ou pode ser uma sequência, com o formato &ldquo;xNUM&rdquo;, especificando o fator de multiplicação do<br/>número de processadores disponíveis, por exemplo, &ldquo;x1.5&rdquo;. O valor padrão é <code>&quot;30&quot;</code>.</li>
+</ul><h2>CONSULTE TAMBÉM</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

@@ -1,0 +1,25 @@
+version: '3'
+services:
+    test:
+        build: .
+        container_name: discovery
+        ports:
+            - 8080:80
+        tty: true
+    mysql:
+        build: ./mysql
+        image: mysql:5.7
+        container_name: some-mysql
+        restart: always
+        environment:
+            MYSQL_DATABASE: sample_db
+            MYSQL_USER: user
+            MYSQL_PASSEWORD: password
+            MYSQL_ROOT_PASSWORD: rootpassword
+        ports:
+            - 3306:3306
+        volumes:
+            - ./mysql/initdb.d:/docker/entrypoint/initdb.d
+            - ./mysql/conf.d:/etc/mysql/conf.d
+            - ./mysql/log:/var/log/mysql
+

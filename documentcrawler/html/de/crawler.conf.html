@@ -1,0 +1,85 @@
+<h1>Data Crawler konfigurieren</h1><p><code>crawler</code> erfordert eine Konfigurationsdatei für seine Optionen. Beispiele für Konfigurationsdateien stehen im Verzeichnis <code>share</code> im Installationsverzeichnis von <code>crawler</code>zur Verfügung. Kopieren Sie diese Beispiele und ändern Sie sie. <em>Ändern Sie nicht die Beispiele selbst!</em></p><p>Die Datei <code>crawler.conf</code> enthält Informationen, die dem Crawler mitteilen, welche Dateien er für seinen Suchlauf verwenden soll (Eingabeadapter), wohin die Zusammenstellung von Dateien der Crawlersuche gesendet werden soll, sobald der Suchlauf abgeschlossen ist (Ausgabeadapter), und weitere Verwaltungsoptionen der Crawlersuche. </p><p><strong>Hinweis</strong>: Alle Dateipfade sind relativ zum Verzeichnis <code>config</code>, sofern nichts anderes angegeben ist.</p><p>Die Optionen, die in dieser Datei definiert werden können, sind: </p><h2>Eingabeadapter</h2>
+<ul>
+  <li><strong>class</strong> - Nur zur internen Verwendung. Definiert die Eingabeadapterklasse von Data Crawler. Der Standardwert lautet: <code>com.ibm.watson.crawler.connectorframeworkinputadapter.Crawl</code>.</li>
+  <li><strong>config</strong> - Nur zur internen Verwendung. Definiert die Konfiguration von Connector-Framework. Der Standardkonfigurationsschlüssel innerhalb dieses Blocks zum Übergeben des ausgewählten Eingabeadapters lautet: <code>connector_framework</code>. <strong>Hinweis</strong> - Das Connector-Framework ermöglicht Ihnen, mit Ihren Daten zu &ldquo;sprechen&rdquo;. Es können interne Daten innerhalb des Unternehmens oder externe Daten im Web oder in der Cloud sein. Die Konnectoren ermöglichen Zugriff auf eine Reihe von unterschiedlichen Datenquellen, während die Verbindung tatsächlich durch den Prozess der Crawlersuche gesteuert wird.</li>
+  <li><strong>WICHTIG</strong> - Daten, die vom Eingabeadapter das Connector-Frameworks abgerufen werden, werden lokal im Cache gespeichert. Die Daten werden nicht verschlüsselt gespeichert. Die Daten werden standardmäßig in einem temporären Verzeichnis zwischengespeichert, das beim Warmstart bereinigt werden sollte. Die Daten sollten nur von dem Benutzer gelesen werden können, der den crawler-Befehl ausgeführt hat. Es besteht die Möglichkeit, dass dieses Verzeichnis den Crawler überdauert, falls das Connector-Framework verschwindet, bevor es sich selbst bereinigen kann. Denken Sie daher sorgfältig über die Position Ihrer zwischengespeicherten Daten nach. Sie können sie in ein verschlüsseltes Dateisystem stellen. Dabei sind jedoch Auswirkung auf die Leistung zu bedenken. Nur Sie können die Entscheidung über die richtige Balance zwischen Geschwindigkeit und Sicherheit für Ihre Crawlersuchen treffen.</li>
+  <li><strong>crawl_config_file</strong> - Die Konfigurationsdatei für die Crawlersuche. Der Standardwert lautet: <code>connectors/filesystem.conf</code>.</li>
+  <li><strong>crawl_seed_file</strong> - Die Seeddatei für die Crawlersuche. Der Standardwert lautet: <code>seeds/filesystem-seed.conf</code>.</li>
+  <li><strong>id_vcrypt_file</strong> - Die Schlüsseldatei, die für die Datenverschlüsselung durch den Crawler verwendet wird. Der Standardschlüssel für den Crawler lautet <code>id_vcrypt</code>.<br/>Verwenden Sie das Script im Ordner <code>bin</code>, wenn Sie eine neue Datei &lsquo;id_vcrypt_file&rsquo; generieren müssen.</li>
+  <li><strong>crawler_temp_dir</strong> - Der temporärer Ordner des Crawlers für Konnektorprotokolle. Der Standardwert <code>tmp</code> wird bereitgestellt. Wenn der Ordner <code>tmp</code> noch nicht vorhanden ist, wird er im aktuellen Arbeitsverzeichnis erstellt.</li>
+  <li><strong>extra_jars_dir</strong> - Nur zur internen Verwendung. Fügt weitere JARs zum Klassenpfad des Connector-Frameworks hinzu.<br/>Dieser Wert muss <code>oakland</code> lauten, wenn er den SharePoint-Konnektor verwendet, und <code>database</code>, wenn er den Datenbankconnector verwendet. Sie können diesen Wert leer lassen, (z. B. eine leere Zeichenfolge &quot;&quot; angeben), wenn Sie andere Konnectoren verwenden. <strong>Hinweis</strong>: Relativ zum Verzeichnis <code>lib/java</code> des Connector-Frameworks.</li>
+  <li><strong>urls_to_filter</strong> - Durch einen Zeilenumbruch getrennte Whitelist von URLs für die Crawlersuche in Form von regulären Ausdrücken. Data Crawler durchsucht nur URLs, die einem der bereitgestellten regulären Ausdrücke entsprechen. Die Domänenliste enthält die häufigsten Domänen der höchsten Ebene (Top-Level Domains). Fügen Sie bei Bedarf weitere hinzu. Die Liste der Dateierweiterungstypen enthält die Dateierweiterungen, die der Orchestration Service in diesem Release von Data Crawler unterstützt. Stellen Sie sicher, dass Ihre Seed-URL-Domäne vom Filter zugelassen wird. Falls die Seed-URL zum Beispiel <code>http://testdomain.test.in</code> lautet, fügen Sie im Domänenfilter &ldquo;<code>in</code>&rdquo; hinzu. Stellen Sie sicher, dass Ihre Seed-URL nicht von einem Filter ausgeschlossen wird, da der Crawler sonst blockiert.</li>
+  <li><strong>max_text_size</strong> - Die maximale Größe (in Byte), die ein Dokument annehmen kann, bevor es vom Connector-Framework auf die Platte geschrieben wird. Die Anpassung mit einem höheren Wert führt dazu, dass weniger Dokumente auf die Platte geschrieben werden. Dabei erhöht sich jedoch der Speicherbedarf.</li>
+  <li><strong>extra_vm_params</strong> - Ermöglicht Ihnen weitere Java-Parameter zu dem Befehl hinzuzufügen, der das Connector-Framework startet.</li>
+  <li><strong>bootstrap_logging</strong> - Schreibt das Startprotokoll von Connector-Framework. Diese Option ist nur für die professionelle Fehlerbehebung sinnvoll. Die Werte lauten <code>true</code> oder <code>false</code>. Die Protokolldatei wird in das Verzeichnis <code>crawler_temp_dir</code> geschrieben.</li>
+</ul><h2>Speicheradapter</h2><p>Ermöglicht das Speichern interner Status der Crawlersuche in einer Datenbank. Diese Einstellung ist für die Optionen <code>restart</code> und <code>resume</code> der Crawlersuche notwendig, damit diese korrekt funktionieren. </p>
+<pre><code class="javascript">storage_adapter {
+ config = &quot;storage_in_db&quot;
+  storage_in_db {
+    include &quot;storage/database_storage.conf&quot;
+  } 
+}
+</code></pre><p>Die referenzierte Datei <code>storage/database_storage.conf</code> verwendet standardmäßig eine H2-Datenbank. Sie können eine beliebige Datenbank anstelle der bereitgestellten Standardwerte mit einem JDBC-Treiber verwenden. Lesen Sie die Dokumentation zu Ihrem JDBC-Treiber, um spezifische Informationen über einige dieser Einstellungen herauszufinden. Die Standardoptionen können direkt durch Öffnen der Datei <code>config/storage/database_storage.conf</code> und Ändern der folgenden anwendungsfallspezifischen Werte geändert werden:</p>
+<ul>
+  <li><strong>class</strong> - Diese Klasse zeigt auf die zu verwendende Datenbankadapterklasse. Der Standardwert lautet <code>com.ibm.watson.crawler.storageadapters.DatabasePersistAdapter</code>.</li>
+  <li><strong>driver</strong> - Die Klasse für den JDBC-Treiber. Der Standardwert lautet <code>org.h2.Driver</code> für die Verwendung von H2.</li>
+  <li><strong>url</strong> - Verwenden Sie die JDBC-Optionen für Ihren Treiber. Dies ist das URL-Präfix für die JDBC-Verbindungszeichenfolge. Der Standardwert lautet: <code>jdbc:h2:file:</code></li>
+  <li><strong>database_location</strong> - Die Position, an der Ihre Datenbank sich befinden soll. Dies gilt nur für dateibasierte Datenbanken wie &lsquo;sqlite&rsquo; und H2. Der Standardwert lautet: <code>./storage/database</code></li>
+  <li><strong>database_name</strong> - Der Name der Datenbank. Der Standardwert lautet <code>ActivityDB</code></li>
+  <li><strong>table_name</strong> - Der Name der zu verwendenden Tabelle. Der Standardwert lautet: <code>Ledger</code></li>
+  <li><strong>username</strong> - Der Benutzername für die Verbindung zur Datenbank.</li>
+  <li><strong>password</strong> - Das Kennwort für die Verbindung zur Datenbank.</li>
+</ul><p>Die Standardkonfiguration ist für die meisten Aktivitäten ausreichend. </p><h2>Ausgabeadapter</h2><p>Es gibt eine Reihe von <em>Ausgabeadaptern</em> aus denen Sie auswählen können. Legen Sie den Ausgabeadapter durch die Definition von <code>output_adapter.class</code><br/>in <code>crawler.conf</code> fest. Die Optionen sind: </p>
+<ul>
+  <li><strong>class</strong> - Definiert die Ausgabeadapterklasse von Data Crawler. Der Standardwert lautet: <code>com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter</code></li>
+  <li><strong>config</strong> - Definiert, welcher Konfigurationsschlüssel an den Ausgabeadapter übergeben werden soll. Die Zeichenfolge muss einem Schlüssel innerhalb des Konfigurationsobjekts entsprechen. Es folgt ein Codebeispiel:<br/><code>javascript
+  orchestration_service {
+include &quot;orchestration_service.conf&quot;
+  },
+  test {
+output_directory = &quot;/tmp/crawler-test-output&quot;
+  }
+}
+</code><br/>In diesem Beispiel lautet der Konfigurationsschlüssel <code>orchestration_service</code>. Der Standardwert lautet <code>discovery_service</code>.</li>
+</ul><p>Sie müssen einen Ausgabeadapter auswählen, indem Sie seinen Klassenparameter <code>class</code> und seinen Konfigurationsschlüssel <code>config</code> angeben. </p>
+<ul>
+  <li><strong>Orchestration Service-Ausgabeadapter</strong>: Lädt durchsuchte Dokumente auf den Orchestration Service der Watson Developer Cloud hoch. Wählen Sie diesen Adapter aus, indem Sie für den Parameter <code>class</code> und den Schlüssel <code>config</code> Folgendes festlegen:<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.orchestrationserviceoutputadapter.oneatatime.OrchestrationServiceOutputAdapter&quot;
+  config = &quot;orchestration_service&quot;
+  orchestration_service {
+include &quot;orchestration/orchestration_service.conf&quot;
+  }
+</code></li>
+  <li><strong>Discovery Service-Ausgabeadapter</strong>: Lädt durchsuchte Dokumente auf den Discovery Service der Watson Developer Cloud hoch. Wählen Sie diesen Adapter aus, indem Sie für den Parameter <code>class</code> und den Schlüssel <code>config</code> Folgendes festlegen:<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter&quot;
+  config = &quot;discovery_service&quot;
+  discovery_service {
+include &quot;discovery/discovery_service.conf&quot;
+  }
+</code></li>
+  <li><strong>Watson Test-Ausgabeadapter</strong>: Schreibt eine Darstellung der durchsuchten Dateien an eine bestimmte Position. Wählen Sie diesen Adapter aus, indem Sie für den Parameter <code>class</code> und den Schlüssel <code>config</code> Folgendes festlegen:</li>
+</ul><p><strong>Hinweis</strong> - Ein weiterer Parameter, <code>output_directory</code>, wählt das Verzeichnis, in das die Darstellung der durchsuchten Daten geschrieben werden soll.<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.testoutputadapter.TestOutputAdapter&quot;
+  config = &quot;test&quot;
+  output_directory = &quot;/tmp/crawler-test-output&quot;
+</code><br/>* <strong>retry</strong> - Gibt die Optionen zum Wiederholen für den Fall eines fehlgeschlagenen Versuchs, den Ausgabeadapter mit einer Push-Operation zu übertragen, an.<br/> * max_attempts - Maximale Anzahl der Wiederholungsversuche. Der Standardwert lautet: <code>10</code><br/> * delay - Mindestdauer der Verzögerung zwischen den Versuchen in Sekunden. Der Standardwert lautet: <code>2</code><br/> * exponent_base - Faktor, der das Wachstum der Verzögerungszeit bei jedem fehlgeschlagenen Versuch bestimmt. Der Standardwert lautet: <code>2</code></p><p>Die Formel lautet:<br/><code>
+ d(nth_retry) = delay * (exponent_base ^ nth_retry)
+</code></p><p>Die Einstellung mit einer Verzögerung von 1 Sekunde und einem Exponenten mit der Basis 2, führt dazu, dass die zweite Wiederholung bzw.. der dritte Versuch insgesamt, mit einer Verzögerung von 2 Sekunden anstatt mit einer Verzögerung von 1 Sekunde erfolgt. Der nächste Versuch erfolgt dann mit einer Verzögerung von 4 Sekunden.<br/> <code>
+ d(0) = 1 * (2 ^ 0) = 1 second
+ d(1) = 1 * (2 ^ 1) = 2 seconds
+ d(2) = 1 * (2 ^ 2) = 4 seconds
+</code><br/> Auf diese Weise wird mit den Standardeinstellungen eine Übermittlung bis zu 10 Mal versucht, wobei ungefähr 1022 Sekunden (etwas über 17 Minuten) lang gewartet wird. Die Angabe dieser Zeitdauer kann nur näherungsweise berechnet werden, da weitere Wartezeit hinzugefügt wird, um zu vermeiden, dass mehrere erneute Übergaben gleichzeitig ausgeführt werde. Diese variable Zeitdauer beträgt bis zu 10%, so dass der letzte Versuch im vorherigen Beispiel eine Verzögerung von bis zu 4,4 Sekunden aufweisen kann. Die Wartezeit umfasst nicht die Zeit, die zum Verbinden mit dem Service, zum Hochladen von Daten oder zum Warten auf eine Antwort benötigt wird.<br/> <em>Warnung:</em> Das Verringern der Wartezeit durch Reduzierung einer dieser Standardwerte kann dazu führen, dass Dokumente über den konfigurierten Ausgabeadapter nicht erfolgreich hochgeladen werden. Ein Hinweis darauf ist es, wenn bei der Verwendung von Watson Developer Cloud-Services RetryFailure-Nachrichten im Protokoll mit &ldquo;429 Too Many Requests&rdquo; auf das Überschreiten der Begrenzung hinweisen. </p><h2>Debugoptionen</h2>
+<ul>
+  <li><strong>full_node_debugging</strong> - Aktiviert den Debugmodus. Mögliche Werte sind: <code>true</code> oder <code>false</code> <strong>Warnung</strong>: Damit werden die vollständigen Daten jedes durchsuchten Dokuments in die Protokolle gestellt.</li>
+  <li><strong>heartbeat_wait_time</strong> - Zeitintervall in Millisekunden zwischen dem Berichten der Dokumentaufnahmestatistik (nur im Debugmodus). Der Standardwert lautet:</li>
+</ul><h2>Protokollierungsoptionen</h2>
+<ul>
+  <li><strong>configuration_file</strong> - Die Konfigurationsdatei für die Protokollierung. In der Beispieldatei <code>crawler.conf</code> ist diese Option in <code>logging.log4j</code> definiert und der zugehörige Standardwert lautet <code>log4j_custom.properties</code>.<br/>Diese Option muss bei Verwendung einer <code>.properties</code>-Datei oder einer <code>.conf</code>-Datei auf ähnliche Weise definiert werden.</li>
+</ul><h2>Weitere Verwaltungsoptionen der Crawlersuche</h2>
+<ul>
+  <li><strong>shutdown_timeout</strong> - Gibt das Zeitlimit bei Systemabschluss der Anwendung in Minuten an. Der Standardwert lautet <code>10</code>.</li>
+  <li><strong>output_limit</strong> - Die höchste Zahl der indexierbaren Elemente, die der Crawler gleichzeitig an den Ausgabeadapter sendet. Dieser Wert kann weiter durch die Anzahl zentraler Bestandteile begrenzt werden, die für die Ausführung von Arbeiten verfügbar sind. Es heißt, dass zu jedem beliebigen Zeitpunkt nicht mehr als &ldquo;x&rdquo; indexierbare Elemente an den Ausgabeadapter gesendet werden und auf die Rückgabe warten. Der Standardwert lautet <code>10</code>.</li>
+  <li><strong>input_limit</strong> - Begrenzt die Anzahl der URLs, die zu einem Zeitpunkt angefordert werden können. Der Standardwert lautet <code>3</code>.</li>
+  <li><strong>output_timeout</strong> - Die Zeitdauer in Sekunden, bevor der Data Crawler bei einer Anforderung an den Ausgabeadapter aufgibt und anschließend das Element aus der Warteschlange des Ausgabeadapters entfernt, um die weitere Verarbeitung fortsetzen zu können. Der Standardwert lautet <code>1200</code>. <strong>Hinweis</strong> - Den Beschränkungen, die durch den Ausgabeadapter bestehen, sollte Beachtung geschenkt werden, da diese Beschränkungen mit den hier definierten Begrenzungen zusammenhängen könnten. Das oben definierte <code>output_limit</code> bezieht sich nur auf die Anzahl der indexierbaren Objekte, die gleichzeitig an den Ausgabeadapter gesendet werden können. Sobald ein indexierbares Objekt an den Ausgabeadapter gesendet wird, ist es wie in der Variablen <code>output_timeout</code> definiert gezählt worden. Es ist möglich, dass der Ausgabeadapter selbst über eine Drosselung verfügt, die es verhindert, dass er so viele Eingaben verarbeitet, wie er empfängt. Die Orchestrierungsausgabeadapter können über einen Verbindungspool verfügen, der für HTTP-Verbindungen zum Service konfigurierbar ist. Wenn dieser zum Beispiel den Standardwert 8 annimmt und wenn Sie für <code>output_limit</code> eine Zahl definiert haben, die größer als 8 ist, dann werden Sie (gezählte) Prozesse haben, die auf ihre Ausführung warten. In diesem Fall kann es zu Zeitlimitüberschreitungen kommen.</li>
+  <li><strong>num_threads</strong> - Die Anzahl der parallelen Threads, die gleichzeitig ausgeführt werden können. Dieser Wert kann entweder eine ganze Zahl sein, die die Anzahl der parallelen Threads direkt angibt, oder es kann eine Zeichenfolge mit dem Format&ldquo;xNUM&rdquo; sein, die den Multiplikationsfaktor der Anzahl der verfügbaren Prozessoren angibt. Zum Beispiel: &ldquo;x1.5&rdquo;. Der Standardwert lautet <code>&quot;30&quot;</code>.</li>
+</ul><h2>Weitere Informationen</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

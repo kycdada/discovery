@@ -1,0 +1,13 @@
+<h1>vcrypt(1) - 用于加密和解密少量数据的工具</h1><h2>摘要</h2><p>用法：vcrypt &ndash;decrypt|-d &ndash;encrypt|-e &ndash;genkey|-g [选项]</p><h2>描述</h2><p><code>vcrypt</code> 主要用于加密供 Connector Framework 使用的密码。</p><h3>关于密钥长度的特别说明</h3><p>缺省情况下，Java 虚拟机实施必须支持 128 位/16 字节 AES 密钥。如果系统安装了 Java Cryptographic Extension，那么它或许能够使用 256 位/32 字节 AES 密钥。如果提供了 32 字节密钥，但用于启动 <code>vcrypt</code> 的 JVM 不支持此密钥，那么将显示一条错误。</p><h2>命令</h2><h3>&ndash;encrypt | -e OPTIONS INPUT</h3><p>对文件或标准输入中提供的数据进行加密。</p><h3>&ndash;decrypt | -d OPTIONS INPUT</h3><p>对文件或标准输入中提供的数据进行解密。</p><h3>&ndash;genkey | -g</h3><p>生成适用于 <code>vcrypt</code> 的加密密钥，并将其放到标准输出中。</p><h2>选项</h2><h3>&ndash;keyfile|-k PATH/TO/ID_VCRYPT</h3><p>指定包含相应 Base64 编码密钥的文件的路径，此密钥很可能是使用 <code>--genkey|-g</code> 命令生成的。</p><h2>输入</h2><h3>加密方式</h3>
+<pre><code>$FILE_CONTAINING_CLEARTEXT | -- $CLEARTEXT
+</code></pre><h3>解密方式</h3>
+<pre><code>$FILE_CONTAINING_CRYPTED_TEXT | -- $CRYPTED_TEXT
+</code></pre><h2>示例</h2><p>生成密钥，并将其放到文件 <code>id_vcrypt</code> 中：</p>
+<pre><code>vcrypt --genkey &gt; id_vcrypt
+</code></pre><p>对标准输入中的密码进行加密，并将其放到标准输出中（此处通过输出重定向到 <code>my_secret_data.txt</code> 来写入）：</p>
+<pre><code>./vcrypt --encrypt --keyfile id_vcrypt -- &quot;my secret password&quot; &gt; my_secret_data.txt
+</code></pre><p>您可以将输出传送到 <code>xclip</code>、<code>pbcopy</code> 或类似工具，以将输出放到操作系统剪贴板中。</p><p>对来自文件的密码进行解密：</p>
+<pre><code>vcrypt --decrypt --keyfile id_vcrypt my_secret_data.txt
+</code></pre><h2>属性和环境变量</h2><h3><code>VCRYPT_OPTS</code> 环境变量</h3><p>可使用此环境变量来将选项传递到用于启动 <code>vcrypt</code> 的 <code>java</code> 命令。</p><h3><code>vcrypt.key</code> 属性</h3><p>在命令行中，将此属性作为 <code>VCRYPT_OPTS</code> 中的 <code>-D</code> 属性（采用 16 或 32 字节字符串形式）传递以使用密钥，而不会传递 <code>--keyfile | -k keyfile</code> 选项。</p><p>用法示例：</p>
+<pre><code>VCRYPT_OPTIONS=&quot;-Dvcrypt.key=&#39;1234qwerasdfzxcv&#39;&quot; vcrypt --encrypt file_to_encrypt
+</code></pre><h3><code>VIV_VCRYPT_KEY</code> 环境变量</h3><p><code>vcrypt</code> 允许使用此环境变量来设置密钥。该密钥必须为 16 或 32 字节。</p><h2>另请参阅</h2><p>crawler(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

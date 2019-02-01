@@ -1,0 +1,73 @@
+<h1>crawler (1) - Een crawler voor het verplaatsen van gegevens van A naar B</h1><h2>SYNOPSIS</h2><p>Syntaxis: crawler [ crawl | testit | restart | resume | refresh | summary ][ options ]</p><h2>BESCHRIJVING</h2><p>De Data Crawler wordt gebruikt voor het crawlen van verschillende repository&rsquo;s van gegevens, zoals contentbeheersystemen en bestandssystemen en om de resulterende documenten naar een service op afstand te pushen.</p><h2>ALGEMENE OPTIES</h2>
+<pre><code>--version
+    De versie van het programma afbeelden
+--help
+    Deze tekst over gebruik afbeelden
+</code></pre><h2>OPDRACHTEN</h2><h3>crawl [ opties ]</h3><p>Hiermee wordt een crawl met de huidige configuratie uitgevoerd</p>
+<pre><code>-c &lt;waarde&gt; | --config &lt;waarde&gt;  # Geeft het te gebruiken configuratiebestand aan. De standaardwaarde is &quot;config/crawler.conf&quot;.
+--pii-checking &lt;waarde&gt;         # Schakelt controle van PII in/uit
+</code></pre><h3>testit [ opties ]</h3><p>Hiermee wordt een testcrawl uitgevoerd, waarbij alleen de seed-URL wordt gecrawld en de in de wachtrij geplaatste URL&rsquo;s worden afgebeeld. Als de seed-URL resulteert in indexeerbare content (bijvoorbeeld een document), wordt deze content verzonden naar de uitvoeradapter en wordt de content op het scherm afgebeeld. Als het ophalen van de seed-URL ertoe leidt dat URL&rsquo;s in de wachtrij geplaatst worden, worden deze URL&rsquo;s afgebeeld en wordt er geen content naar de uitvoeradapter verzonden. Standaard worden er vijf in de wachtrij geplaatste URL&rsquo;s afgebeeld.</p>
+<pre><code>-c &lt;waarde&gt; | --config &lt;waarde&gt;  # Geef het te gebruiken configuratiebestand aan. De standaardwaarde is &quot;config/crawler.conf&quot;.
+-l &lt;n&gt; | --limit &lt;n&gt;           # Begrenst het aantal in de wachtrij geplaatste URL&#39;s die afgebeeld worden.
+--pii-checking &lt;waarde&gt;         # Schakelt controle van PII in/uit
+</code></pre><h3>restart [ opties ]</h3><p>Hiermee voert u het starten van de crawl opnieuw uit; er wordt een nieuwe crawl met de huidige configuratie uitgevoerd.</p>
+<pre><code>-c &lt;waarde&gt; | --config &lt;waarde&gt;  # Geeft het te gebruiken configuratiebestand aan.
+--pii-checking &lt;waarde&gt;         # Schakelt controle van PII in/uit
+</code></pre><h3>resume [ opties ]</h3><p>Hiermee wordt het crawlen hervat vanaf het punt waar deze was gestopt.</p>
+<pre><code>-c &lt;waarde&gt; | --config &lt;waarde&gt;  # Geeft het te gebruiken configuratiebestand aan.
+--pii-checking &lt;waarde&gt;         # Schakelt controle van PII in/uit
+</code></pre><h3>refresh [ opties ]</h3><p>Hiermee vernieuwt u een eerdere crawl.</p>
+<pre><code>-c &lt;waarde&gt; | --config &lt;waarde&gt;  # Geeft het te gebruiken configuratiebestand aan.
+--pii-checking &lt;waarde&gt;         # Schakelt controle van PII in/uit
+</code></pre><h3>summary [ opties ]</h3><p>Hiermee genereert u een crawlrapport.</p>
+<pre><code>--submitted                    # Query op alle ingezonden documenten
+--processed                    # Query op alleen de documenten met geslaagde verwerking
+--failed                       # Query op alleen de documenten met mislukte verwerking
+--group-id &lt;waarde&gt;            # Query op de crawluitvoering voor een opgegeven groep. Een groep bestaat uit een eerste crawl en alle hervatte, vernieuwde, of opnieuw gestart items van de eerste crawl. Als de waarde niet is opgegeven, behelst deze query standaard de meest recente gecrawlde groep.
+--show-content                 # Hiermee beeldt u alle aanvullende content af die is gekoppeld aan een query
+--filter                       # Filtert het queryresultaat op URL en hashID
+</code></pre><h2>VOORBEELDEN</h2><p>Voer het crawlen uit met behulp van het configuratiebestand op <code>config/crawler.conf</code>:</p>
+<pre><code>crawler crawl
+</code></pre><p>Voer een test uit met behulp van het configuratiebestand op <code>config/crawler.conf</code>:</p>
+<pre><code>crawler testit
+</code></pre><p>Voer het crawlen uit met behulp van het configuratiebestand op <code>/home/watson/office-share.conf</code>:</p>
+<pre><code>crawler crawl --config /home/watson/office-share.conf
+</code></pre><p>Start het crawlen opnieuw met behulp van het configuratiebestand op <code>/home/watson/office-share.conf</code>:</p>
+<pre><code>crawler restart --config /home/watson/office-share.conf
+</code></pre><p>Haal overzichtsinformatie over mislukte documenten op met een groeps-ID van <code>2</code></p>
+<pre><code>crawler summary --failed --group-id 2 --show-content
+</code></pre><p>Gebruik afbeelden, inclusief versie:</p>
+<pre><code>crawler --help
+</code></pre><h2>CONFIGURATIE</h2><p>Voor opties van de <code>crawler</code> is een configuratiebestand vereist. Voorbeelden van configuratiebestanden vindt u in de directory <code>share</code> in de installatiedirectory van de <code>crawler</code>. Kopieer deze voorbeelden en wijzig ze. <em>Breng geen wijzigingen ter plekke in de voorbeelden aan.</em></p><p>Als de optie <code>--config | -c</code> niet is opgegeven, kijkt de <code>crawler</code> voor zijn configuratie in de directory <code>config</code> van de directory waarin <code>crawler</code> gestart is. Dat wil zeggen: <code>crawler</code> zoekt naar <code>config/crawler.conf</code>.</p><h2>DIAGNOSE</h2><p>Met deze functies kunt u een diagnose maken van problemen.</p><h3>Fouten opsporen</h3><p>Hiermee activeert u de foutopsporingswerkstand. Stel het volgende in het bestand <code>crawler.conf</code> in:</p>
+<pre><code>debugging.full_node_debugging = true
+</code></pre><h3>Logboekregistratie</h3><p>Hiermee schakelt u logboekregistratie in. Stel het volgende in het bestand <code>log4j_custom.properties</code> in:</p>
+<pre><code>log4j.rootLogger=INFO, Console, Log
+</code></pre><p>Dit is het standaard logboekniveau voor de bestandsuitvoer. Voor het consolelogboek is de standaardwaarde:</p>
+<pre><code>log4j.appender.Console.Threshold=WARN
+</code></pre><p>Logboekniveaus kunnen worden ingesteld op de volgende waarden:</p>
+<pre><code>OFF - Het hoogst mogelijke niveau, hiermee schakelt u logboekregistratie uit.
+FATAL - Geeft zeer ernstige foutevents aan die er waarschijnlijk toe leiden dat de toepassing  afgebroken wordt.
+ERROR - Geeft foutevents aan waarbij de toepassing nog voortgezet kan worden.
+WARN - Hiermee worden mogelijk schadelijke situaties aangegeven.
+INFO - Geeft informatieberichten aan over de voortgang van de toepassing op weinig gedetailleerd niveau.
+DEBUG - Geeft gedetailleerde informatieve events aan die relevant zijn om fouten op te sporen in een toepassing.
+TRACE - Geeft nog gedetailleerdere informatieve events aan dan bij DEBUG.
+ALL - Het laagst mogelijke niveau, hiermee schakelt u alle logboekregistraties in.
+</code></pre><h2>VERSNELLING/VERTRAGING</h2><p>Hiermee definieert u beperkingen in grootte, voor het beheren van de doorvoer. Stel het volgende in het bestand <code>crawler.conf</code> in:</p><p><code>shutdown_timeout</code> Hier geeft u de timeoutwaarde in minuten aan, voordat de toepassing wordt afgesloten; de standaardwaarde is 10</p>
+<pre><code>shutdown_timeout = &lt;n&gt;
+</code></pre><p><code>output_limit</code> is het grootste aantal indexeerbare items die de draagbare crawler tegelijkertijd naar de uitvoeradapter stuurt, waarna retourzending wordt afgewacht; de standaardwaarde is 10. Dit aantal kan verder worden beperkt door het aantal kernen dat beschikbaar is om het werk uit te voeren.</p>
+<pre><code>output_limit = &lt;n&gt;
+</code></pre><p><code>input_limit</code> Beperkt het aantal URL&rsquo;s dat in één keer kan worden aangevraagd vanaf de connector; de standaardwaarde is 3.</p>
+<pre><code>input_limit = &lt;n&gt;
+</code></pre><p><code>output_timeout</code> is het aantal seconden voordat de draagbare crawler een aanvraag voor de uitvoeradapter staakt en vervolgens het item uit de limietwachtrij verwijdert; hierdoor kan er meer verwerkt worden. De standaardwaarde is 150.</p>
+<pre><code>output_timeout = &lt;n&gt;
+</code></pre><p>Er dient aandacht te worden besteed aan de voorwaarden die door de uitvoeradapter opgelegd worden, aangezien deze voorwaarden betrekking kunnen hebben op de limieten die hier gedefinieerd zijn. De <code>output_limit</code> die hierboven is gedefinieerd, heeft alleen betrekking op de hoeveelheid indexeerbare objecten die tegelijk naar de uitvoeradapter kunnen worden verzonden. Als een indexeerbaar object eenmaal naar de uitvoeradapter is verzonden, wordt &ldquo;de klok gezet&rdquo; zoals gedefinieerd door de variabele <code>output_timeout</code>. Het kan zijn dat de uitvoeradapter zelf een snelheidsregeling heeft die voorkomt dat hij evenveel invoeritems verwerkt als dat hij ontvangt.<br/>De Orchestration Output Adapter kan bijvoorbeeld een verbindingspool hebben die geconfigureerd kan worden voor HTTP-verbindingen met de service. Als de standaardwaarde bijvoorbeeld 8 is en u de<br/><code>output_limit</code> instelt op een getal dat hoger is dan geconfigureerd voor die verbindingspool, zijn er processen op de klok die wachten op hun beurt om uitgevoerd te worden.<br/>U kunt dan timeouts krijgen.</p><p><code>num_threads</code> Het aantal parallelle threads dat tegelijk kan worden uitgevoerd. Deze waarde kan een geheel getal zijn dat het aantal parallelle threads rechtstreeks aangeeft, of een tekenreeks met de indeling <code>&quot;xNUM&quot;</code>, die de vermenigvuldigingsfactor van het aantal beschikbare processors aangeeft. De standaardwaarde is &ldquo;x1.5&rdquo;, oftewel 1,5 keer het aantal beschikbare processors (op basis van <code>Runtime.availableProcessors</code>).</p>
+<pre><code>num_threads = &lt;n&gt;
+</code></pre><p>De formule voor het berekenen van de parallelle verwerking in de Data Crawler-pool is: <code>min(maxThreads, max(minThreads, numThreads))</code>.</p><h2>OMGEVINGSVARIABELE <code>CRAWLER_OPTS</code></h2><p>Hieronder vindt u eigenschappen die kunnen worden doorgegeven aan <code>crawler</code> via de omgevingsvariabele <code>CRAWLER_OPTS</code>, samen met standaardwaarden.</p><p>Geef deze als volgt door:</p>
+<pre><code>CRAWLER_OPTS=&quot;-Dproperty=waarde -Dproperty=waarde&quot; crawler
+</code></pre><p>Deze mag alleen worden gewijzigd voor het opsporen van fouten en alleen op verzoek van IBM Support.</p><h3>cfa.java_bin</h3><p><code>cfa.java_bin</code> kan de <code>java</code>-opdracht wijzigen die wordt gebruikt voor het starten van de Connector Framework Input Adapter. Standaard gebruikt <code>crawler</code> hetzelfde <code>java</code>-programma dat wordt gebruikt voor het starten van de <code>crawler</code> zelf.</p><p>Dit kan ook worden gewijzigd door de eigenschap <code>java.home</code> in te stellen; deze eigenschap kan daarna worden gebruikt voor het berekenen van het pad naar het uitvoerbare <code>java</code>-bestand.</p><h3>cfa.lib_dir</h3><p><code>cfa.lib_dir</code> wijzigt het pad naar de directory <code>lib</code> van het Connector Framework. Normaal gesproken hoeft dit slechts zelden te worden gewijzigd. Standaard gebruikt <code>crawler</code> de directory <code>lib</code> binnen het berekende pad naar het Connector Framework, in het algemeen simpelweg <code>connectorFramework</code>.</p><h3>cfa.framework_jars_dir</h3><p><code>cfa.framework_jars_dir</code> wijzigt het pad naar de jars-directory van het Connector Framework dat zich standaard bevindt in <code>connectorFramework/&lt;version&gt;/lib/java</code>.</p><h3>cfa.plugins_dir</h3><p><code>cfa.plugins_dir</code> geeft het pad aan naar de plugins-directory van het Connector Framework, waarin de feitelijke connectors zijn opgeslagen.<br/>Standaard wordt dit opgebouwd vanuit de <code>framework_jars_dir</code> en is het <code>connectorFramework/&lt;version&gt;/lib/java/plugins</code>.</p><h2>BEKENDE BEPERKINGEN</h2><p>Hier vindt u bekende beperkingen in de huidige release van de Data Crawler</p>
+<ul>
+  <li>De Data Crawler kan vastlopen bij het uitvoeren van de connector voor het bestandssysteem met een ongeldige of ontbrekende URL.</li>
+  <li>Configureer de waarde <code>urls_to_filter</code> in het bestand <code>config/crawler.con</code> zodanig dat alle URL&rsquo;s of RegExes in de goedgekeurde lijst worden opgenomen in een enkele RegEx-expressie.</li>
+  <li>Het pad naar het configuratiebestand dat wordt doorgegeven aan de optie <code>--config | -c</code> moet een gekwalificeerd pad zijn. Dit betekent dat het de relatieve indelingen <code>config/crawler.conf</code> of <code>./crawler.conf</code> moet hebben, of het absolute pad <code>/path/to/config/crawler.conf</code>. Het opgeven van alleen <code>crawler.conf</code> is alleen mogelijk als bestanden waarnaar wordt verwezen met behulp van <code>include</code> in het bestand <code>crawler.conf</code> inline worden gezet in plaats van <code>include</code> te gebruiken. Bijvoorbeeld: <code>discovery/discovery_service.conf</code> is met een <code>include</code> opgenomen om de configuratie eenvoudiger te kunnen lezen. De content moet worden gekopieerd naar <code>crawler.conf</code> in de sleutel <code>output_adapter.discovery_service</code> om een niet-gekwalificeerde pad in de optie config te kunnen gebruiken.</li>
+</ul><h2>WIJZIGINGSLOGBOEK</h2><p>Raadpleeg het bestand <code>changelog.txt</code> in uw installatiedirectory voor een lijst met wijzigingen in deze release.</p><h2>AUTEUR</h2><p>IBM Watson - <a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/">https://www.ibm.com/smarterplanet/us/en/ibmwatson/</a></p><p>Gemaakt door yinz in Pittsburgh.</p><h2>ZIE OOK</h2><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

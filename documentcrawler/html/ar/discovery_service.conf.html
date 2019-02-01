@@ -1,0 +1,22 @@
+<h1>توصيف خدمة Discovery</h1><p>تقوم خدمة Discovery باخبار أداة البحث بكيفية ادارة الملفات التي تم بحثها عند استخدام خدمة IBM Watson Discovery. يمكن تغيير الاختيارات المفترضة مباشرة بواسطة فتح الملف ‏‎<code>config/discovery/discovery_service.conf</code>‎‏، وتعديل القيم التالية الخاصة بحالة الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>http_timeout</strong> - ، بالثانية، لعملية قراءة/فهرسة الوثيقة؛ المفترض هو <code>125</code>.</li>
+  <li><strong>concurrent_upload_connection_limit</strong> - عدد مرات الاتصالات المسموح بها في نفس الوقت لتحميل الوثائق؛ المفترض هو <code>2</code>. عند استخدام Orchestration Service Output Adapter، يجب أن يكون هذا الرقم أكبر من، أو يساوي، مجموعة <code>output_limit</code> عند توصيف اختيارات بحث صفحات الانترنت.</li>
+  <li><strong>base_url</strong> - عنوان URL الذي سيتم ارسال الوثائق التي تم بحثها الخاصة بك إليه. بالنسبة للاصدار الحالي لخدمة Discovery، القيمة هي ‏‎<code>https://gateway.watsonplatform.net/discovery/api</code>‎‏.</li>
+  <li><strong>environment_id</strong> - هو مكان مجموعة الوثائق الخاصة بك التي تم بحثها على <code>base-url</code>.</li>
+  <li><strong>collection_id</strong> - اسم مجموعة الوثائق التي قمت باعدادها في خدمة Discovery.</li>
+  <li><strong>configuration_id</strong> - اسم ملف التوصيف الذي يقوم Discovery باستخدامه.</li>
+  <li><strong>check_for_completion</strong> - يتحقق مما كان قد تم تشغيل الوثيقة بنجاح عند نقطة النهاية. يقوم ذلك بتقليل الأداء الملموس لأداة بحث، ولكن سينتج عنه اعلام موثوق به خاص بتحميل أو تحويل الوثيقة بنجاح. القيمة اما <code>true</code> أو <code>false</code>.<br/><strong>هام</strong> - عند اتاحة هذا المعامل، من الحكمة القيام بزيادة ‏‎<code>concurrent_upload_connection_limit</code>‎‏ لأكثر من، أو يساوي، مجموعة <code>output_limit</code> عند توصيف اختيارات بحث صفحات الانترنت، للاستفادة الكاملة من المصادر المتاحة لك.</li>
+</ul><p>قم بادخال بيانات اعتماد خدمة Discovery الخاصة بك:<br/>* <strong>اسم المستخدم</strong> - هو اسم المستخدم للتوثيق بمكان مجموعة الوثائق التي تم بحثها الخاصة بك.<br/>* <strong>كلمة السرية</strong> - هي كلمة السرية للتوثيق بمكان مجموعة الوثائق التي تم بحثها الخاصة بك.</p><p>يستطيع Discovery Service Output Adapter ارسال احصائيات بالترتيب الى IBM لتتمكن من فهم وخدمة المستخدمين الخاصين بها. يمكن تحديد الاختيارات التالية للمتغير <code>send_stats</code>:<br/>* <strong>jvm</strong> - تتضمن احصائيات ‏‎Java Virtual Machine (JVM)‎‏ المرسلة مورد ونسخة Java، كما هو منصوص عليه بواسطة JVM المستخدم لتنفيذ data crawler. القيمة اما <code>true</code> أو <code>false</code>.<br/>* <strong>os</strong> - تتضمن احصائيات نظام التشغيل (OS) المرسلة اسم، ونسخة، وأسلوب بناء نظام التشغيل، كما هو منصوص عليه بواسطة JVM المستخدم لتنفيذ data crawler. القيمة اما <code>true</code> أو <code>false</code>.</p>
+<ul>
+  <li><strong>api_version</strong> - الاستخدام الداخلي فقط. تاريخ أخر تغيير بنسخة API.</li>
+</ul><h1>توصيف مساحة تخزين تتبع مسار عنوان URL</h1><p>تتضمن الحافظة ‏‎<code>config/discovery</code>‎‏ أيضا ملف توصيف يمكن استخدامه للمناظرات الداخلية الخاصة بعناوين URL لأداة البحث وأكواد الوثائق. يمكن تغيير الاختيارات المفترضة مباشرة بواسطة فتح الملف ‏‎<code>config/discovery/uri_tracking_storage.conf</code>‎‏، وتعديل القيم التالية الخاصة بحالة الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>البرنامج المشغل</strong> - فئة البرنامج المشغل الى JDBC H2 لقاعدة البيانات الخاصة بك. القيمة المفترض هي ‏‎<code>org.h2.Driver</code>‎‏</li>
+  <li><strong>عنوان URL</strong> - هو بادئة عنوان URL لمجموعة حروف وصلة JDBC. النسق هو ‏‎<code>jdbc:h2:[file:]</code>‎‏. <strong>ملحوظة</strong> البادئة ‏‎<code>file:</code>‎‏ هي اختيارية. اذا لم يكن يتم استخدام مسار نسبي أو يتم استخدام المسار النسبي <code>database_location</code> فقط، فسيتم استخدام دليل العمل الحالي كنقطة بداية. المفترض هو ‏‎<code>jdbc:h2:file:</code>‎‏</li>
+  <li><strong>database_location</strong> - المكان الذي على القرص حيث يتم تخزين قاعدة البيانات، على سبيل المثال، ‏‎<code>./storage/database</code>‎‏ أو ‏‎<code>~/storage/database</code>‎‏. القيمة المفترض هي ‏‎<code>./storage/database</code>‎‏</li>
+  <li><strong>database_name</strong> - اسم قاعدة البيانات. القيمة المفترض هي ‏‎<code>ActivityDB</code>‎‏</li>
+  <li><strong>table_name</strong> - اسم الجدول المراد استخدامه. القيمة المفترض هي ‏‎<code>UriTracker</code>‎‏</li>
+  <li><strong>اسم المستخدم</strong> - اسم المستخدم للاتصال بقاعدة البيانات</li>
+  <li><strong>كلمة السرية</strong> - كلمة السرية للاتصال بقاعدة البيانات</li>
+</ul><h2>يمكنك الاطلاع أيضا على</h2><p>‏‎crawler(1)‎‏</p><p>‏‎vcrypt(1)‎‏</p><p>‏‎crawler.conf(5)‎‏</p><p>‏‎crawler-options.conf(5)‎‏</p><p>‏‎crawler-seed.conf(5)‎‏</p>

@@ -1,0 +1,52 @@
+<h1>توصيف أسس الترقيم الآلي لبحث صفحات الانترنت</h1><p>تعد أسس الترقيم الآلى هي نقاط بداية لبحث صفحات الانترنت، ويتم استخدامها بواسطة data crawler لاسترجاعهم من المصدر الذي يتم تعريفه بواسطة أساس الترقيم الآلى هذا. عادة، تقوم أسس الترقيم الآلي بتوصيف عناوين URL للتوصل الى المصادر المبنية على أساس البروتكول مثل مشاركات الملفات، ومشاراكات SMB، وقواعد البيانات، ومستودعات البيانات الأخرى التي يمكن التوصل اليها بواسطة بروتوكولات انترنت متنوعة. علاوة على ذلك، يتوافر لعناوين URL أساس الترقيم الآلى المختلفة امكانيات مختلفة.</p><p>تستطيع أسس الترقيم الآلي أن تكون أيضا مستودع تخزين، لاتاحة البحث بتطبيقات خارجية معينة مثل أنظمة ادارة علاقة العميل ‏‎(CRM)‎‏، وأنظمة دورة حياة المنتج ‏‎(PLC)‎‏، وأنظمة ادارة المحتويات ‏‎(CMS)‎‏، والتطبيقات المبنية على أساس وحدة شارات التعليم المجمعة، وتطبيقات الانترنت لقواعد البيانات.</p><p>يتيح data crawler حاليا بحث أسس الترقيم الآلي التي تقوم بدعم موصلات الملفات للأنواع التالية من مستودعات التخزين:</p>
+<ul>
+  <li>Filesystem</li>
+  <li>Databases, via JDBC</li>
+  <li>CMIS (Content Management Interoperability Services)</li>
+  <li>SMB (Server Message Block), CIFS (Common Internet Filesystem), or Samba fileshares</li>
+  <li>SharePoint and SharePoint Online</li>
+  <li>مربع</li>
+</ul><p>يتم أيضا تقديم قالب توصيف أساس الترقيم الآلى لبحث صفحات الانترنت، مما يسمح لك بتهيئة موصل أساس الترقيم الآلى لبحث صفحات الانترنت.</p><h2>كيفية البدء:</h2><p>عند بحث مستودعات البيانات، يبدأ crawler من عنوان URL أساس الترقيم الآلى المحدد بواسطة المستخدم، ويبدأ في تحميل الصفحات من المعلومات. يقوم crawler أيضا بايجاد الروابط التي في الصفحات التي يتم تحميلها، ويقوم بجدولة الصفحات التي تم اكتشافها مؤخرا لمزيد من عمليات بحث صفحات الانترنت.</p><p>يتم استخدام معلومات التوصيف لتحديد أي الصفحات بحاجة الى أن يتم بحثها، وكيفية بحثهم. ويفسر ذلك الاختيارات التي يمكنك توصيفها لكل ملف أساس ترقيم آلى لبحث صفحات الانترنت للموصل.</p><p><strong>ملحوظة</strong>: يعمل كل ملف توصيف خاص بأساس الترقيم الآلى لبحث صفحات الانترنت مع ملف توصيف موصل الملف المقابل؛ ويتم وصف اختيارات موصل الملف بشكل منفصل.</p><h3>توصيف Filesystem Crawl Seed</h3><p>يمكن توصيف القيم التالية لملف Filesystem crawl seed. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/seeds/filesystem-seed.conf</code>‎‏ وتحديد القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>url</strong> - كشف مفصول بسطر جديد للملفات والحافظات المراد بحثها. يستطيع مستخدمي UNIX استخدام مسار مثل ‏‎<code>/usr/local/</code>‎‏.<br/>يجب أن تبدأ عناوين URL باستخدام ‏‎<code>sdk-fs://</code>‎‏. لذا للقيام بالبحث، على سبيل المثال، ‏‎<code>/home/watson/mydocs</code>‎‏، ستكون قيمة عنوان URL هذا هي ‏‎<code>sdk-fs:///home/watson/mydocs</code>‎‏ - يعد الثالث <code>/</code> ضروريا!<br/><strong>ملحوظة</strong>: يقوم Filesystem connector باستخدام بروتوكول مهيأ، ‏‎<code>sdk-fs://</code>‎‏، لتكوين عنوان URL صحيح. لا تقوم باضافة بادئة ‏‎<code>file://</code>‎‏ للمسارات المعروضة؛ يجب أن تبدأ عناوين URLباستخدام ‏‎<code>sdk-fs://</code>‎‏.</li>
+  <li><strong>hops</strong> - الاستخدام الداخلي فقط.</li>
+  <li><strong>default-allow</strong> - الاستخدام الداخلي فقط.</li>
+</ul><h3>توصيف Database Crawl Seed</h3><p>يمكن توصيف القيم التالية لملف Database crawl seed. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/seeds/database-seed.conf</code>‎‏ وتحديد القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>url</strong> - عنوان URL الجدول أو المشاهدة المراد استرجاعهم. يقوم بتعريف عنوان URL المهيأ لأساس الترقيم الآلى الخاص بقاعدة بيانات SQL. الهيكل هو:</li>
+</ul><p> <code>database-system://host:port/database?[per=num]&amp;[sql=SQL]</code></p><p>سيعرض اختبار عنوان URL أساس الترقيم الآلى كل عناوين URL التي يتم وضعها بالصف. على سبيل المثال، اختبار عنوان URL التالي لقاعدة بيانات تتضمن 200 سجل:</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=100&amp;sql=select%20*%20from%20vessel&amp;</code></p><p>عرض عناوين URL التالية التي تم وضعها بالصف:</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=0&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=100&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=200&amp;</code></p><p>أثناء الاختبار سيعرض عنوان URL التالي البيانات التي تم استرجاعها من الصف 43:</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=1&amp;key-val=43</code><br/>* <strong>hops</strong> - الاستخدام الداخلي فقط.<br/>* <strong>default-allow</strong> - الاستخدام الداخلي فقط.<br/>* <strong>user-password</strong> - بيانات الاعتماد لنظام قاعدة البيانات. يجب فصل اسم المستخدم وكلمة السرية بواسطة <code>:</code>، ويجب تشفير كلمة السرية بواسطة البرنامج vcrypt الذي يتم شحنه مع Data Crawler. على سبيل المثال ‏‎<code>username:[[vcrypt/3]]passwordstring</code>‎‏.<br/>* <strong>max-data-size</strong> - الحد الأقصى لحجم بيانات الوثيقة. وهو أكبر كتلة من الذاكرة سيتم تحميلها في المرة الواحدة. يمكن زيادة هذا الحد فقط اذا كان يتوافر لك ذاكرة كافية على الحاسب الآلي الخاص بك.<br/>* <strong>filter-exact-duplicates</strong> - الاستخدام الداخلي فقط.<br/>* <strong>jdbc-class</strong> (اختيار Extender) - عند تحديده، ستقوم مجموعة الحروف هذه باحلال فئة JDBC المستخدمة بواسطة الموصل عند اختيار ‏‎<code>(other)</code>‎‏ كنظام قاعدة البيانات.<br/>* <strong>connection-string</strong> (اختيار Extender) - عند تحديده، ستقوم مجموعة الحروف هذه باحلال مجموعة حروف وصلة JDBC التي تم تكوين آليا. يسمح لك ذلك بادخال المزيد من التوصيف التفصيلي عن وصلة قاعدة البيانات، مثل توازن التحميل أو اتصالات SSL. على سبيل المثال: ‏‎<code>jdbc:netezza://127.0.0.1:5480/databasename</code>‎‏.<br/>* <strong>save-frequency-for-resume</strong> (اختيار Extender) - يقوم بتحديد اسم عمود أو تسمية مرفقة، حتى تتمكن من استئناف بحث صفحات الانترنت أو للقيام بتجديد جزئي. يقوم أساس الترقيم الآلى بحفظ اسم هذا العمود على فترات زمنية منتظمة كلما استمر في بحث صفحات الانترنت، وبحفظه مرة أخرى بمجرد الانتهاء من بحث أخر صف من قاعدة البيانات الخاصة بك. عند استئناف بحث صفحات الانترنت أو تجديده، يبدأ بحث صفحات الانترنت بالصف الذي تم تحديده في القيمة التي تم حفظها لهذا المجال.</p><h3>توصيف CMIS Crawl Seed</h3><p>يمكن توصيف القيم التالية لملف CMIS crawl seed. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/seeds/cmis-seed.conf</code>‎‏ وتعديل القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><p><strong>url</strong> - عنوان URL حافظة من مستودع تخزين CMIS ليتم استخدامه كنقطة بداية لبحث صفحات الانترنت، على سبيل المثال:</p></li>
+  <li><p>‏‎<code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=workspace://SpacesStore/guid</code>‎‏ للبحث من الحافظة الرئيسية، فيجب ادخال عنوان URL على النحو التالي:</p></li>
+  <li><p><code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=</code></p></li>
+  <li><strong>at</strong> - اختيار غير مستخدم.</li>
+  <li><strong>default-allow</strong> - الاستخدام الداخلي فقط.</li>
+</ul><h3>توصيف Samba Crawl Seed</h3><p>يمكن توصيف القيم التالية لملف Samba crawl seed. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/seeds/samba-seed.conf</code>‎‏ وتعديل القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><p><strong>url</strong> - كشف مفصول بسطر جديد للمشاركات المراد بحثها، على سبيل المثال:</p></li>
+  <li><p><code>smb://share.test.com/office</code></p></li>
+  <li><code>smb://share.test.com/cash/money/change</code></li>
+  <li><code>smb://share.test.com/C$/Program Files</code></li>
+  <li><p><strong>hops</strong> - الاستخدام الداخلي فقط. </p></li>
+  <li><strong>default-allow</strong> - الاستخدام الداخلي فقط.</li>
+</ul><h3>توصيف SharePoint Crawl Seed</h3><p>يمكن توصيف القيم الاضافية التالية لملف SharePoint crawl seed. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/seeds/sharepoint-seed.conf</code>‎‏ وتعديل القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><p><strong>url</strong> - كشف مفصول بسطر جديد لتطبيقات الانترنت SharePoint أو تجميعات المواقع ليتم بحثهم,</p></li>
+  <li><p><code>io-sp://a.com</code></p></li>
+  <li><code>io-sp://b.com:83/site</code></li>
+  <li><code>io-sp://c.com/site2</code></li>
+</ul><p>سيتم أيضا بحث المواقع الفرعية لهذه المواقع (الا اذا تم استبعادهم بواسطة قواعد بحث صفحات الانترنت أخرى).<br/>* <strong>filter-url</strong> - كشف مفصول بسطر جديد لتطبيقات الانترنت SharePoint أو تجميعات المواقع ليتم بحثهم,</p>
+<ul>
+  <li><code>http://a.com</code></li>
+  <li><code>http://b.com:83/site</code></li>
+  <li><code>http://c.com/site2</code></li>
+  <li><p><strong>hops</strong> - الاستخدام الداخلي فقط. </p></li>
+  <li><strong>n-concurrent-requests</strong> - الاستخدام الداخلي فقط.</li>
+  <li><strong>delay</strong> - الاستخدام الداخلي فقط.</li>
+  <li><strong>default-allow</strong> - الاستخدام الداخلي فقط.</li>
+  <li><strong>seed-protocol</strong> - يقوم بتحديد بروتوكول أساس الترقيم الآلى للعناصر التابعة لتجميع الموقع. ويعد ذلك ضروريا اذا كان بروتوكول تجميع الموقع هو SSL، أو HTTP، أو HTTPS. يجب تحديد هذه القيمة مثل بروتوكول تجميع الموقع.</li>
+</ul><h3>توصيف Box Seed</h3><p>يمكن توصيف القيم التالية لملف Box crawl seed. لتحديد تلك القيم، قم بفتح الملف ‏‎<code>config/seeds/box-seed.conf</code>‎‏ وتحديد القيم التالية الخاصة بحالات الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>url</strong> - هو عنوان URL المراد استخدامه كنقطة بداية لبحث صفحات الانترنت. القيمة المفترضة هي ‏‎<code>box://app.box.com/</code>‎‏.</li>
+  <li><strong>default-allow</strong> - الاستخدام الداخلي فقط.</li>
+</ul><h2>يمكنك الاطلاع أيضا على</h2><p>‏‎crawler(1)‎‏</p><p>‏‎vcrypt(1)‎‏</p><p>‏‎crawler.conf(5)‎‏</p><p>‏‎crawler-options.conf(5)‎‏</p><p>‏‎orchestration_service.conf(5)‎‏</p>

@@ -1,0 +1,10 @@
+<h1>オーケストレーション・サービスの構成</h1><p>オーケストレーション・サービスは、Crawler に対して、クロールされたファイルの管理方法を示します。デフォルト・オプションを直接変更する場合は、<code>config/orchestration/orchestration-service.conf</code> ファイルを開いて、それぞれのユース・ケースに合わせて以下の値を変更します。</p>
+<ul>
+  <li><strong>http_timeout</strong> - 文書の読み取り/インデックス付け操作に対する秒単位のタイムアウト。デフォルトは <code>585</code> です。</li>
+  <li><strong>concurrent_upload_connection_limit</strong> - 文書のアップロードで許可される同時接続の数。デフォルトは <code>10</code> です。通常は、この数はクロール・オプションの構成時に設定した <code>output_limit</code> の値以上でなければなりません。</li>
+  <li><strong>base_url</strong> - クロールする文書の送信先の URL。</li>
+  <li><strong>endpoint</strong> - <code>base-url</code> でクロールする文書コレクションの場所。</li>
+  <li><strong>username</strong> - <code>endpoint</code> の場所で認証を行うためのユーザー名。</li>
+  <li><strong>password</strong> - <code>endpoint</code> の場所で認証を行うためのパスワード。**重要** - このパスワードは、Data Crawler 付属の vcrypt プログラムを使用して暗号化**しないでください**。</li>
+  <li><strong>config_file</strong> - オーケストレーション・サービスで使用される構成ファイル。</li>
+</ul><p>オーケストレーション・サービスの出力アダプターは、IBM がそのユーザーに対する理解を深め、サービスを向上するための統計を送信できます。<br/><code>send_stats</code> 変数に対して以下のオプションを設定できます。<br/>* <strong>jvm</strong> - 送信される Java 仮想マシン (JVM) 統計に、Data Crawler の実行に使用する JVM から報告された Java のベンダーとバージョンが含まれます。値は、<code>true</code> または <code>false</code> のいずれかです。<br/>* <strong>os</strong> - 送信されるオペレーティング・システム (OS) 統計には、Data Crawler の実行に使用する JVM から報告された OS 名、バージョン、およびアーキテクチャーが含まれます。値は、<code>true</code> または <code>false</code> のいずれかです。</p><h2>関連資料</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p>

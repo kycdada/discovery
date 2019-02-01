@@ -1,0 +1,73 @@
+<h1>crawler(1) - Ein Crawler zum Verschieben von Daten von Punkt A nach Punkt B</h1><h2>Übersicht</h2><p>Verwendung: crawler [ crawl | testit | restart | resume | refresh | summary ][ options ]</p><h2>Beschreibung</h2><p>Data Crawler wird verwendet, um verschiedene Datenrepositorys wie Content-Management-Systeme und Dateisysteme zu durchsuchen und anschließend die Ergebnisdokumente mit der Push-Operation an einen fernen Service zu übertragen.</p><h2>Globale Optionen</h2>
+<pre><code>--version
+    Anzeigen der Programmversion
+--help
+    Anzeigen dieses Texts zur Verwendung
+</code></pre><h2>Befehle</h2><h3>crawl [ optionen ]</h3><p>Führt eine Crawlersuche mit der aktuellen Konfiguration durch.</p>
+<pre><code>-c &lt;wert&gt; | --config &lt;wert&gt;    # Gibt die zu verwendende Konfigurationsdatei an. Standardwert: &quot;config/crawler.conf&quot;.
+--pii-checking &lt;wert&gt;          # Aktivieren/Inaktvieren der PII-Überprüfung
+</code></pre><h3>testit [ optionen ]</h3><p>Führt einen Test der Crawlersuche durch, der nur die Seed-URL durchsucht und alle eingereihten URLs anzeigt. Falls die Seed-URL zu einem indexierbaren Inhalt führt, (z.B. ein Dokument), dann wird der Inhalt an den Ausgabeadapter gesendet und am Bildschirm angezeigt. Falls die Abfrage der Seed-URL dazu führt, dass URLs eingereiht werden, dann werden diese URLs angezeigt und es wird kein Inhalt an den Ausgabeadapter gesendet. Standardmäßig werden fünf eingereihte URLs angezeigt. </p>
+<pre><code>-c &lt;wert&gt; | --config &lt;wert&gt;    # Gibt die zu verwendende Konfigurationsdatei an. Standardwert: &quot;config/crawler.conf&quot;.
+-l &lt;n&gt; | --limit &lt;n&gt;           # Begrenzt die Anzahl der eingereihten URLs, die angezeigt werden.
+--pii-checking &lt;wert&gt;          # Aktivieren/Inaktvieren der PII-Überprüfung
+</code></pre><h3>restart [ optionen ]</h3><p>Führt eine Crawlersuche erneut aus; startet eine neue Crawlersuche mit der aktuellen Konfiguration.</p>
+<pre><code>-c &lt;wert&gt; | --config &lt;wert&gt;    # Gibt die zu verwendende Konfigurationsdatei an.
+--pii-checking &lt;wert&gt;          # Aktivieren/Inaktvieren der PII-Überprüfung
+</code></pre><h3>resume [ optionen ]</h3><p>Nimmt eine Crawlersuche an dem Punkt wieder auf, an dem sie stoppte.</p>
+<pre><code>-c &lt;wert&gt; | --config &lt;wert&gt;    # Gibt die zu verwendende Konfigurationsdatei an.
+--pii-checking &lt;wert&gt;          # Aktivieren/Inaktvieren der PII-Überprüfung
+</code></pre><h3>refresh [ optionen ]</h3><p>Aktualisiert eine vorherige Crawlersuche.</p>
+<pre><code>-c &lt;wert&gt; | --config &lt;wert&gt;    # Gibt die zu verwendende Konfigurationsdatei an.
+--pii-checking &lt;wert&gt;          # Aktivieren/Inaktvieren der PII-Überprüfung
+</code></pre><h3>summary [ optionen ]</h3><p>Generiert einen Crawlersuchbericht.</p>
+<pre><code>--submitted                    # Fragt alle übergebenen Dokumente ab.
+--processed                    # Fragt nur die Dokumente ab, die erfolgreich verarbeitet wurden.
+--failed                       # Fragt nur die Dokumente ab, die nicht erfolgreich verarbeitet wurden.
+--group-id &lt;value&gt;             # Fragt die Ausführung der Crawlersuche für eine bestimmte Gruppe ab. Eine Gruppe besteht aus einer Anfangssuche und allen wiederaufgenommenen, aktualisierten oder neu gestarteten Crawlersuchen dieser Anfangssuche. Falls kein Wert angegeben wird, wird für diese Abfrage standardmäßig die aktuellste Gruppe durchsucht.
+--show-content                 # Zeigt allen zusätzlichen Inhalt an, der einer Abfrage zugeordnet ist.
+--filter                       # Filtert dieses Abfrageergebnis auf der URL und hashID.
+</code></pre><h2>Beispiele</h2><p>Führt eine Crawlersuche mithilfe der Konfigurationsdatei unter <code>config/crawler.conf</code> aus:</p>
+<pre><code>crawler crawl
+</code></pre><p>Führt einen Test aus, bei dem die Konfigurationsdatei unter <code>config/crawler.conf</code> verwendet wird:</p>
+<pre><code>crawler testit
+</code></pre><p>Führt eine Crawlersuche mit der Konfigurationsdatei unter <code>/home/watson/office-share.conf</code> aus:</p>
+<pre><code>crawler crawl --config /home/watson/office-share.conf
+</code></pre><p>Startet eine Crawlersuche mit der Konfigurationsdatei unter <code>/home/watson/office-share.conf</code>:</p>
+<pre><code>crawler restart --config /home/watson/office-share.conf
+</code></pre><p>Ruft Ergebnistexte für fehlgeschlagene Dokumente mit der Gruppen-ID <code>2</code> ab:</p>
+<pre><code>crawler summary --failed --group-id 2 --show-content
+</code></pre><p>Zeigt die Verwendung einschließlich der Version an:</p>
+<pre><code>crawler --help
+</code></pre><h2>KONFIGURATION</h2><p><code>crawler</code> erfordert eine Konfigurationsdatei für seine Optionen. Beispiele für Konfigurationsdateien stehen im Verzeichnis <code>share</code> im Installationsverzeichnis von <code>crawler</code> zur Verfügung. Kopieren Sie diese Beispiele und ändern Sie sie. <em>Ändern Sie nicht die Beispiele selbst!</em></p><p>Ohne die Angabe der Option <code>--config | -c</code> sucht <code>crawler</code> im Verzeichnis <code>config</code> des Verzeichnisses, in dem <code>crawler</code> gestartet wurde, nach seiner Konfiguration. Das heißt, <code>crawler</code> sucht nach <code>config/crawler.conf</code>.</p><h2>Diagnose</h2><p>Verwenden Sie diese Komponenten, um Probleme zu diagnostizieren. </p><h3>Fehlerbehebung</h3><p>Aktiviert den Debugmodus. Legen Sie in der Datei <code>crawler.conf</code> Folgendes fest:</p>
+<pre><code>debugging.full_node_debugging = true
+</code></pre><h3>Protokollierung</h3><p>Aktiviert die Protokollierung. Legen Sie in der Datei <code>log4j_custom.properties</code> Folgendes fest:</p>
+<pre><code>log4j.rootLogger=INFO, Console, Log
+</code></pre><p>Dies ist die Standardprotokollierungsstufe für die Dateiausgabe. Für das Konsolenprotokoll lautet der Standard: </p>
+<pre><code>log4j.appender.Console.Threshold=WARN
+</code></pre><p>Für Protokollebenen können die folgenden Werte festgelegt werden:</p>
+<pre><code>OFF - Die höchstmögliche Ebene, diese ist zum Abschalten der Protokollierung gedacht.
+FATAL - Kennzeichnet sehr schwerwiegender Fehlerereignisse, die vermutlich zu einem Abbruch der Anwendung führen.
+ERROR - Kennzeichnet Fehlerereignisse, bei denen die Anwendung weiter ausgeführt werden kann.
+WARN - Kennzeichnet möglicherweise schädliche Situationen.
+INFO - Kennzeichnet Informationsnachrichten, die den Fortschritt der Anwendung auf einer allgemeinen Ebene hervorheben.
+DEBUG - Kennzeichnet differenzierte Informationsereignisse, die bei der Fehlerbehebung bei Anwendungen hilfreich sind.
+TRACE - Kennzeichnet differenziertere Informationsereignisse als DEBUG.
+ALL - Die niedrigste Ebene, die zum Einschalten der Protokollierung gedacht ist.
+</code></pre><h2>Regulierung</h2><p>Definiert Dimensionierungsbegrenzungen, die bei der Verwaltung des Durchsatzes helfen. Legen Sie in der Datei <code>crawler.conf</code> Folgendes fest: </p><p><code>shutdown_timeout</code> Gibt den Zeitlimitwert in Minuten an, bevor die Anwendung heruntergefahren wird. Der Standardwert lautet 10. </p>
+<pre><code>shutdown_timeout = &lt;n&gt;
+</code></pre><p><code>output_limit</code> ist die höchste Zahl der indexierbaren Elemente, die der portierbare Crawler gleichzeitig an den Ausgabeadapter in Erwartung einer Antwort sendet. Der Standardwert lautet 10. Dieser Wert kann weiter durch zentrale Bestandteile begrenzt werden, die für die Ausführung von Arbeiten verfügbar sind. </p>
+<pre><code>output_limit = &lt;n&gt;
+</code></pre><p><code>input_limit</code> Begrenzt die Anzahl der URLs, die zu einem Zeitpunkt angefordert werden können. Der Standardwert lautet 3. </p>
+<pre><code>input_limit = &lt;n&gt;
+</code></pre><p><code>output_timeout</code> Dies ist die Zeitdauer in Sekunden, bevor der portierbare Crawler bei einer Anforderung an den Ausgabeadapter aufgibt und anschließend das Element aus der Begrenzungswarteschlange entfernt, um die Verarbeitung fortsetzen zu können. Der Standardwert lautet 150.</p>
+<pre><code>output_timeout = &lt;n&gt;
+</code></pre><p>Den Beschränkungen, die durch den Ausgabeadapter bestehen, sollte Beachtung geschenkt werden, da diese Beschränkungen mit den hier definierten Begrenzungen zusammenhängen könnten. Das oben definierte <code>output_limit</code> bezieht sich nur auf die Anzahl der indexierbaren Objekte, die gleichzeitig an den Ausgabeadapter gesendet werden können. Sobald ein indexierbares Objekt an den Ausgabeadapter gesendet wird, ist es wie in der Variablen <code>output_timeout</code> definiert gezählt worden. Es ist möglich, dass der Ausgabeadapter selbst über eine Drosselung verfügt, die es verhindert, dass er so viele Eingaben verarbeitet, wie er empfängt. Die Orchestrierungsausgabeadapter können über einen Verbindungspool verfügen, der für HTTP-Verbindungen zum Service konfigurierbar ist. Wenn dieser zum Beispiel den Standardwert 8 annimmt und wenn Sie für <code>output_limit</code> eine Zahl definiert haben, die über der für diesen Verbindungspool konfigurierten Zahl liegt, dann werden Sie (gezählte) Prozesse haben, die auf ihre Ausführung warten. In diesem Fall kann es zu Zeitlimitüberschreitungen kommen. </p><p><code>num_threads</code> Die Anzahl der parallelen Threads, die gleichzeitig ausgeführt werden können. Dieser Wert kann entweder eine ganze Zahl sein, die die Anzahl der parallelen Threads direkt angibt, oder es kann eine Zeichenfolge mit dem Format <code>&quot;xNUM&quot;</code> sein, die den Multiplikationsfaktor der Anzahl der verfügbaren Prozessoren angibt. Der Standardwert lautet &ldquo;x1.5&rdquo; oder 1,5 x die Anzahl der verfügbaren Prozessoren (die mit <code>Runtime.availableProcessors</code> erfasst wurde).</p>
+<pre><code>num_threads = &lt;n&gt;
+</code></pre><p>Die Formel für die Berechnung der Parallelität im Data Crawler-Pool lautet: <code>min(maxThreads, max(minThreads, numThreads))</code>.</p><h2>Umgebungsvariable <code>CRAWLER_OPTS</code></h2><p>Folgende Eigenschaften können an <code>crawler</code> mithilfe der Umgebungsvariable <code>CRAWLER_OPTS</code> übergeben werden. Sie werden hier mit Standardwerten aufgelistet.</p><p>Übergeben Sie diese wie folgt:</p>
+<pre><code>CRAWLER_OPTS=&quot;-Dproperty=value -Dproperty=value&quot; crawler
+</code></pre><p>Sie sollten nur für die Fehlerbehebung geändert werden und ausschließlich auf Anweisung von IBM Support.</p><h3>cfa.java_bin</h3><p><code>cfa.java_bin</code> kann den Befehl <code>java</code> ändern, der für den Start des Eingabeadapters des Connector-Frameworks verwendet wird. Standardmäßig verwendet <code>crawler</code> dieselbe <code>java</code>-Binärdatei, die auch für den Start von <code>crawler</code> selbst verwendet wird.</p><p>Dies kann auch durch Festlegen der Eigenschaft <code>java.home</code> geändert werden, die dann verwendet wird, um den Pfad zur ausführbaren <code>java</code>-Datei zu berechnen. </p><h3>cfa.lib_dir</h3><p><code>cfa.lib_dir</code> ändert den Pfad zum Verzeichnis <code>lib</code> von Connector-Framework. Diese Änderung sollte sehr selten vorzunehmen sein. Standardmäßig verwendet <code>crawler</code> das Verzeichnis <code>lib</code> innerhalb des berechneten Pfades zum Connector-Framework. In der Regel ist dies einfach <code>connectorFramework</code>.</p><h3>cfa.framework_jars_dir</h3><p><code>cfa.framework_jars_dir</code> ändert den Pfad zum jar-Verzeichnis von Connector-Framework, das sich standardmäßig im Verzeichnis <code>connectorFramework/&lt;version&gt;/lib/java</code> befindet.</p><h3>cfa.plugins_dir</h3><p><code>cfa.plugins_dir</code> gibt den Pfad zum Plugins-Verzeichnis des Connector-Frameworks an, in dem die tatsächlichen Konnectoren gespeichert sind.<br/>Standardmäßig wird dieser Pfad vom Verzeichnis <code>framework_jars_dir</code> erstellt und lautet <code>connectorFramework/&lt;version&gt;/lib/java/plugins</code>.</p><h2>Bekannte Einschränkungen</h2><p>Details zu bekannten Einschränkungen im aktuellen Release von Data Crawler</p>
+<ul>
+  <li>Data Crawler kann blockieren, wenn der Dateistystemkonnektor mit einer ungültigen oder fehlenden URL ausgeführt wird.</li>
+  <li>Konfigurieren Sie den Wert <code>urls_to_filter</code> in der Datei <code>config/crawler.conf</code>, so dass alle Whitelist-URLs oder RegExes in einem einzigen RegEx-Ausdruck enthalten sind.</li>
+  <li>Der Pfad zur Konfigurationsdatei, der in der Option <code>--config | -c</code> übergeben wurde, muss ein qualifizierter Pfad sein. Das heißt, er muss sich in den relativen Formaten <code>config/crawler.conf</code> oder <code>./crawler.conf</code> oder dem absoluten Pfad <code>/path/to/config/crawler.conf</code> befinden. Die alleinige Angabe von <code>crawler.conf</code> ist möglich, aber nur dann, wenn die mithilfe von <code>include</code> in der Datei <code>crawler.conf</code> referenzierten Dateien integriert (in-lined) und nicht mit <code>include</code> einbezogen wurden. So wurde zum Beispiel <code>discovery/discovery_service.conf</code> mit <code>include</code> einbezogen, um das Lesen der Konfiguration zu vereinfachen. Der zugehörige Inhalt muss in <code>crawler.conf</code> innerhalb des Schlüssels <code>output_adapter.discovery_service</code> kopiert werden, um einen nicht qualifizierten Pfad in der Konfigurationsoption verwenden zu können.</li>
+</ul><h2>Änderungsprotokoll</h2><p>Eine Liste mit Änderungen in diesem Release finden Sie in der Datei <code>changelog.txt</code> in Ihrem Installationsverzeichnis. </p><h2>Autor</h2><p>IBM Watson - <a href="https://www.ibm.com/smarterplanet/us/en/ibmwatson/">https://www.ibm.com/smarterplanet/us/en/ibmwatson/</a></p><p>Made by yinz in Pittsburgh.</p><h2>Weitere Informationen</h2><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

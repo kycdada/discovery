@@ -1,0 +1,75 @@
+<h1>配置 Data Crawler</h1><p><code>搜寻器</code>需要通过一个配置文件来设置其选项。<code>搜寻器</code>安装目录中的 <code>share</code> 目录中提供了一些配置示例。请复制这些示例并作出修改。*请勿在原始位置中修改这些示例。*</p><p><code>crawler.conf</code> 文件包含的信息用于告知搜寻器要使用哪些文件进行搜寻（输入适配器）、完成搜寻后将已搜寻文件的集合发送到的位置以及其他搜寻管理选项。</p><p><strong>注</strong>：所有文件路径都相对于 <code>config</code> 目录，除非另有说明。</p><p>可在此文件中设置以下选项：</p><h2>输入适配器</h2>
+<ul>
+  <li><strong>class</strong> - 仅供内部使用；定义 Data Crawler 输入适配器类。缺省值为 <code>com.ibm.watson.crawler.connectorframeworkinputadapter.Crawl</code>。</li>
+  <li><strong>config</strong> - 仅供内部使用；定义 Connector Framework 配置。此块中要传递到所选输入适配器的缺省配置键为 <code>connector_framework</code>。<br/><strong>注</strong> - 您可以使用 Connector Framework 来与自己的数据进行交互。这可以是企业的内部数据，也可以是 Web 或云上的外部数据。可通过连接器来访问大量不同的数据源，但连接实际由搜寻过程控制。</li>
+  <li><strong>要点</strong> - 将在本地缓存 Connector Framework 输入适配器所检索的数据。这些数据在存储时不进行加密。缺省情况下，用于缓存这些数据的临时目录应该会在重新引导时被清除，且只能由执行 crawler 命令的用户来读取。如果 Connector Framework 在可执行清除之前就已消失，那么此目录可能比搜寻器存在时间更长。请谨慎考虑缓存数据的存放位置 - 您可以将这些数据放到加密的文件系统中，但需要注意这样做所产生的性能影响。只有您可以决定搜寻速度与安全性之间的适度平衡。</li>
+  <li><strong>crawl_config_file</strong> - 要用于搜寻的配置文件。缺省值为 <code>connectors/filesystem.conf</code>。</li>
+  <li><strong>crawl_seed_file</strong> - 要用于搜寻的搜寻种子文件。缺省值为 <code>seeds/filesystem-seed.conf</code>。</li>
+  <li><strong>id_vcrypt_file</strong> - 搜寻器执行数据加密所使用的密钥文件；搜寻器随附的缺省密钥为 <code>id_vcrypt</code>。<br/>如果需要生成新的 id_vcrypt_file，请使用 <code>bin</code> 文件夹中的 vcrypt 脚本。</li>
+  <li><strong>crawler_temp_dir</strong> - 用于连接器日志的搜寻器临时文件夹。提供的缺省值为 <code>tmp</code>。如果还不存在 <code>tmp</code> 文件夹，那么将在当前工作目录中创建该文件夹。</li>
+  <li><strong>extra_jars_dir</strong> - 仅供内部使用；向 Connector Framework 类路径添加额外的 JAR。<br/>在使用 SharePoint 连接器时，该值必须为 <code>oakland</code>，而在使用数据库连接器时，该值必须为 <code>database</code>。在使用其他连接器时，可将该值留空（即空字符串 &quot;&quot;）。**注**：相对于 Connector Framework <code>lib/java</code> 目录。</li>
+  <li><strong>urls_to_filter</strong> - 要搜寻的 URL 白名单（用换行符分隔），采用正则表达式形式。Data Crawler 只会搜寻与提供的正则表达式之一相匹配的 URL。域列表包含最常见的顶级域；可根据需要向此列表中添加域。从 Data Crawler 的这一发行版开始，文件扩展名类型列表包含 Orchestration Service 支持的文件扩展名。确保过滤器不会排除您的种子 URL 域。例如，如果种子 URL 类似于 <code>http://testdomain.test.in</code>，那么将向域过滤器添加“<code>in</code>”。确保过滤器不会排除您的种子 URL，否则 Crawler 可能挂起。</li>
+  <li><strong>max_text_size</strong> - Connector Framework 将文档写入到磁盘前该文档的最大大小（以字节计）。调高该值将会减少向磁盘写入的文档数量，但会增加内存需求。</li>
+  <li><strong>extra_vm_params</strong> - 允许您向用于启动 Connector Framework 的命令中添加额外的 Java 参数。</li>
+  <li><strong>bootstrap_logging</strong> - 编写 Connector Framework 启动日志；仅用于高级调试。值为 <code>true</code> 或 <code>false</code>。将日志文件写入到 <code>crawler_temp_dir</code> 中。</li>
+</ul><h2>存储适配器</h2><p>允许将搜寻器的内部状态存储到数据库中。必须使用此设置，才能使搜寻的 <code>restart</code> 和 <code>resume</code> 选项正确工作。</p>
+<pre><code class="javascript">storage_adapter {
+ config = &quot;storage_in_db&quot;
+  storage_in_db {
+    include &quot;storage/database_storage.conf&quot;
+  } 
+}
+</code></pre><p>缺省情况下，引用的文件 <code>storage/database_storage.conf</code> 使用 H2 数据库。您可以使用任何具有 JDBC 驱动程序的数据库来代替所提供的缺省值。请参阅您的 JDBC 驱动程序文档，以查找有关其中某些设置的特定信息。要直接更改缺省选项，请打开 <code>config/storage/database_storage.conf</code> 文件，并根据您的用例来修改以下值：<br/>* <strong>class</strong> - 此类指向要使用的数据库适配器类。缺省值为 <code>com.ibm.watson.crawler.storageadapters.DatabasePersistAdapter</code>。<br/>* <strong>driver</strong> - JDBC 驱动程序类。缺省值为 <code>org.h2.Driver</code>（即使用 H2）。<br/>* <strong>url</strong> - 请参阅您驱动程序的 JDBC 选项。这是 JDBC 连接字符串的 URL 前缀。缺省值为 <code>jdbc:h2:file:</code>。<br/>* <strong>database_location</strong> - 您希望数据库所在的位置。这仅适用于基于文件的数据库（如，sqlite 和 H2）。缺省值为 <code>./storage/database</code>。<br/>* <strong>database_name</strong> - 数据库的名称。缺省值为 <code>ActivityDB</code>。<br/>* <strong>table_name</strong> - 要使用的表的名称。缺省值为 <code>Ledger</code>。<br/>* <strong>username</strong> - 用于连接到数据库的用户名<br/>* <strong>password</strong> - 用于连接到数据库的密码</p><p>缺省配置可满足大多数活动的需求。</p><h2>输出适配器</h2><p>提供了一对可供选择的*输出适配器*。可通过设置 <code>crawler.conf</code> 中的 <code>output_adapter.class</code> 来设置输出适配器。选项包括：</p>
+<ul>
+  <li><strong>class</strong> - 定义 Data Crawler 输出适配器类。缺省值为 <code>com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter</code>。</li>
+  <li><strong>config</strong> - 定义要传递到输出适配器的配置键。该字符串必须与此配置对象中的键相对应。在以下代码示例中：<br/><code>javascript
+  orchestration_service {
+include &quot;orchestration_service.conf&quot;
+  },
+  test {
+output_directory = &quot;/tmp/crawler-test-output&quot;
+  }
+}
+</code><br/>配置键为 <code>orchestration_service</code>。缺省值为 <code>discovery_service</code>。</li>
+</ul><p>必须通过指定 <code>class</code> 参数和 <code>config</code> 键来选择输出适配器。</p>
+<ul>
+  <li><strong>Orchestration Service 输出适配器</strong>：将已搜寻的文档上载到 Watson Developer Cloud 的 Orchestration Service 中。通过设置 <code>class</code> 参数和 <code>config</code> 键来选择此适配器，如下所示：<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.orchestrationserviceoutputadapter.oneatatime.OrchestrationServiceOutputAdapter&quot;
+  config = &quot;orchestration_service&quot;
+  orchestration_service {
+include &quot;orchestration/orchestration_service.conf&quot;
+  }
+</code></li>
+  <li><strong>Discovery Service 输出适配器</strong>：将已搜寻的文档上载到 Watson Developer Cloud 的 Discovery Service 中。通过设置 <code>class</code> 参数和 <code>config</code> 键来选择此适配器，如下所示：<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.discoveryserviceoutputadapter.DiscoveryServiceOutputAdapter&quot;
+  config = &quot;discovery_service&quot;
+  discovery_service {
+include &quot;discovery/discovery_service.conf&quot;
+  }
+</code></li>
+  <li><strong>Watson Test 输出适配器</strong>：将已搜寻文件的表示写入到磁盘上指定的位置。通过设置 <code>class</code> 参数和 <code>config</code> 键来选择此适配器，如下所示：</li>
+</ul><p><strong>注</strong> - 额外参数 <code>output_directory</code> 用于选择要向其中写入已搜寻数据的表示的目录。<br/><code>javascript
+  class = &quot;com.ibm.watson.crawler.testoutputadapter.TestOutputAdapter&quot;
+  config = &quot;test&quot;
+  output_directory = &quot;/tmp/crawler-test-output&quot;
+</code><br/>* <strong>retry</strong> - 指定在推送至输出适配器的尝试失败时可用的重试选项。<br/> * max_attempts - 最大重试次数。缺省值为 <code>10</code>。<br/> * delay - 两次尝试之间的最短延迟（以秒计）。缺省值为 <code>2</code>。<br/> * exponent_base - 用于确定每次失败尝试后延迟时间增长量的因子。缺省值为 <code>2</code>。</p><p>公式为：<br/><code>
+ d(nth_retry) = delay * (exponent_base ^ nth_retry)
+</code></p><p>例如，如果将 delay 设置为 1 秒且将 exponent_base 设置为 2，那么将导致第二次尝试与第三次尝试之间的延迟为 2 秒（而不是 1 秒），而下一个延迟为 4 秒。<br/> <code>
+ d(0) = 1 * (2 ^ 0) = 1 second
+ d(1) = 1 * (2 ^ 1) = 2 seconds
+ d(2) = 1 * (2 ^ 2) = 4 seconds
+</code><br/>因此，如果使用缺省设置，那么最多将尝试提交 10 次，最长等待时间约为 1,022 秒（略微超过 17 分钟）。此时间为近似值，因为其中会额外增加一些时间以防同时执行多个重新提交操作。此“模糊”时间最多为 10%，因此前一示例中最后一次重试的延迟可达 4.4 秒。等待时间不包括连接到服务、上载数据或等待响应所用的时间。<br/> <em>警告：</em>如果通过降低任何这些缺省值来缩短等待时间，可能导致无法通过所配置的输出适配器成功上载文档。在使用 Watson Developer Cloud 服务时，反映这一情况的证据是日志中引用“429 Too Many Requests”速率限制的 RetryFailure 消息。</p><h2>调试选项</h2>
+<ul>
+  <li><strong>full_node_debugging</strong> - 激活调试方式；可能的值包括 <code>true</code> 或 <code>false</code>。**警告**：这会将每个已搜寻文档的全部数据放入日志中。</li>
+  <li><strong>heartbeat_wait_time</strong> - 两次报告文档摄入统计信息之间的时间间隔，以毫秒计（仅限调试方式）。缺省值为 1000 毫秒。</li>
+</ul><h2>日志记录选项</h2>
+<ul>
+  <li><strong>configuration_file</strong> - 要用于日志记录的配置文件。在样本 <code>crawler.conf</code> 文件中，在 <code>logging.log4j</code> 中定义此选项，并且其缺省值为 <code>log4j_custom.properties</code>。<br/>无论是使用 <code>.properties</code> 还是 <code>.conf</code> 文件，必须以同样的方式定义此选项。</li>
+</ul><h2>其他搜寻管理选项</h2>
+<ul>
+  <li><strong>shutdown_timeout</strong> - 指定超时值（以分钟计），经过这段时间后才关闭应用程序。缺省值为 <code>10</code>。</li>
+  <li><strong>output_limit</strong> - 搜寻器尝试同时发送到输出适配器的可索引项的最大数量。可用于执行处理的内核数会进一步限制此选项。即，在任何时候向等待返回的输出适配器发送的可索引项的数量不得超过“x”。缺省值为 <code>10</code>。</li>
+  <li><strong>input_limit</strong> - 限制可从连接器同时请求的 URL 数。缺省值为 <code>3</code>。</li>
+  <li><strong>output_timeout</strong> - Data Crawler 放弃对输出适配器的请求并从输出适配器队列中移除此项以释放更多处理资源之前等待的时间量（以秒计）。缺省值为 <code>1200</code>。**注** - 应注意输出适配器施加的约束，因为这些约束可能与此处定义的限制有关。上面定义的 <code>output_limit</code> 仅与可同时发送到输出适配器的可索引对象数有关。将可索引对象发送到输出适配器后，便开始“计时”（如 <code>output_timeout</code> 变量所定义）。输出适配器本身可能具有调速，这会阻止它处理所收到的所有输入。例如，Orchestration 输出适配器可能有一个连接池（可针对到该服务的 HTTP 连接进行配置）。例如，如果将此值缺省设置为 8，并且您为 <code>output_limit</code> 设置的数字大于 8，那么会有一些进程已开始计时并等待轮流执行。这样，您可能会遇到超时。</li>
+  <li><strong>num_threads</strong> - 可同时运行的并行线程数。此值可以为整数（直接指定并行线程数），也可以为“xNUM”格式的字符串（指定可用处理器数的倍增因子，例如“x1.5”）。缺省值为 <code>&quot;30&quot;</code>。</li>
+</ul><h2>另请参阅</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

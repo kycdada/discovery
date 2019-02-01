@@ -1,0 +1,10 @@
+<h1>توصيف خدمة orchestration</h1><p>تقوم خدمة orchestration باخبار أداة البحث بكيفية ادارة الملفات التي تم بحثها. يمكن تغيير الاختيارات المفترضة مباشرة بواسطة فتح الملف ‏‎<code>config/orchestration/orchestration-service.conf</code>‎‏، وتعديل القيم التالية الخاصة بحالة الاستخدام الخاصة بك:</p>
+<ul>
+  <li><strong>http_timeout</strong> - ، بالثانية، لعملية قراءة/فهرسة الوثيقة؛ المفترض هو <code>585</code>.</li>
+  <li><strong>concurrent_upload_connection_limit</strong> - عدد الاتصالات المسموح بها في نفس الوقت لتحميل الوثائق؛ المفترض هو <code>10</code>. عامة، يجب أن يكون هذا الرقم أكبر من، أو يساوي، مجموعة <code>output_limit</code> عند توصيف اختيارات بحث صفحات الانترنت.</li>
+  <li><strong>base_url</strong> - عنوان URL الذي سيتم ارسال الوثائق التي تم بحثها الخاصة بك إليه.</li>
+  <li><strong>نقطة النهاية</strong> - هو مكان مجموعة الوثائق الخاصة بك التي تم بحثها على <code>base-url</code>.</li>
+  <li><strong>اسم المستخدم</strong> - هو اسم المستخدم للتوثيق بمكان <code>endpoint</code>.</li>
+  <li><strong>كلمة السرية</strong> - هي كلمة سرية لتوثيق بمكان <code>endpoint</code>. <strong>هام</strong> - <strong>لا</strong> تقوم باستخدام برنامج vcrypt الذي تم شحنه مع Data Crawler لتشفير كلمة السرية هذه.</li>
+  <li><strong>config_file</strong> - ملف التوصيف الذي تقوم خدمة orchestration باستخدامه.</li>
+</ul><p>يستطيع Orchestration Service Output Adapter ارسال احصائيات بالترتيب الى IBM لتتمكن من فهم وخدمة المستخدمين الخاصين بها. يمكن تحديد الاختيارات التالية للمتغير <code>send_stats</code> :<br/>* <strong>jvm</strong> - تتضمن احصائيات ‏‎Java Virtual Machine (JVM)‎‏ المرسلة مورد ونسخة Java، كما هو منصوص عليه بواسطة JVM المستخدم لتنفيذ data crawler. القيمة اما <code>true</code> أو <code>false</code>.<br/>* <strong>os</strong> - تتضمن احصائيات نظام التشغيل (OS) المرسلة اسم، ونسخة، وأسلوب بناء نظام التشغيل، كما هو منصوص عليه بواسطة JVM المستخدم لتنفيذ data crawler. القيمة اما <code>true</code> أو <code>false</code>.</p><h2>يمكنك الاطلاع أيضا على</h2><p>‏‎crawler(1)‎‏</p><p>‏‎vcrypt(1)‎‏</p><p>‏‎crawler.conf(5)‎‏</p><p>‏‎crawler-options.conf(5)‎‏</p><p>‏‎crawler-seed.conf(5)‎‏</p>

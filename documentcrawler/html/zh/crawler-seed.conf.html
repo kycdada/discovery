@@ -1,0 +1,52 @@
+<h1>配置搜寻种子</h1><p>种子是搜寻的起点，Data Crawler 使用种子从该种子所识别的资源中检索数据。通常，种子会配置 URL 来访问基于协议的资源，例如，文件共享、SMB 共享、数据库和其他可通过各种 Web 协议访问的数据存储库。此外，不同的种子 URL 具有不同的功能。</p><p>种子也可以特定于存储库，可用于搜寻特定的第三方应用程序（例如，客户关系管理 (CRM) 系统、产品生命周期 (PLC) 系统、内容管理系统 (CMS)、基于云的应用程序以及 Web 数据库应用程序）。</p><p>Data Crawler 目前提供了支持以下存储库类型文件连接器的搜寻种子：</p>
+<ul>
+  <li>文件系统</li>
+  <li>使用 JDBC 的数据库</li>
+  <li>CMIS（内容管理互操作性服务）</li>
+  <li>SMB（服务器消息块）、CIFS（公共因特网文件系统）或 Samba 文件共享</li>
+  <li>SharePoint 和 SharePoint Online</li>
+  <li>Box</li>
+</ul><p>此外还提供了一个搜寻种子配置模板，您可以使用该模板为定制连接器来定制搜寻种子。</p><h2>入门：</h2><p>在搜寻数据存储库时，搜寻器从用户指定的种子 URL 开始，并开始下载信息页面。另外，搜寻器还会查找已下载页面中的链接，并安排进一步搜寻新发现的页面。</p><p>系统将使用配置信息来确定要搜寻的页面及其搜寻方式。此文件解释了每个连接器的搜寻种子文件的可配置选项。</p><p><strong>注</strong>：每个搜寻种子配置文件与对应的文件连接器配置文件配合工作；在其他位置会单独描述文件连接器选项。</p><h3>配置文件系统搜寻种子</h3><p>可配置文件系统搜寻种子文件的以下值。要设置这些值，请打开文件 <code>config/seeds/filesystemseed.conf</code>，并根据您的用例来指定以下值：</p>
+<ul>
+  <li><strong>url</strong> - 要搜寻的文件和文件夹的换行符分隔列表。UNIX 用户可以使用诸如 <code>/usr/local/</code> 的路径。URL 必须以 <code>sdkfs：//</code> 开头。例如，要搜寻 <code>/home/watson/mydocs</code>，此 URL 的值将为 <code>sdkfs：///home/watson/mydocs</code> - 第三个 <code>/</code> 是必需的！**注**：文件系统连接器使用定制协议 <code>sdkfs：//</code> 来创建有效 URL。请勿在所列路径前面添加 <code>file://</code>；URL 必须以 <code>sdkfs：//</code> 开头。</li>
+  <li><strong>hops</strong> - 仅供内部使用。</li>
+  <li><strong>default-allow</strong> - 仅供内部使用。</li>
+</ul><h3>配置数据库搜寻种子</h3><p>可配置数据库搜寻种子文件的以下值。要设置这些值，请打开文件 <code>config/seeds/database-seed.conf</code>，并根据您的用例来指定以下值：</p>
+<ul>
+  <li><strong>url</strong> - 要检索的表或视图的 URL。定义定制的 SQL 数据库种子 URL。结构为：</li>
+</ul><p> <code>database-system://host:port/database?[per=num]&amp;[sql=SQL]</code></p><p>测试种子 URL 将显示所有排队的 URL。例如，测试包含 200 条记录的数据库的以下 URL：</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=100&amp;sql=select%20*%20from%20vessel&amp;</code></p><p>将显示以下排队的 URL：</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=0&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=100&amp;</code></p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?key-val=200&amp;</code></p><p>测试以下 URL 将显示从第 43 行检索的数据：</p><p> <code>sqlserver://test.mycompany.com:1433/WWII_Navy/?per=1&amp;key-val=43</code><br/>* <strong>hops</strong> - 仅供内部使用。<br/>* <strong>default-allow</strong> - 仅供内部使用。<br/>* <strong>user-password</strong> - 用于数据库系统的凭证。需要使用 <code>:</code> 分隔用户名和密码，并且必须使用 Data Crawler 随附的 vcrypt 程序来加密密码。例如 <code>username:[[vcrypt/3]]passwordstring</code>。<br/>* <strong>max-data-size</strong> - 单个文档的最大数据量。这是一次可装入的最大内存块。仅当您的计算机上有足够的内存时，才可增加此限制。<br/>* <strong>filter-exact-duplicates</strong> - 仅供内部使用。<br/>* <strong>jdbc-class</strong>（Extender 选项）- 如果指定了此选项，该字符串将覆盖当选择<code>（其他）</code>作为数据库系统时连接器使用的 JDBC 类。<br/>* <strong>connection-string</strong>（Extender 选项）- 如果指定了此选项，此字符串将覆盖自动生成的 JDBC 连接字符串。这样，您便可以提供关于数据库连接的更详细的配置，例如，负载均衡或 SSL 连接。例如：<code>jdbc:netezza://127.0.0.1:5480/databasename</code>。<br/>* <strong>save-frequency-for-resume</strong>（Extender 选项）- 指定列或关联标签的名称，以便能够恢复搜寻或执行部分刷新。种子在搜寻过程中会定期保存该列的名称，并在搜寻完数据库最后一行后再次保存该名称。在恢复搜寻或进行刷新时，搜寻将从此字段保存的值所标识的那一行开始。</p><h3>配置 CMIS 搜寻种子</h3><p>可配置 CMIS 搜寻种子文件的以下值。要设置这些值，请打开文件 <code>config/seeds/cmisseed.conf</code>，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><p><strong>url</strong> - CMIS 存储库中用作搜寻起点的文件夹的 URL，例如：</p></li>
+  <li><p><code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=workspace://SpacesStore/guid</code><br/> 要从根文件夹进行搜寻，您需要提供以下 URL：</p></li>
+  <li><p><code>cmis://alfresco.test.com:8080/alfresco/cmisatom?folderToProcess=</code></p></li>
+  <li><strong>at</strong> - 未使用的选项。</li>
+  <li><strong>default-allow</strong> - 仅供内部使用。</li>
+</ul><h3>配置 Samba 搜寻种子</h3><p>可配置 Samba 搜寻种子文件的以下值。要设置这些值，请打开文件 <code>config/seeds/sambaseed.conf</code>，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><p><strong>url</strong> - 要搜寻的共享的换行符分隔列表，例如：</p></li>
+  <li><p><code>smb://share.test.com/office</code></p></li>
+  <li><code>smb://share.test.com/cash/money/change</code></li>
+  <li><code>smb://share.test.com/C$/Program Files</code></li>
+  <li><p><strong>hops</strong> - 仅供内部使用。</p></li>
+  <li><strong>default-allow</strong> - 仅供内部使用。</li>
+</ul><h3>配置 SharePoint 搜寻种子</h3><p>可配置 SharePoint 搜寻种子文件的以下值。要设置这些值，请打开文件 <code>config/seeds/sharepointseed.conf</code>，并根据您的用例来修改以下值：</p>
+<ul>
+  <li><p><strong>url</strong> - 要搜寻的 SharePoint Web 应用程序或站点集合的换行符分隔列表，例如：</p></li>
+  <li><p><code>io-sp://a.com</code></p></li>
+  <li><code>io-sp://b.com:83/site</code></li>
+  <li><code>io-sp://c.com/site2</code></li>
+</ul><p>同时还会搜寻这些站点的子站点（除非它们被其他搜寻规则排除在外）。<br/>* <strong>filter-url</strong> - 要搜寻的 SharePoint Web 应用程序或站点集合的换行符分隔列表，例如：</p>
+<ul>
+  <li><code>http://a.com</code></li>
+  <li><code>http://b.com:83/site</code></li>
+  <li><code>http://c.com/site2</code></li>
+  <li><p><strong>hops</strong> - 仅供内部使用。</p></li>
+  <li><strong>n-concurrent-requests</strong> - 仅供内部使用。</li>
+  <li><strong>delay</strong> - 仅供内部使用。</li>
+  <li><strong>default-allow</strong> - 仅供内部使用。</li>
+  <li><strong>seed-protocol</strong> - 设置站点集合子代的种子协议。如果站点集合的协议为 SSL、HTTP 或 HTTPS，这为必需项。必须将此值设置为与站点集合的协议相同。</li>
+</ul><h3>配置 Box 种子</h3><p>可配置 Box 搜寻种子文件的以下值。要设置这些值，请打开文件 <code>config/seeds/boxseed.conf</code>，并根据您的用例来指定以下值：</p>
+<ul>
+  <li><strong>url</strong> - 要用作搜寻起点的 URL。缺省值为 <code>box://app.box.com/</code>。</li>
+  <li><strong>default-allow</strong> - 仅供内部使用。</li>
+</ul><h2>另请参阅</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>orchestration_service.conf(5)</p>

@@ -1,0 +1,13 @@
+<h1>vcrypt (1) - 用來加密和解密少量資料的工具</h1><h2>用法概要</h2><p>用法：vcrypt &ndash;decrypt|-d &ndash;encrypt|-e &ndash;genkey|-g [ OPTIONS ]</p><h2>說明</h2><p><code>vcrypt</code> 主要用來加密「連接器架構」使用的密碼。</p><h3>有關金鑰長度的特殊附註</h3><p>依預設，Java 虛擬機器 (JVM) 實作必須支援 128 位元/16 個位元組的 AES 金鑰。如果系統已安裝「Java 加密延伸」，也許能使用 256 位元/32 個位元組的 AES 金鑰。如果提供了 32 個位元組的金鑰，但用來啟動 <code>vcrypt</code> 的 JVM 並不支援，將會顯示錯誤。</p><h2>指令</h2><h3>&ndash;encrypt | -e OPTIONS INPUT</h3><p>在檔案中或以標準輸入提供加密資料。</p><h3>&ndash;decrypt | -d OPTIONS INPUT</h3><p>在檔案中或以標準輸入提供解密資料。</p><h3>&ndash;genkey | -g</h3><p>產生適用於與 <code>vcrypt</code> 搭配使用的加密金鑰至標準輸出。</p><h2>選項</h2><h3>&ndash;keyfile|-k PATH/TO/ID_VCRYPT</h3><p>指定包含適當 Base64 編碼金鑰的檔案路徑，最可能是使用 <code>--genkey|-g</code> 指令來產生。</p><h2>輸入</h2><h3>加密模式</h3>
+<pre><code>$FILE_CONTAINING_CLEARTEXT | -- $CLEARTEXT
+</code></pre><h3>解密模式</h3>
+<pre><code>$FILE_CONTAINING_CRYPTED_TEXT | -- $CRYPTED_TEXT
+</code></pre><h2>範例</h2><p>產生金鑰並將它放入 <code>id_vcrypt</code> 檔案：</p>
+<pre><code>vcrypt --genkey &gt; id_vcrypt
+</code></pre><p>將在此寫入的密碼從標準輸入加密至標準輸出，並透過輸出重新導向至 <code>my_secret_data.txt</code>：</p>
+<pre><code>./vcrypt --encrypt --keyfile id_vcrypt -- &quot;my secret password&quot; &gt; my_secret_data.txt
+</code></pre><p>您也可以將輸出以管線傳送至 <code>xclip</code>、<code>pbcopy</code> 或是類似項目，以將輸出放在您的作業系統剪貼簿上。</p><p>從檔案解密密碼：</p>
+<pre><code>vcrypt --decrypt --keyfile id_vcrypt my_secret_data.txt
+</code></pre><h2>內容及環境變數</h2><h3><code>VCRYPT_OPTS</code> 環境變數</h3><p>此環境變數可以用來傳遞選項至用來開始 <code>vcrypt</code> 的 <code>java</code> 指令。</p><h3><code>vcrypt.key</code> 內容</h3><p>在 <code>VCRYPT_OPTS</code> 中以 16 或 32 位元組字串將此傳遞為 <code>-D</code> 內容，以在指令行使用金鑰，而非傳遞 <code>--keyfile | -k keyfile</code> 選項。</p><p>用法範例：</p>
+<pre><code>VCRYPT_OPTIONS=&quot;-Dvcrypt.key=&#39;1234qwerasdfzxcv&#39;&quot; vcrypt --encrypt file_to_encrypt
+</code></pre><h3><code>VIV_VCRYPT_KEY</code> 環境變數</h3><p><code>vcrypt</code> 允許使用此環境變數來設定金鑰。它必須是 16 或 32 個位元組。</p><h2>另請參閱</h2><p>crawler(1)</p><p>crawler.conf(5)</p><p>crawler-options.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>

@@ -1,0 +1,128 @@
+<h1>Configurando opções de crawl</h1><p>O Data Crawler coleta os dados brutos eventualmente usados para formar resultados da procura para o<br/>serviço do IBM Watson Retrieve and Rank.</p><p>O Data Crawler fornece atualmente os conectores para suportar a coleção de dados a partir dos<br/>repositórios a seguir:</p>
+<ul>
+  <li>Sistema de arquivos</li>
+  <li>Bancos de dados, por meio de JDBC</li>
+  <li>CMIS (Content Management Interoperability Services)</li>
+  <li>Compartilhamentos de arquivos SMB (Server message Block), CIFS (Common Internet Filesystem) ou Samba</li>
+  <li>SharePoint e SharePoint Online</li>
+  <li>Postal</li>
+</ul><p>Um modelo de configuração do conector também é fornecido, o que permite customizar um conector.</p><h2>Introdução:</h2><p>Ao efetuar crawl dos repositórios de dados, o crawler é iniciado em uma URL de valor inicial especificada<br/>pelo usuário, e inicia o download das páginas de informações. O crawler também localiza links nas páginas<br/>transferidas por download e planeja as páginas descobertas recentemente para execução de crawl adicional.</p><p>As informações de configuração são usadas para determinar quais páginas precisam ser<br/>passadas por crawl, e como efetuar crawl nelas. Esse arquivo explica as opções que são possíveis de configurar para<br/>cada conector.</p><p><strong>Nota</strong>: cada conector também possui um arquivo de configuração inicial<br/>correspondente; as opções de configuração inicial são descritas separadamente.</p><h3>Configurando o Filesystem Connector</h3><p>O Filesystem Connector permite efetuar crawl do local dos arquivos<br/>para a instalação do Data Crawler. A seguir estão as opções de configuração básica necessárias para usar o<br/>Filesystem Connector. Para configurar esses valores, abra o arquivo<br/><code>config/connectors/filesystem.conf</code> e modifique os valores a seguir, específicos para os<br/>casos de uso:</p>
+<ul>
+  <li><strong>protocol</strong> - O nome do protocolo do conector usado para o crawl. Use<br/><code>sdk-fs</code> para esse conector.</li>
+  <li><strong>collection</strong> - Este atributo é usado para descompactar arquivos temporários.</li>
+  <li><strong>logging-config</strong> - Especifica o arquivo usado para configurar opções de<br/>criação de log; ele deve ser formatado como uma sequência XML <code>log4j</code>.</li>
+  <li><strong>classname</strong> - Nome de classe Java para o conector. O valor para usar esse<br/>conector deve ser <code>plugin:filesystem.plugin@filesystem</code>.</li>
+</ul><h3>Configurando o conector de banco de dados</h3><p>O conector de banco de dados permite efetuar crawl de um banco de dados executando um comando SQL<br/>customizado e criando um documento por linha (registro) e um elemento de conteúdo por coluna (campo). É<br/>possível especificar uma coluna a ser usada como uma chave exclusiva, bem como uma coluna que contém um<br/>registro de data e hora que representa a data da última modificação de cada registro. O conector recupera<br/>todos os registros do banco de dados especificado, e também pode ser restrito às tabelas específicas,<br/>junções, etc., na instrução SQL.</p><p>O conector de banco de dados permite efetuar crawl dos bancos de dados a seguir:</p>
+<ul>
+  <li>IBM DB2</li>
+  <li>MySQL</li>
+  <li>Oracle</li>
+  <li>PostgreSQL</li>
+  <li>Microsoft SQL Server</li>
+  <li>Sybase</li>
+  <li>Outros bancos de dados compatíveis com SQL por meio de um driver compatível com JDBC 3.0</li>
+</ul><p>O conector recupera todos os registros da tabela e do banco de dados especificados.</p><p><strong>Drivers JDBC</strong><br/>O conector de banco de dados é enviado com o driver Oracle JDBC (Java Database<br/>Connectivity) versão 1.5. Todos os drivers JDBC de terceiros enviados com o data crawler estão<br/>localizados no diretório <code>/lib/java/database</code> de instalação do data crawler, em que é<br/>possível incluí-los, removê-los e modificá-los, conforme necessário. Também é possível usar a configuração<br/><code>extra_jars_dir</code> no arquivo <code>crawler.conf</code> para especificar outro local.</p><p><strong>Drivers JDBC <em>DB2</em></strong><br/>O data crawler não é enviado com os drivers JDBC para DB2 devido a problemas de<br/>licensa. No entanto, todas as instalações do DB2 nas quais o suporte do JDBC foi instalado, incluem os arquivos JAR que<br/>o data crawler requer, para poder efetuar crawl de uma instalação do DB2. Para executar crawl em uma instância do<br/>DB2, deve-se copiar esses arquivos no diretório apropriado na instalação do data crawler, para que o<br/>conector de banco de dados possa usá-los.</p><p>Para ativar o data crawler para efetuar crawl de uma instalação do DB2, localize os arquivos JAR<br/><code>db2jcc.jar</code> e a licença (geralmente, <code>db2jcc_license_cu.jar</code>)<br/>na instalação do DB2, e copie esses arquivos no subdiretório <code>lib/java</code> do diretório de<br/>instalação do data crawler, ou é possível usar a configuração de <code>extra_jars_dir</code><br/>no arquivo <code>crawler.conf</code> para especificar outro local.</p><p><strong>Drivers JDBC <em>MySQL</em></strong><br/>O data crawler não é enviado com os drivers JDBC para MySQL por causa de possíveis problemas de<br/>licença, se eles foram entregues como parte do produto. No entanto, fazer download do<br/>arquivo JAR que contém os drivers JDBC MySQL e integrar esse arquivo JAR na instalação do data crawler é<br/>muito fácil: </p>
+<ol>
+  <li><p>Use um navegador da web para visitar o site de download do MySQL, e localize a origem e o link de<br/>download binário para o formato de archive que deseja usar (geralmente zip para sistemas Microsoft Windows<br/>ou um gzipped tarball para sistemas Linux). Clique nesse link para iniciar o processo de download. O registro<br/>pode ser necessário.</p></li>
+  <li><p>Use o comando <code>unzip archive-file-name</code> ou <code>tar zxf
+archive-file-name</code> apropriado para extrair o conteúdo desse archive, com base no tipo e no nome do<br/>archive do qual é feito download.</p></li>
+  <li><p>Mude para o diretório que foi extraído do archive, e copie o arquivo JAR desse<br/>diretório para o subdiretório <code>lib/java</code> do diretório de instalação do<br/>data crawler, ou é possível usar a configuração <code>extra_jars_dir</code> no arquivo<br/><code>crawler.conf</code> para especificar outro local.</p></li>
+</ol><p>A seguir estão as opções de configuração básica necessárias para usar o conector de banco de dados. Para<br/>configurar esses valores, abra o arquivo <code>config/connectors/database.conf</code> e modifique<br/>os valores a seguir, específicos para os casos de uso: </p>
+<ul>
+  <li><strong>protocol</strong> - O nome do protocolo do conector usado para o crawl. O valor para<br/>esse conector é baseado no sistema de banco de dados a ser acessado.</li>
+  <li><strong>collection</strong> - Este atributo é usado para descompactar arquivos temporários.</li>
+  <li><strong>classname</strong> - Nome de classe Java para o conector. O valor para usar esse<br/>conector deve ser <code>plugin:database.plugin@database</code>.</li>
+  <li><strong>logging-config</strong> - Especifica o arquivo usado para configurar opções de<br/>criação de log; ele deve ser formatado como uma sequência XML <code>log4j</code>.</li>
+</ul><h3>Configurando o conector CMIS</h3><p>O conector CMIS (Content Management Interoperability Services) permite efetuar crawl dos repositórios<br/>do CMS (Content Management System) ativados pelo CMIS, como Alfresco, Documentum ou IBM Content<br/>Manager, e indexar os dados que eles contêm.</p><p>A seguir estão as opções de configuração básica necessárias para usar o conector CMIS. Para configurar<br/>esses valores, abra o arquivo <code>config/connectors/cmis.conf</code> e modifique os valores a seguir,<br/>específicos para os casos de uso:</p>
+<ul>
+  <li><strong>protocol</strong> - O nome do protocolo do conector usado para o crawl. Use<br/><code>cmis</code> para esse conector.</li>
+  <li><strong>collection</strong> - Este atributo é usado para descompactar arquivos temporários.</li>
+  <li><strong>dns</strong> - Opção não usada.</li>
+  <li><strong>classname</strong> - Nome de classe Java para o conector. O valor para usar esse<br/>conector deve ser <code>plugin:cmis-v1.1.plugin@connector</code>.</li>
+  <li><strong>logging-config</strong> - Especifica o arquivo usado para configurar opções de<br/>criação de log; ele deve ser formatado como uma sequência XML <code>log4j</code>.</li>
+  <li><strong>endpoint</strong> - A URL do terminal em serviço de um repositório compatível com CMIS.<br/>Por exemplo, as estruturas da URL para SharePoint são:</li>
+  <li>Para ligação de AtomPub:<br/> http://<server>:<port>/_vti_bin/cmis/rest?getRepositories</li>
+  <li>Para ligação de WebServices:<br/> http://<server>:<port>/_vti_bin/cmissoapwsdl.aspx</li>
+  <li><p><strong>username</strong> - O nome do usuário do repositório CMIS usado para<br/>acessar o conteúdo. Esse usuário deve ter acesso a todas as pastas e documentos de destino a serem passados<br/>por crawl e indexados.</p></li>
+  <li><strong>password</strong> - A senha do repositório CMIS, usada para acessar o conteúdo. A<br/>senha NÃO deve ser criptografada; ela deve fornecida em texto simples.</li>
+  <li><strong>repositoryid</strong> - O ID do repositório CMIS usado para acessar o conteúdo para<br/>esse repositório específico.</li>
+  <li><strong>bindingtype</strong> - Identifica o tipo de ligação que deve ser usado para<br/>se conectar a um repositório CMIS. O valor é <code>AtomPub</code> ou <code>WebServices</code>.</li>
+  <li><strong>authentication</strong> - Identifica qual tipo de mecanismo de autenticação usar ao<br/>entrar em contato com um repositório compatível com CMIS: <code>Basic HTTP Authentication</code>,<br/><code>NTLM</code> ou <code>WS-Security(Username token)</code>.</li>
+  <li><strong>enable-acl</strong> - Permite a recuperação de ACLs para dados passados por crawl. Se<br/>você não estiver preocupado com a segurança dos documentos nessa coleção, a desativação dessa<br/>opção aumentará o desempenho por não solicitar essas informações com o documento e não<br/>recuperar e codificar essas informações. O valor é <code>true</code> ou <code>false</code>.</li>
+  <li><strong>user-agent</strong> - Um cabeçalho enviado ao servidor ao efetuar crawl de documentos.</li>
+  <li><strong>method</strong> - O método (<code>GET</code> ou <code>POST</code>) pelo<br/>qual os parâmetros serão passados.</li>
+  <li><strong>url-logging</strong> - A extensão para a qual as URLs passadas por crawl são<br/>registradas. Os valores<br/>possíveis são:</li>
+  <li><p><strong><em>full-logging</em></strong> - Registre todas as informações sobre a URL.</p></li>
+  <li><strong><em>refined-logging</em></strong> - Registre somente as informações necessárias para<br/>procurar o log do crawler e para que o conector funcione corretamente; este é o valor padrão.</li>
+  <li><strong><em>minimal-logging</em></strong> -Registre somente a quantia mínima de informações<br/>necessárias para que o conector funcione corretamente.</li>
+</ul><p>Configurar esta opção para criação de log mínima reduzirá o tamanho dos logs e ganhará um<br/>ligeiro aumento de desempenho devido à E/S menor associada à minimização da quantia de dados que está sendo<br/>registrada.<br/>* <strong>ssl-version</strong> - Especifica uma versão de SSL a ser usada para conexões HTTPS. Por<br/>padrão, o protocolo mais sólido disponível é usado.</p><h3>Configurando o Conector SMB/CIFS/Samba</h3><p>O conector Samba permite efetuar crawl de compartilhamentos de arquivos de Server Message Block (SMB) e<br/>Common Internet Filesystem (CIFS). Esse tipo de compartilhamento de arquivos é comum em redes Windows, e<br/>também é fornecido por meio do projeto de software livre <a href="https://www.samba.org/">Samba</a>.</p><p>A seguir estão as opções de configuração básica necessárias para usar o conector Samba. Para configurar<br/>esses valores, abra o arquivo <code>config/connectors/samba.conf</code> e modifique os valores a<br/>seguir, específicos para os casos de uso:</p>
+<ul>
+  <li><strong>protocol</strong> - O nome do protocolo do conector usado para o crawl. O valor para<br/>usar esse conector é <code>smb</code>.</li>
+  <li><strong>collection</strong> - Este atributo é usado para descompactar arquivos temporários.</li>
+  <li><strong>classname</strong> - Nome de classe Java para o conector. O valor para usar esse<br/>conector deve ser <code>plugin:smb.plugin@connector</code>.</li>
+  <li><strong>logging-config</strong> - Especifica o arquivo usado para configurar opções de<br/>criação de log; ele deve ser formatado como uma sequência XML <code>log4j</code>.</li>
+  <li><strong>username</strong> - O nome do usuário do Samba com o qual se autenticar. Se<br/>fornecido, o domínio e a senha deverão ser fornecidos também. Se não for fornecido, a conta guest será<br/>usada.</li>
+  <li><strong>password</strong> - A senha do Samba com a qual se autenticar. Se o nome do usuário<br/>for fornecido, ela será necessária. A senha deve ser criptografada usando a biblioteca VCrypt enviada<br/>com o data crawler.</li>
+  <li><strong>archive</strong> - Permite que o conector Samba efetue crawl e indexe arquivos<br/>compactados dentro de archives. O valor é <code>true</code> ou <code>false</code>; o valor padrão<br/>é <code>false</code>.</li>
+  <li><strong>max-policies-per-handle</strong> - Especifica o número máximo de políticas Local<br/>Security Authority (LSA) que podem ser abertas para uma única manipulação de RPC. Essas políticas definem<br/>as permissões de acesso necessárias para consultar ou modificar um sistema específico sob várias<br/>condições. O valor padrão para essa opção é <code>255</code>.</li>
+  <li><strong>crawl-fs-metadata</strong> - A ativação dessa opção fará com que o data crawler inclua um documento VXML que contém os metadados do sistema de arquivos disponíveis sobre o arquivo<br/>(data de criação, data da última modificação, atributos de arquivos, etc.)</li>
+  <li><strong>enable-arc-connector</strong> - Opção não usada.</li>
+  <li><strong>disable-indexes</strong> - Nova lista separada por quebras de linha de índices a serem<br/>desativados, o que pode resultar em um crawl mais rápido, por exemplo:</li>
+  <li><p>disable-url-index</p></li>
+  <li>disable-error-state-index</li>
+  <li>disable-crawl-time-index</li>
+  <li><strong>exact-duplicates-hash-size</strong> - Configura o tamanho da hashtable usada para<br/>resolver duplicatas exatas. Tenha muito cuidado ao modificar esse número. O valor selecionado deve ser o<br/>principal, e os tamanhos maiores podem fornecer consultas mais rápidas, mas requererão mais memória, enquanto<br/>que os tamanhos menores podem desacelerar crawls, mas reduzirão substancialmente o uso de memória.</li>
+  <li><strong>user-agent</strong> - Opção não usada.</li>
+  <li><strong>timeout</strong> - Opção não usada.</li>
+  <li><strong>n-concurrent-requests</strong> - O número de solicitações que serão enviadas em<br/>paralelo para um único endereço IP. O padrão é <code>1</code>.</li>
+  <li><strong>enqueue-persistence</strong> - Opção não usada.</li>
+</ul><h3>Configurando o conector SharePoint</h3><p>O conector SharePoint permite efetuar crawl dos objetos SharePoint Server e SharePoint Online e<br/>indexar as informações que eles contêm. Um objeto, como um documento, perfil do usuário, coleção de sites,<br/>blog, item da lista, lista da associação, página de diretório, e mais, pode ser indexado com seus metadados<br/>associados. Para itens da lista e documentos, os índices podem incluir anexos.</p><p><strong>Nota</strong>: o conector SharePoint respeita o atributo <code>noindex</code> em<br/>todos os objetos SharePoint, independentemente de seu tipo específico (blogs, documentos, perfis do usuário e muito mais). Um único documento é retornado para cada resultado.</p><p><strong>Importante</strong>: a conta do SharePoint usada para efetuar crawl dos sites do<br/>SharePoint deve ter pelo menos privilégios totais de acesso de leitura.</p><p>A seguir estão as opções de configuração básica necessárias para usar o conector SharePoint. Para<br/>configurar esses valores, abra o arquivo <code>config/connectors/sharepoint.conf</code> e modifique os<br/>valores a seguir, específicos para os casos de uso:</p>
+<ul>
+  <li><strong>protocol</strong> - O nome do protocolo do conector usado para o crawl. Use<br/><code>io-sp</code> para esse conector.</li>
+  <li><strong>collection</strong> - Este atributo é usado para descompactar arquivos temporários.</li>
+  <li><strong>classname</strong> - Nome de classe Java para o conector. O valor para usar esse<br/>conector deve ser <code>plugin:io-sharepoint.plugin@connector</code>.</li>
+  <li><strong>logging-config</strong> - Especifica o arquivo usado para configurar opções de<br/>criação de log; ele deve ser formatado como uma sequência XML <code>log4j</code>.</li>
+  <li><strong>seed-url-type</strong> - Identifica para qual tipo de objeto SharePoint as URLs<br/>iniciais fornecidas apontam: coleções de sites ou aplicativos da web (também conhecidos como servidores<br/>virtuais).</li>
+  <li><p><strong><em>Site Collections</em></strong> - Se o Tipo de URL Inicial for configurado como<br/><code>Site Collections</code>, em seguida, somente os filhos da coleção de sites referenciados pela<br/>URL passarão por crawl.</p></li>
+  <li><strong><em>Web Applications</em></strong> - Se o Tipo de URL Inicial for configurado como <code>Web
+Applications</code>, em seguida, todas as coleções de sites (e seus filhos) pertencentes aos<br/>aplicativos da web referenciados por cada URL passarão por crawl.</li>
+  <li><strong>auth-type</strong> - O mecanismo de autenticação a ser usado ao entrar em contato com<br/>o servidor SharePoint: <code>BASIC</code>, <code>NTLM2</code>, <code>KERBEROS</code> ou<br/><code>CBA</code>. O tipo de autenticação padrão é <code>NTLM2</code>.</li>
+  <li><strong>spUser</strong> - O nome do usuário do SharePoint usado para acessar o<br/>conteúdo. Esse usuário deve ter acesso a todos os sites e listas de destino a serem<br/>passados por crawl e indexados, e deve poder recuperar e resolver as permissões associadas. É melhor<br/>inseri-lo com o nome de domínio, como: <code>MYDOMAIN \\Administrator</code>.</li>
+  <li><strong>spPassword</strong> - A senha do usuário do SharePoint usada para acessar o<br/>conteúdo. A senha deve ser criptografada usando o programa vcrypt enviado com o Data Crawler.</li>
+  <li><strong>cba-sts</strong> - A URL para o terminal Security Token Service (STS) para tentar<br/>se autenticar com relação ao usuário do crawl. Para locais do SharePoint com ADFS, esse deve ser o<br/>terminal ADFS. Se o Tipo de Autenticação for configurado como <code>CBA</code> (Claims Based<br/>Authentication), em seguida, esse campo será obrigatório.</li>
+  <li><strong>cba-realm</strong> - O identificador de confiança de parte de retransmissão a ser<br/>usado ao solicitar um token de segurança a partir do STS. Às vezes isso é conhecido como o valor &ldquo;AppliesTo&rdquo;<br/>ou &ldquo;Realm&rdquo;. Para o SharePoint Online, essa deve ser a URL para a raiz da instância do SharePoint Online<br/>(por exemplo, <code>https://mycompany.sharepoint.com</code>). Para ADFS, esse é o valor do ID para a<br/>Confiança de Parte Confiável entre SharePoint e ADFS (por exemplo,<br/><code>&quot;urn:SHAREPOINT:adfs&quot;</code>).</li>
+  <li><strong>everyone-group</strong> - Quando especificado, o nome desse grupo é usado nas ACLs<br/>quando o acesso precisar ser fornecido a todos. Esse campo será obrigatório quando os perfis do usuário do<br/>crawl forem ativados. <strong>Nota</strong> - A segurança ainda não é respeitada pelo serviço<br/>Recuperar e Classificar.</li>
+  <li><strong>user-profile-master-url</strong> - A URL base que o conector usa para construir links<br/>para perfis do usuário. Isso deve ser configurado como apontar para o formato de exibição para perfis do usuário. Se<br/>o token <code>%FIRST_SEED%</code> for encontrado, ele será substituído pela primeira URL inicial. Necessário quando o crawl em perfis do usuário está ativado.</li>
+  <li><strong>urls</strong> - Lista separada por quebras de linha de URLs de HTTP de aplicativos da<br/>web SharePoint ou coleções de sites a efetuar crawl.</li>
+  <li><strong>ehcache-config</strong> - Opção não usada.</li>
+  <li><strong>method</strong> - O método (<code>GET</code> ou <code>POST</code>) pelo<br/>qual os parâmetros serão passados.</li>
+  <li><strong>cache-types</strong> - Opção não usada.</li>
+  <li><strong>cache-size</strong> - Opção não usada.</li>
+  <li><strong>enable-acl</strong> - Permite a execução de crawl dos perfis do usuário do<br/>SharePoint; os valores são <code>true</code> ou <code>false</code>. O valor padrão é <code>false</code>.</li>
+</ul><h3>Configurando o Conector Box</h3><p>O Conector Box permite efetuar crawl da instância do Enterprise Box, e indexar as informações<br/>que ela contém. A seguir estão as opções de configuração básica necessárias para usar o conector Box. Para<br/>configurar esses valores, abra o arquivo <code>config/connectors/box.conf</code> e modifique os<br/>valores a seguir, específicos para os casos de uso:</p>
+<ul>
+  <li><strong>protocol</strong> - O nome do protocolo do conector usado para o crawl. Use<br/><code>box</code> para esse conector.</li>
+  <li><strong>classname</strong> - Nome de classe Java para o conector. O valor para usar esse<br/>conector deve ser <code>plugin:box.plugin@connector</code>.</li>
+  <li><strong>logging-config</strong> - Especifica o arquivo usado para configurar opções de<br/>criação de log; ele deve ser formatado como uma sequência XML <code>log4j</code>.</li>
+  <li><strong>box-crawl-seed-url</strong> - A URL base para o Box. O valor para esse conector é<br/><code>box://app.box.com/</code>. É possível efetuar crawl de diferentes tipos de<br/>URLs, por exemplo:</li>
+  <li><p><strong><em>Para efetuar crawl de uma empresa inteira</em></strong>:<br/><code>box://app.box.com/</code></p></li>
+  <li><strong><em>Para efetuar crawl de uma Pasta específica</em></strong>:<br/><code>box://app.box.com/user/USER_ID/folder/FOLDER_ID/FolderName</code></li>
+  <li><strong><em>Para efetuar crawl de um Usuário específico</em></strong>:<br/><code>box://app.box.com/user/USER_ID/</code></li>
+  <li><strong>client-id</strong> - Insira o ID do Cliente fornecido pelo Box quando você criou o<br/>aplicativo Box.</li>
+  <li><strong>client-secret</strong> - Insira o Segredo do cliente fornecido pelo Box quando você<br/>criou o aplicativo Box.</li>
+  <li><strong>path-to-private-key</strong> - Este é o local, no sistema de arquivos local, da Chave<br/>Privada que faz parte do par de chaves privada-pública gerado para comunicação com o Box.</li>
+  <li><strong>kid</strong> - Especifique o ID da Chave Pública. Essa é a outra metade do par de<br/>chaves privada-pública gerado para comunicação com o Box.</li>
+  <li><strong>enterprise-id</strong> - A Empresa na qual o aplicativo foi autorizado. O ID da<br/>Empresa é listado na página principal do Console do administrador do Box.</li>
+  <li><strong>enable-acl</strong> - Somente uso interno. Permite recuperar as ACLs para dados<br/>passados por crawl.</li>
+  <li><strong>user-agent</strong> - Um cabeçalho enviado para o servidor ao efetuar crawl dos<br/>documentos.</li>
+  <li><strong>method</strong> - O método (<code>GET</code> ou <code>POST</code>) pelo<br/>qual os parâmetros serão passados.</li>
+  <li><strong>url-logging</strong> - A extensão para a qual as URLs passadas por crawl são registradas. Os valores<br/>possíveis são:</li>
+  <li><p><strong><em>full-logging</em></strong> - Registre todas as informações sobre a URL.</p></li>
+  <li><strong><em>refined-logging</em></strong> - Registre somente as informações necessárias para<br/>procurar o log do crawler e para que o conector funcione corretamente; este é o valor padrão.</li>
+  <li><strong><em>minimal-logging</em></strong> -Registre somente a quantia mínima de informações<br/>necessárias para que o conector funcione corretamente.</li>
+</ul><p>Configurar esta opção para criação de log mínima reduzirá o tamanho dos logs e ganhará um ligeiro<br/>aumento de desempenho devido à E/S menor associada à minimização da quantia de dados que está sendo<br/>registrada.<br/>* <strong>ssl-version</strong> - Especifica a versão de SSL a ser usada para conexões HTTPS.<br/>Por padrão, o protocolo mais sólido disponível é usado.</p><p>O Conector Box possui algumas limitações:</p>
+<ul>
+  <li>Comentários ou Tarefas sobre arquivos não são recuperados.</li>
+  <li>O corpo do conteúdo do Notes é recuperado como JSON. A conversão adicional de dados do<br/>Notes pode ser necessária.</li>
+  <li>Documentos individuais não podem ser recuperados por meio de TestIt. Somente as URLs iniciais, URLs<br/>da Pasta e URLs do Usuário podem ser recuperadas por meio de TestIt.</li>
+</ul><h2>CONSULTE TAMBÉM</h2><p>crawler(1)</p><p>vcrypt(1)</p><p>crawler.conf(5)</p><p>crawler-seed.conf(5)</p><p>orchestration_service.conf(5)</p>
