@@ -18,6 +18,7 @@ discovery = common.discovery
 environment_id = common.environment_id
 collection_id = common.collection_id
 
+
 # 対応可能ファイル PDF,WORD(doc,docx),HTMl(.htm,html),XHTML(.xhtml),JSON(.json)
 accept_extension = {".pdf":"application/pdf",".doc":"application/msword",".docx":"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ".html":"text/html",".htm":"text/html",".xhtml":"application/xhtml+xml",".json":"application/json"}
@@ -36,15 +37,21 @@ for key in accept_extension:
         this_mimetype = accept_extension[extension]
         print(this_mimetype)
 
+file_name = os.path.basename(argvs[1])
+print(file_name)
+encoded_name= urllib.parse.quote(file_name)
+
+
+
 # ドキュメント追加
 with open(argvs[1],"rb") as fileinfo:
     try:
-        add_doc = discovery.add_document(environment_id.encode("utf-8"),collection_id.encode("utf-8"),file=fileinfo,file_content_type=this_mimetype.encode("utf-8")).get_result()
+        add_doc = discovery.add_document(environment_id.encode("utf-8"),collection_id.encode("utf-8"),file=fileinfo,file_content_type=this_mimetype.encode("utf-8"),filename=encoded_name).get_result()
         print(json.dumps(add_doc, indent=2))
     except WatsonApiException as e:
         print(e)
         try:
-            add_doc = discovery.add_document(environment_id.encode("utf-8"),collection_id.encode("utf-8"),file=fileinfo).get_result()
+            add_doc = discovery.add_document(environment_id.encode("utf-8"),collection_id.encode("utf-8"),file=fileinfo,filename=encoded_name).get_result()
             print(json.dumps(add_doc,indent=2))
         except WatsonApiException as e:
             print(e)
